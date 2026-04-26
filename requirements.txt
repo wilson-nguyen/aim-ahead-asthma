@@ -1,5 +1,5 @@
 numpy
-pandas
+pandas<3.0
 scikit-learn
 catboost
 shap
@@ -9,3 +9,6 @@ jupyter
 ipykernel
 pyreadstat
 pyarrow
+xgboost
+lightgbm
+imbalanced-learn
