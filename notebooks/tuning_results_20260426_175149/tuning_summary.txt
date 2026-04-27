@@ -1,0 +1,64 @@
+================================================================================
+HYPERPARAMETER TUNING SUMMARY
+================================================================================
+
+Date: 2026-04-26 17:54:15
+Trials per model: 3
+Cross-validation: 5-fold
+Training samples: 3,939
+
+
+CATBOOST
+--------------------------------------------------------------------------------
+Configuration: f_classif + smote_enn
+Best Trial: #1
+Sensitivity (CV): 0.6189
+Specificity (CV): 0.8257
+AUC (CV): 0.7872
+
+Best Hyperparameters:
+  iterations: 650
+  learning_rate: 0.02052792867269332
+  depth: 7
+  l2_leaf_reg: 3.026214833581796
+  border_count: 146
+  bagging_temperature: 0.5863596587019888
+  random_strength: 4.286229372128265
+
+
+MLP
+--------------------------------------------------------------------------------
+Configuration: mutual_info + cost_5x
+Best Trial: #1
+Sensitivity (CV): 0.7260
+Specificity (CV): 0.6743
+AUC (CV): 0.8083
+
+Best Hyperparameters:
+  n_layers: 3
+  n_units_l0: 75
+  n_units_l1: 157
+  n_units_l2: 138
+  activation: tanh
+  alpha: 0.01936652010427235
+  learning_rate: constant
+  learning_rate_init: 0.00011531371331083199
+  max_iter: 300
+
+
+BALANCED RANDOM FOREST
+--------------------------------------------------------------------------------
+Configuration: f_classif + smote_enn
+Best Trial: #0
+Sensitivity (CV): 0.7124
+Specificity (CV): 0.7455
+AUC (CV): 0.8040
+
+Best Hyperparameters:
+  n_estimators: 450
+  max_depth: 5
+  min_samples_split: 20
+  min_samples_leaf: 10
+  max_features: log2
+  bootstrap: False
+  sampling_strategy: not majority
