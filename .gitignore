@@ -34,3 +34,8 @@ Thumbs.db
 # Environment variables / secrets
 .env
 *.key
+# CatBoost auto-generated training logs
+catboost_info/
+
+# Optuna tuning results (regenerable)
+tuning_results_*/
