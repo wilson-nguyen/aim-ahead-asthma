@@ -54,7 +54,6 @@ Place raw files in `data/raw/`, or run `python download_nhanes.py`.
 
 - `download_nhanes.py` — fetch raw NHANES data
 - `notebooks/` — the 01–05 analysis pipeline
-- `src/` — reusable preprocessing and modeling functions
 - `data/` — raw and processed NHANES files (git-ignored)
 - `outputs/` — figures, metrics, and model artifacts (git-ignored)
 
