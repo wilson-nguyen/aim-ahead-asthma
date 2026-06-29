@@ -1,11 +1,11 @@
 # Explainable Machine Learning for Pediatric Asthma (NHANES)
 
-A sensitivity-first, explainable machine-learning pipeline that identifies the clinical, environmental, and social factors associated with diagnosed pediatric asthma in U.S. national survey data (NHANES). First-author research project — **Best Poster Award, 2025 AIM-AHEAD Annual Meeting**; manuscript under peer review (revise-and-resubmit).
+A sensitivity-first, explainable machine-learning pipeline that identifies the clinical, environmental, and social factors associated with diagnosed pediatric asthma in U.S. national survey data (NHANES). First-author research project (Best Poster Award, 2025 AIM-AHEAD Annual Meeting); manuscript under peer review.
 
 ## Summary
 
 - **Goal:** an interpretable, **sensitivity-first** classifier that identifies the factors most associated with a recorded diagnosis of asthma, rather than a deployable diagnostic tool.
-- **Data:** NHANES cycles 2007–2008, 2009–2010, 2011–2012; children aged 6–17; **n = 6,567** analytic sample (asthma prevalence 18.7%). Outcome: `MCQ010` (ever told had asthma). Survey design weights (`WTMEC2YR`) incorporated.
+- **Data:** NHANES cycles 2007–2008, 2009–2010, 2011–2012; children aged 6–17; **n = 6,567** analytic sample (asthma prevalence 18.7%). Outcome: `MCQ010` (ever told had asthma). Survey design weights (`WTMEC2YR`) are retained as sample weights for model fitting and evaluation, and excluded from the feature matrix.
 - **Model:** gradient-boosted trees (**CatBoost**), tuned with **Optuna** (100 trials, 5-fold CV); 60/20/20 stratified train/validation/test split (seed 42); decision threshold tuned on validation to reach ≥ 80% sensitivity, then applied unchanged to the held-out test set.
 - **Explainability:** **SHAP** values and permutation importance; a reduced **Top-10-feature model** derived from the SHAP ranking.
 - **Headline result (test set, n = 1,314):** the full model reaches AUC **0.827** (95% CI 0.795–0.856) at the sensitivity-first operating point (sensitivity 0.78, specificity 0.72, NPV 0.93), and a **10-feature model performs comparably** (AUC 0.803, 95% CI 0.771–0.833), showing the top SHAP-ranked predictors capture nearly all of the signal. Predicted probabilities were isotonically calibrated (Brier 0.185 to 0.109); confidence intervals are 1,000-iteration bootstrap.
@@ -37,6 +37,8 @@ Notebook 03 expects `data/processed/02b_harmonized.parquet`, which is created by
 8. Forced expiratory time (`SPXNFET`)
 9. Crawl/walk/run/play limitations (`PFQ020`)
 10. Airway obstruction indicator — *engineered* (`obstruction_indicator`)
+
+*These rankings are associative, not causal. Several top features (recent wheezing, lung function, healthcare use, activity limitation) are downstream of or proxies for an existing diagnosis, so they should not be read as causal risk factors.*
 
 ## Setup
 
