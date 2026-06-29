@@ -1,10 +1,10 @@
-# Explainable Machine Learning for Pediatric Asthma Screening (NHANES)
+# Explainable Machine Learning for Pediatric Asthma (NHANES)
 
-A sensitivity-first, explainable machine-learning pipeline that screens for pediatric asthma from U.S. national survey data (NHANES), integrating clinical, environmental, and social predictors. First-author research project — **Best Poster Award, 2025 AIM-AHEAD Annual Meeting**; manuscript under peer review (revise-and-resubmit).
+A sensitivity-first, explainable machine-learning pipeline that identifies the clinical, environmental, and social factors associated with diagnosed pediatric asthma in U.S. national survey data (NHANES). First-author research project — **Best Poster Award, 2025 AIM-AHEAD Annual Meeting**; manuscript under peer review (revise-and-resubmit).
 
 ## Summary
 
-- **Goal:** a screening classifier tuned for **sensitivity** (catching true asthma cases) while staying interpretable for clinical use.
+- **Goal:** an interpretable, **sensitivity-first** classifier that identifies the factors most associated with a recorded diagnosis of asthma, rather than a deployable diagnostic tool.
 - **Data:** NHANES cycles 2007–2008, 2009–2010, 2011–2012; children aged 6–17; **n = 6,567** analytic sample (asthma prevalence 18.7%). Outcome: `MCQ010` (ever told had asthma). Survey design weights (`WTMEC2YR`) incorporated.
 - **Model:** gradient-boosted trees (**CatBoost**), tuned with **Optuna** (100 trials, 5-fold CV); 60/20/20 stratified train/validation/test split (seed 42); decision threshold tuned on validation to reach ≥ 80% sensitivity, then applied unchanged to the held-out test set.
 - **Explainability:** **SHAP** values and permutation importance; a reduced **Top-10-feature model** derived from the SHAP ranking.
@@ -29,7 +29,7 @@ Run the notebooks in order:
 3. General health condition (`HUQ010`)
 4. FEV1/FVC ratio — *engineered* (`fev1_fvc_ratio`)
 5. Times received healthcare, past year (`HUQ050`)
-6. Health now vs. one year ago (`HSQ500`)
+6. Head cold or chest cold, past 30 days (`HSQ500`)
 7. Family history × lung function — *engineered interaction* (`family_spirometry_interaction`)
 8. Forced expiratory time (`SPXNFET`)
 9. Crawl/walk/run/play limitations (`PFQ020`)
@@ -64,4 +64,4 @@ Python · pandas · NumPy · scikit-learn · CatBoost · SHAP · imbalanced-lear
 
 ## Citation
 
-Nguyen, W., Micheals, K., & Alwesabi, Y. "Explainable Machine Learning for Pediatric Asthma Diagnosis: Integrating Clinical, Environmental, and Social Predictors." (Under review, 2026.)
+Nguyen, W., Micheals, K., & Alwesabi, Y. "Explainable Machine Learning to Identify Clinical, Environmental, and Social Factors Associated with Diagnosed Pediatric Asthma (NHANES 2007-2012)." (Under review, 2026.)
