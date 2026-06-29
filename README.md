@@ -8,7 +8,8 @@ A sensitivity-first, explainable machine-learning pipeline that screens for pedi
 - **Data:** NHANES cycles 2007–2008, 2009–2010, 2011–2012; children aged 6–17; **n = 6,567** analytic sample (asthma prevalence 18.7%). Outcome: `MCQ010` (ever told had asthma). Survey design weights (`WTMEC2YR`) incorporated.
 - **Model:** gradient-boosted trees (**CatBoost**), tuned with **Optuna** (100 trials, 5-fold CV); 60/20/20 stratified train/validation/test split (seed 42); decision threshold tuned on validation to reach ≥ 80% sensitivity, then applied unchanged to the held-out test set.
 - **Explainability:** **SHAP** values and permutation importance; a reduced **Top-10-feature model** derived from the SHAP ranking.
-- **Headline result (test set, n = 1,314):** the full model reaches AUC **0.822** (95% CI 0.790–0.851) at 80% sensitivity, and a **10-feature model performs comparably** — AUC 0.811 (0.779–0.840) — showing the top SHAP-ranked predictors capture nearly all of the signal. Confidence intervals are 1,000-iteration bootstrap.
+- **Headline result (test set, n = 1,314):** the full model reaches AUC **0.827** (95% CI 0.795–0.856) at the sensitivity-first operating point (sensitivity 0.78, specificity 0.72, NPV 0.93), and a **10-feature model performs comparably** (AUC 0.803, 95% CI 0.771–0.833), showing the top SHAP-ranked predictors capture nearly all of the signal. Predicted probabilities were isotonically calibrated (Brier 0.185 to 0.109); confidence intervals are 1,000-iteration bootstrap.
+- **Cross-cycle data handling:** variables that NHANES renamed across 2007–2012 were harmonized into single cross-cycle variables, and survey-design/administrative variables (the interview weight and the masked variance pseudo-PSU/pseudo-stratum) were excluded from the predictor set; the examination weight (`WTMEC2YR`) was retained only as the survey weight.
 
 ## Pipeline
 
