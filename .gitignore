@@ -39,3 +39,4 @@ catboost_info/
 
 # Optuna tuning results (regenerable)
 tuning_results_*/
+notebooks/final_test_results_*.json
