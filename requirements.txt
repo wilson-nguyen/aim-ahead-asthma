@@ -12,3 +12,4 @@ pyarrow
 xgboost
 lightgbm
 imbalanced-learn
+optuna
