@@ -13,14 +13,17 @@ A sensitivity-first, explainable machine-learning pipeline that identifies the c
 
 ## Pipeline
 
-Run the notebooks in order:
+Run the pipeline in order:
 
-1. `download_nhanes.py` — fetch raw NHANES files
+1. `python download_nhanes.py` — fetch raw NHANES files
 2. `notebooks/01_load_and_harmonize.ipynb` — load and merge survey cycles
 3. `notebooks/02_recode.ipynb` — recode variables
-4. `notebooks/03_clean_and_filter.ipynb` — clean and define the analytic sample (children 6–17 with a valid `MCQ010` response)
-5. `notebooks/04_model.ipynb` — feature engineering, Optuna tuning, train and evaluate CatBoost
-6. `notebooks/05_top10_sensitivity.ipynb` — Top-10-feature sensitivity analysis + SHAP
+4. `python notebooks/harmonize_cycles.py` — harmonize renamed cross-cycle variables and write `data/processed/02b_harmonized.parquet`
+5. `notebooks/03_clean_and_filter.ipynb` — clean and define the analytic sample (children 6–17 with a valid `MCQ010` response)
+6. `notebooks/04_model.ipynb` — feature engineering, Optuna tuning, train and evaluate CatBoost
+7. `notebooks/05_top10_sensitivity.ipynb` — Top-10-feature sensitivity analysis + SHAP
+
+Notebook 03 expects `data/processed/02b_harmonized.parquet`, which is created by `notebooks/harmonize_cycles.py` after notebook 02.
 
 ## Top 10 predictors (SHAP-ranked)
 
