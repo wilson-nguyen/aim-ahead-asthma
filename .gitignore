@@ -40,3 +40,17 @@ catboost_info/
 # Optuna tuning results (regenerable)
 tuning_results_*/
 notebooks/final_test_results_*.json
+notebooks/validation_leaderboard_*.csv
+
+# Personal materials -- NEVER publish (resumes, cover letters, applications)
+Wilson_Nguyen_*
+*_Resume*.docx
+*_Resume*.pdf
+*_CoverLetter*.docx
+*_CoverLetter*.pdf
+
+# Notebook backups created by the R3 correction patches
+*.ipynb.bak*
+
+# Frozen pre-correction snapshot lives outside the repo
+../aim-ahead-asthma-FROZEN-*/

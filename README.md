@@ -31,12 +31,12 @@ Notebook 03 expects `data/processed/02b_harmonized.parquet`, which is created by
 2. Close relative had asthma (`MCQ300B`)
 3. General health condition (`HUQ010`)
 4. FEV1/FVC ratio, *engineered* (`fev1_fvc_ratio`)
-5. Times received healthcare, past year (`HUQ050`)
-6. Head cold or chest cold, past 30 days (`HSQ500`)
-7. Family history × lung function, *engineered interaction* (`family_spirometry_interaction`)
-8. Forced expiratory time (`SPXNFET`)
-9. Crawl/walk/run/play limitations (`PFQ020`)
-10. Airway obstruction indicator, *engineered* (`obstruction_indicator`)
+5. Family history × lung function, *engineered interaction* (`family_spirometry_interaction`)
+6. Times received healthcare, past year (`HUQ050`)
+7. Health now compared with 1 year ago (`HUQ020`)
+8. Household reference person born in the US (`DMDHRBR_US`)
+9. Forced expiratory time (`SPXNFET`)
+10. Crawl/walk/run/play limitations (`PFQ020`)
 
 *These rankings are associative, not causal. Several top features (recent wheezing, lung function, healthcare use, activity limitation) are downstream of or proxies for an existing diagnosis, so they should not be read as causal risk factors.*
 
