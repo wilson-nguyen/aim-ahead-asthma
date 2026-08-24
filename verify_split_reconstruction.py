@@ -193,6 +193,47 @@ def main():
         check(f"y_{part} exact (values+order+index)", rep[f"y_{part}"].equals(art[f"y_{part}"]))
         check(f"sw_{part} exact", rep[f"sw_{part}"].equals(art[f"sw_{part}"]))
 
+    # ---- Step 2b: structural split assertions ----------------------------
+    print("\nStep 2b — split partition assertions")
+    itr, iva, ite = (set(rep["i_train"]), set(rep["i_val"]), set(rep["i_test"]))
+    check("splits pairwise disjoint",
+          not (itr & iva) and not (itr & ite) and not (iva & ite))
+    check("splits complete (union == analytic cohort)",
+          len(itr | iva | ite) == rep["n_clean"],
+          f"{len(itr | iva | ite)} vs {rep['n_clean']}")
+    s_tr = set(rep["seqn_clean"].iloc[list(itr)])
+    s_va = set(rep["seqn_clean"].iloc[list(iva)])
+    s_te = set(rep["seqn_clean"].iloc[list(ite)])
+    check("SEQN sets pairwise disjoint",
+          not (s_tr & s_va) and not (s_tr & s_te) and not (s_va & s_te))
+
+    # ---- Step 2c: HISTORICAL arrays (frozen pre-correction snapshot) ------
+    # Item 7 as originally promised: the split behind the SUBMITTED results.
+    print("\nStep 2c — historical split arrays from the frozen snapshot")
+    import __main__ as _m
+    for _name in ("NHANESCleaner", "ClinicalFeatureEngineer", "ProtectedSelectKBest"):
+        if not hasattr(_m, _name):          # shims so old __main__ pickles resolve
+            setattr(_m, _name, type(_name, (), {}))
+    frozen_pkls = sorted(glob.glob(os.path.join(
+        HERE, "..", "aim-ahead-asthma-FROZEN-*", "notebooks",
+        "tuning_results_*", "preprocessed_data.pkl")))
+    if not frozen_pkls:
+        check("historical frozen arrays found", False, "no FROZEN snapshot located")
+    for fp in frozen_pkls:
+        tag = os.path.basename(os.path.dirname(fp)).replace("tuning_results_", "")
+        try:
+            import warnings as _w
+            with _w.catch_warnings():
+                _w.simplefilter("ignore")
+                hist = joblib.load(fp)
+            for part in ("train", "val", "test"):
+                check(f"[historical {tag}] y_{part} exact",
+                      rep[f"y_{part}"].equals(hist[f"y_{part}"]))
+                check(f"[historical {tag}] sw_{part} exact",
+                      rep[f"sw_{part}"].equals(hist[f"sw_{part}"]))
+        except Exception as e:
+            check(f"[historical {tag}] loadable", False, f"{type(e).__name__}: {e}")
+
     # ---- Step 3: feature arrays — engineer via the shared module ----------
     print("\nStep 3 — feature-array reconstruction (cleaner → engineer → pruning)")
     from asthma_pipeline import (NHANESCleaner, ClinicalFeatureEngineer,
@@ -265,9 +306,12 @@ def main():
         "split_assignment_sha256": hashlib.sha256(open(csv_path, "rb").read()).hexdigest(),
         "pandas": pd.__version__, "numpy": np.__version__,
         "checks": checks,
+        "historical_runs_checked": [os.path.basename(os.path.dirname(p)) for p in frozen_pkls],
         "verdict": ("ACCEPTED: split assignments are deterministically reconstructed and "
-                    "verified against the preserved arrays (values, ordering, dtypes, "
-                    "missingness, hashes)." if all_pass else
+                    "verified against the preserved arrays — current run AND frozen "
+                    "historical runs — exactly (values, ordering, dtypes, missingness, "
+                    "hashes), with splits proven pairwise disjoint and complete."
+                    if all_pass else
                     "REJECTED: at least one check failed — do NOT describe the split as "
                     "deterministically reconstructed."),
     }

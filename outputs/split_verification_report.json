@@ -1,0 +1,148 @@
+{
+  "verified_at": "2026-08-24T11:53:22",
+  "run_dir": "tuning_results_20260824_084903",
+  "random_state": 42,
+  "n_analytic": 6567,
+  "n_train": 3939,
+  "n_val": 1314,
+  "n_test": 1314,
+  "phase3_content_hash": "dad27016993c998d15e9de1147a5fa35425733bc8233ddaaf87878baf1e71347",
+  "split_assignment_sha256": "ca5a8aaf3ac9cdefbe69e9d96530324e2d6821da459c0aabbc43311a370ec90e",
+  "pandas": "2.3.3",
+  "numpy": "2.4.4",
+  "checks": {
+    "row count": {
+      "pass": true,
+      "detail": "6784 vs 6784"
+    },
+    "column list + order": {
+      "pass": true,
+      "detail": "replica-only=set(), preserved-only=set()"
+    },
+    "dtypes": {
+      "pass": true,
+      "detail": ""
+    },
+    "values + missingness (exact)": {
+      "pass": true,
+      "detail": ""
+    },
+    "content hash": {
+      "pass": true,
+      "detail": "dad27016993c998d vs dad27016993c998d"
+    },
+    "SEQN unique + fully observed": {
+      "pass": true,
+      "detail": "n=6784"
+    },
+    "y_train exact (values+order+index)": {
+      "pass": true,
+      "detail": ""
+    },
+    "sw_train exact": {
+      "pass": true,
+      "detail": ""
+    },
+    "y_val exact (values+order+index)": {
+      "pass": true,
+      "detail": ""
+    },
+    "sw_val exact": {
+      "pass": true,
+      "detail": ""
+    },
+    "y_test exact (values+order+index)": {
+      "pass": true,
+      "detail": ""
+    },
+    "sw_test exact": {
+      "pass": true,
+      "detail": ""
+    },
+    "splits pairwise disjoint": {
+      "pass": true,
+      "detail": ""
+    },
+    "splits complete (union == analytic cohort)": {
+      "pass": true,
+      "detail": "6567 vs 6567"
+    },
+    "SEQN sets pairwise disjoint": {
+      "pass": true,
+      "detail": ""
+    },
+    "[historical 20260426_180035] y_train exact": {
+      "pass": true,
+      "detail": ""
+    },
+    "[historical 20260426_180035] sw_train exact": {
+      "pass": true,
+      "detail": ""
+    },
+    "[historical 20260426_180035] y_val exact": {
+      "pass": true,
+      "detail": ""
+    },
+    "[historical 20260426_180035] sw_val exact": {
+      "pass": true,
+      "detail": ""
+    },
+    "[historical 20260426_180035] y_test exact": {
+      "pass": true,
+      "detail": ""
+    },
+    "[historical 20260426_180035] sw_test exact": {
+      "pass": true,
+      "detail": ""
+    },
+    "[historical 20260625_165708] y_train exact": {
+      "pass": true,
+      "detail": ""
+    },
+    "[historical 20260625_165708] sw_train exact": {
+      "pass": true,
+      "detail": ""
+    },
+    "[historical 20260625_165708] y_val exact": {
+      "pass": true,
+      "detail": ""
+    },
+    "[historical 20260625_165708] sw_val exact": {
+      "pass": true,
+      "detail": ""
+    },
+    "[historical 20260625_165708] y_test exact": {
+      "pass": true,
+      "detail": ""
+    },
+    "[historical 20260625_165708] sw_test exact": {
+      "pass": true,
+      "detail": ""
+    },
+    "pruned feature list matches run": {
+      "pass": true,
+      "detail": "19 vs 19"
+    },
+    "feature name list matches run": {
+      "pass": true,
+      "detail": ""
+    },
+    "X_train_feat exact + hash": {
+      "pass": true,
+      "detail": "hash=fd21b284b0a51533"
+    },
+    "X_val_feat exact + hash": {
+      "pass": true,
+      "detail": "hash=596a6fd698e973e2"
+    },
+    "X_test_feat exact + hash": {
+      "pass": true,
+      "detail": "hash=196c3406eaf24350"
+    }
+  },
+  "historical_runs_checked": [
+    "tuning_results_20260426_180035",
+    "tuning_results_20260625_165708"
+  ],
+  "verdict": "ACCEPTED: split assignments are deterministically reconstructed and verified against the preserved arrays \u2014 current run AND frozen historical runs \u2014 exactly (values, ordering, dtypes, missingness, hashes), with splits proven pairwise disjoint and complete."
+}
