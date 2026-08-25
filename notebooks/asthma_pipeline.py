@@ -291,6 +291,49 @@ class ProtectedSelectKBest(BaseEstimator, TransformerMixin):
 
 
 # ---------------------------------------------------------------------------
+# Resampling — SMOTENC-based, per KM sign-off 2026-08-24
+# ---------------------------------------------------------------------------
+
+class AutoSMOTENCENN(BaseEstimator):
+    """SMOTE-ENN with the SMOTE step replaced by categorical-aware SMOTENC.
+
+    Agreed with K. Micheals 2026-08-24: integer-coded categorical predictors
+    (race/ethnicity, language, citizenship, ...) must not receive synthetic
+    between-category values, so SMOTENC replaces plain SMOTE; the ENN
+    cleaning step is retained for comparability with the prior pipeline.
+
+    Because resampling runs AFTER feature selection and fold membership
+    varies, categorical columns cannot be hardcoded. They are inferred at
+    resample time: columns taking <= max_categorical_unique distinct values
+    (the same discreteness logic NHANESCleaner uses). Binary indicators and
+    small integer codes qualify even after robust scaling, since scaling
+    preserves the number of distinct values. Falls back to plain SMOTE in
+    the degenerate cases (no categorical columns, or no continuous ones).
+    """
+
+    def __init__(self, random_state=RANDOM_STATE, max_categorical_unique=20):
+        self.random_state = random_state
+        self.max_categorical_unique = max_categorical_unique
+
+    def fit_resample(self, X, y):
+        from imblearn.combine import SMOTEENN
+        from imblearn.over_sampling import SMOTE, SMOTENC
+
+        X_arr = np.asarray(X)
+        cat_idx = [j for j in range(X_arr.shape[1])
+                   if len(np.unique(X_arr[:, j])) <= self.max_categorical_unique]
+        if cat_idx and len(cat_idx) < X_arr.shape[1]:
+            smote = SMOTENC(categorical_features=cat_idx,
+                            random_state=self.random_state)
+        else:
+            smote = SMOTE(random_state=self.random_state)
+        self.categorical_indices_ = cat_idx
+        self.used_smotenc_ = bool(cat_idx) and len(cat_idx) < X_arr.shape[1]
+        return SMOTEENN(smote=smote,
+                        random_state=self.random_state).fit_resample(X_arr, y)
+
+
+# ---------------------------------------------------------------------------
 # Pipeline building blocks
 # ---------------------------------------------------------------------------
 
