@@ -1,6 +1,6 @@
 {
-  "verified_at": "2026-08-24T11:53:22",
-  "run_dir": "tuning_results_20260824_084903",
+  "verified_at": "2026-08-25T08:38:56",
+  "run_dir": "tuning_results_20260824_140539",
   "random_state": 42,
   "n_analytic": 6567,
   "n_train": 3939,
@@ -144,5 +144,5 @@
     "tuning_results_20260426_180035",
     "tuning_results_20260625_165708"
   ],
-  "verdict": "ACCEPTED: split assignments are deterministically reconstructed and verified against the preserved arrays \u2014 current run AND frozen historical runs \u2014 exactly (values, ordering, dtypes, missingness, hashes), with splits proven pairwise disjoint and complete."
+  "verdict": "ACCEPTED. Current run: reconstructed feature, outcome, and survey-weight arrays match the preserved arrays exactly (values, ordering, dtypes, missingness, hashes). Frozen historical runs: preserved outcome and survey-weight arrays match the replay exactly, establishing identical participant membership and ordering of all three splits; historical feature matrices were built under superseded feature definitions and are not reproduced. Splits proven pairwise disjoint and complete."
 }

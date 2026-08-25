@@ -307,10 +307,14 @@ def main():
         "pandas": pd.__version__, "numpy": np.__version__,
         "checks": checks,
         "historical_runs_checked": [os.path.basename(os.path.dirname(p)) for p in frozen_pkls],
-        "verdict": ("ACCEPTED: split assignments are deterministically reconstructed and "
-                    "verified against the preserved arrays — current run AND frozen "
-                    "historical runs — exactly (values, ordering, dtypes, missingness, "
-                    "hashes), with splits proven pairwise disjoint and complete."
+        "verdict": ("ACCEPTED. Current run: reconstructed feature, outcome, and "
+                    "survey-weight arrays match the preserved arrays exactly (values, "
+                    "ordering, dtypes, missingness, hashes). Frozen historical runs: "
+                    "preserved outcome and survey-weight arrays match the replay exactly, "
+                    "establishing identical participant membership and ordering of all "
+                    "three splits; historical feature matrices were built under "
+                    "superseded feature definitions and are not reproduced. Splits "
+                    "proven pairwise disjoint and complete."
                     if all_pass else
                     "REJECTED: at least one check failed — do NOT describe the split as "
                     "deterministically reconstructed."),

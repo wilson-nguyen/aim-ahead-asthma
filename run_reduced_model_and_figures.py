@@ -122,6 +122,12 @@ def main():
     order = np.argsort(mean_abs)[::-1]
     ranking = [(names[i], float(mean_abs[i])) for i in order]
     top10 = [names[i] for i in order[:10]]
+    # [Spec compliance, 25 Aug] Section F of the signed exclusion log protects
+    # the spirometry-availability indicators in EVERY model, so the reduced
+    # model is top-10 + the two indicators (12 features), not bare top-10.
+    # Otherwise missing spirometry would be median-imputed invisibly again.
+    reduced_features = top10 + [p for p in ("SPXNFEV1_missing", "SPXNFVC_missing")
+                                if p not in top10]
     print("Top-10 by mean |SHAP| (training):")
     for f, v in ranking[:10]:
         print(f"  {v:7.4f}  {f}  ({lab(f)})")
@@ -131,22 +137,24 @@ def main():
                    "basis": "mean |SHAP| on training data, locked primary"}, f, indent=2)
 
     # ---- 2. Reduced model on top-10 ---------------------------------------
-    print("\nReduced model (top-10, same spec, threshold rule on validation)")
+    print(f"\nReduced model (top-10 + {2} protected indicators = "
+          f"{len(top10)+2} features, threshold rule on validation)")
     red = ImbPipeline(preprocessing_steps() + [
         ("smote_enn", AutoSMOTENCENN(random_state=RANDOM_STATE)),
         ("classifier", CatBoostClassifier(**bp)),
     ])
-    red.fit(Xtr[top10], ytr)
-    prob_val_r = red.predict_proba(Xva[top10])[:, 1]
+    red.fit(Xtr[reduced_features], ytr)
+    prob_val_r = red.predict_proba(Xva[reduced_features])[:, 1]
     cal_r = fit_calibrator(yva, prob_val_r)
     thr_r, s_r, sp_r = lock_threshold(yva, cal_r.predict(prob_val_r))
     print(f"  reduced threshold locked on validation: {thr_r:.4f} "
           f"(val sens {s_r:.3f}, spec {sp_r:.3f})")
 
-    prob_te_r = cal_r.predict(red.predict_proba(Xte[top10])[:, 1])
+    prob_te_r = cal_r.predict(red.predict_proba(Xte[reduced_features])[:, 1])
     prob_va_r = cal_r.predict(prob_val_r)
     reduced_results = {
         "top10": top10,
+        "reduced_features": reduced_features,
         "threshold": round(thr_r, 4),
         "validation": {"unweighted": binary_metrics(yva, prob_va_r, thr_r),
                        "survey_weighted": binary_metrics(yva, prob_va_r, thr_r, swva)},
@@ -157,7 +165,7 @@ def main():
     print(f"  reduced TEST (single pass): AUC {t['auc']:.3f}  sens {t['sensitivity']:.3f}  "
           f"spec {t['specificity']:.3f}")
     joblib.dump({"pipeline": red, "calibrator": cal_r, "threshold": thr_r,
-                 "feature_names": top10, "locked_run": LOCKED_RUN,
+                 "feature_names": reduced_features, "locked_run": LOCKED_RUN,
                  "created": datetime.now().isoformat(timespec="seconds")},
                 os.path.join(out_dir, "reduced_model_bundle.pkl"))
 
@@ -177,7 +185,7 @@ def main():
     # ROC full vs reduced (test)
     plt.figure(figsize=(6.5, 6))
     for prob, label, style in ((prob_te_f, "Full model (22 features)", "-"),
-                               (prob_te_r, "Reduced model (top 10)", "--")):
+                               (prob_te_r, "Reduced model (top 10 + indicators)", "--")):
         fpr, tpr, _ = roc_curve(yte, prob)
         plt.plot(fpr, tpr, style, lw=2,
                  label=f"{label}, AUC {roc_auc_score(yte, prob):.3f}")
@@ -192,7 +200,7 @@ def main():
     x = np.arange(len(ms)); w = 0.36
     plt.figure(figsize=(7, 5))
     plt.bar(x - w / 2, [full_test[m] for m in ms], w, label="Full (22)")
-    plt.bar(x + w / 2, [red_t[m] for m in ms], w, label="Reduced (10)")
+    plt.bar(x + w / 2, [red_t[m] for m in ms], w, label="Reduced (12)")
     plt.xticks(x, [m.upper() if len(m) == 3 else m.capitalize() for m in ms])
     plt.ylim(0, 1); plt.ylabel("Value")
     plt.title("Test performance at locked thresholds (sens ≥ 0.80 rule)")
@@ -262,12 +270,9 @@ def main():
     plt.savefig(os.path.join(fig_dir, "efigure_decision_curve.png"), dpi=300); plt.close()
 
     print(f"\nDone. Artifacts: {out_dir}/ | Figures: {fig_dir}/")
-    if not args.smoke:
-        open(os.path.join(HERE, "notebooks", ".nb05_unlocked"), "w").write(
-            "superseded by run_reduced_model_and_figures.py — " +
-            datetime.now().isoformat(timespec="seconds"))
-        print("notebooks/.nb05_unlocked created (nb05 remains archived; this "
-              "script is its R3 successor).")
+    # [25 Aug] Deliberately NOT creating notebooks/.nb05_unlocked: notebook 05
+    # remains permanently superseded by this script, and its stale guard must
+    # keep blocking execution of the pre-R3 code.
 
 
 if __name__ == "__main__":
