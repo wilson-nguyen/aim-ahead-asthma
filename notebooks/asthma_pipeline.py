@@ -63,7 +63,10 @@ IDENTIFIERS = ["SEQN"]
 # [2026-08-24 codebook adjudication] SPXNSTAT (spirometry status/quality
 # flag), SPQ060 and SPQ100 (spirometry-session questionnaire) added under
 # the same rationale as SPDBRONC/ENQ020.
-PROTOCOL_ROUTING_VARS = ["ENQ020", "SPDBRONC", "SPXNSTAT", "SPQ060", "SPQ100"]
+# [2026-08-25, pending KM ratification] SPDNACC (Baseline Number of
+# Acceptable Curves, ATS criteria) — same quality-metric class as SPXNSTAT.
+PROTOCOL_ROUTING_VARS = ["ENQ020", "SPDBRONC", "SPXNSTAT", "SPQ060", "SPQ100",
+                         "SPDNACC"]
 
 # Diagnostic-opportunity proxies: excluded from the primary model, added
 # back ONLY in the declared exploratory sensitivity analysis.
@@ -99,16 +102,58 @@ def mutual_info_seeded(X, y):
 
 
 # ---------------------------------------------------------------------------
-# Cleaning (unchanged behavior from notebook 04 cell 6)
+# Cleaning — codebook-verified missing-value handling [rewritten 2026-08-25]
+#
+# The previous version blanket-replaced {99,999,777,7777,9999} in every
+# continuous variable and {7,9,77}+big in every categorical. Verified against
+# the NHANES codebooks, both rules were wrong:
+#   - Continuous exam/lab/derived variables code missing as blank and carry
+#     NO numeric sentinels (e.g. RIDAGEEX_H=99 months, FEV=999 mL, weight
+#     99 kg, urinary creatinine 99 are measurements). 99 real values were
+#     being erased.
+#   - Categorical variables with wide code ranges have 7/9 as VALID codes
+#     (DMDEDUC3 7th/9th grade; INDHHIN2/INDFMIN2 income brackets;
+#     DMDHHSIZ/DMDFMSIZ "7 or more"; SPDNACC curve counts). ~3,900 real
+#     values were being erased. Refused/Don't-know codes match the code
+#     width: {7,9} for 1-6-coded items, {77,99} for wider, etc.
 # ---------------------------------------------------------------------------
 
+# Per-variable sentinel sets verified against NHANES codebooks (DEMO_F,
+# SPX_F, ...). Variables listed here bypass the width rule entirely.
+CATEGORICAL_SENTINELS = {
+    "DMDEDUC3": {77, 99},   # 0-15 grades (+55/66 special levels) valid
+    "INDHHIN2": {77, 99},   # income brackets 1-15 valid
+    "INDFMIN2": {77, 99},
+    "DMDHHSIZ": set(),      # 1-7 valid, 7 = "7 or more"; no refused codes
+    "DMDFMSIZ": set(),
+    "SPDNACC":  set(),      # 0-9 curve counts; no refused codes
+}
+
+_SENTINEL_PAIRS = [(7, 9), (77, 99), (777, 999), (7777, 9999)]
+_ALL_SENTINEL_CODES = {c for p in _SENTINEL_PAIRS for c in p}
+
+
 class NHANESCleaner(BaseEstimator, TransformerMixin):
-    """Clean NHANES sentinel codes."""
+    """Codebook-verified NHANES missing-value handling.
+
+    Continuous variables: no value replacement (NHANES codes missing as
+    blank). Categorical variables: refused/don't-know codes only, taken
+    from CATEGORICAL_SENTINELS when listed, otherwise from the width rule
+    (the sentinel pair strictly above the training data's maximum
+    non-sentinel code). If an unlisted variable shows a sentinel-looking
+    code at implausibly high frequency (>2%, refused/DK are rare), fit()
+    raises so the variable is adjudicated against its codebook instead of
+    silently mangled. Binary (1/2) variables: 7/9 scrubbed defensively,
+    then recoded to 1/0 with missingness preserved.
+    """
+
+    AMBIGUITY_FREQ = 0.02
 
     def __init__(self):
         self.continuous_cols_ = None
         self.categorical_cols_ = None
         self.binary_cols_ = None
+        self.sentinel_map_ = None
 
     def fit(self, X, y=None):
         X_df = X.copy() if isinstance(X, pd.DataFrame) else pd.DataFrame(X)
@@ -122,39 +167,57 @@ class NHANESCleaner(BaseEstimator, TransformerMixin):
         self.continuous_cols_ = []
         self.categorical_cols_ = []
         self.binary_cols_ = []
+        self.sentinel_map_ = {}
 
         for col in X_df.columns:
+            s = X_df[col].dropna()
             if col in continuous_whitelist:
                 self.continuous_cols_.append(col)
+            elif len(s) > 0 and pd.api.types.is_numeric_dtype(X_df[col]):
+                unique_vals = set(s.unique())
+                if unique_vals == {1, 2} or unique_vals == {1.0, 2.0}:
+                    self.binary_cols_.append(col)
+                elif np.all(np.abs(s - np.round(s)) < 1e-6) and len(s.unique()) <= 20:
+                    self.categorical_cols_.append(col)
+                else:
+                    self.continuous_cols_.append(col)
             else:
-                s = X_df[col].dropna()
-                if len(s) > 0 and pd.api.types.is_numeric_dtype(X_df[col]):
-                    unique_vals = set(s.unique())
-                    if unique_vals == {1, 2} or unique_vals == {1.0, 2.0}:
-                        self.binary_cols_.append(col)
-                    elif np.all(np.abs(s - np.round(s)) < 1e-6) and len(s.unique()) <= 20:
-                        self.categorical_cols_.append(col)
-                    else:
-                        self.continuous_cols_.append(col)
+                self.continuous_cols_.append(col)
+
+        for col in self.categorical_cols_:
+            if col in CATEGORICAL_SENTINELS:
+                self.sentinel_map_[col] = set(CATEGORICAL_SENTINELS[col])
+                continue
+            obs = set(int(v) for v in X_df[col].dropna().unique())
+            nonsent_max = max((v for v in obs if v not in _ALL_SENTINEL_CODES),
+                              default=0)
+            pair = next((set(p) for p in _SENTINEL_PAIRS if p[0] > nonsent_max),
+                        set())
+            n = len(X_df[col].dropna())
+            for code in sorted(pair & obs):
+                freq = (X_df[col] == code).sum() / max(n, 1)
+                if freq > self.AMBIGUITY_FREQ:
+                    raise ValueError(
+                        f"NHANESCleaner: '{col}' has sentinel-looking code "
+                        f"{code} at {freq:.1%} frequency - refused/don't-know "
+                        f"codes are rare, so this may be a valid value. Check "
+                        f"the NHANES codebook and add '{col}' to "
+                        f"CATEGORICAL_SENTINELS explicitly.")
+            self.sentinel_map_[col] = pair
 
         return self
 
     def transform(self, X):
         X_df = X.copy() if isinstance(X, pd.DataFrame) else pd.DataFrame(X)
 
-        big_sentinels = {99, 999, 777, 7777, 9999}
-        small_sentinels = {7, 9, 77}
-
-        for col in self.continuous_cols_:
-            if col in X_df.columns:
-                X_df[col] = X_df[col].replace(big_sentinels, np.nan)
-
+        # continuous: no replacement — NHANES codes missing as blank
         for col in self.categorical_cols_:
-            if col in X_df.columns:
-                X_df[col] = X_df[col].replace(big_sentinels | small_sentinels, np.nan)
+            if col in X_df.columns and self.sentinel_map_.get(col):
+                X_df[col] = X_df[col].replace(self.sentinel_map_[col], np.nan)
 
         for col in self.binary_cols_:
             if col in X_df.columns:
+                X_df[col] = X_df[col].replace({7, 9}, np.nan)
                 original_na = X_df[col].isna()
                 X_df[col] = (X_df[col] == 1).astype(float)
                 X_df.loc[original_na, col] = np.nan
