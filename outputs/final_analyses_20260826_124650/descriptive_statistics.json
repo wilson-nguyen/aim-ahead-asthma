@@ -1,0 +1,34 @@
+{
+  "run": "tuning_results_20260826_124650",
+  "basis": "descriptive stratification of the locked test predictions; no modeling decisions",
+  "age_smd_cases_vs_controls": 0.072,
+  "age_tertile_test_auc": {
+    "6-9": {
+      "n": 474,
+      "auc": 0.838
+    },
+    "10-13": {
+      "n": 451,
+      "auc": 0.745
+    },
+    "14-17": {
+      "n": 389,
+      "auc": 0.714
+    }
+  },
+  "spirometry_availability_test_auc": {
+    "complete": {
+      "n": 1170,
+      "auc": 0.768
+    },
+    "missing": {
+      "n": 144,
+      "auc": 0.781
+    }
+  },
+  "bmi_z_computable": {
+    "n": 6519,
+    "of": 6567,
+    "pct": 99.3
+  }
+}
