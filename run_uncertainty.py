@@ -35,7 +35,11 @@ warnings.filterwarnings("ignore")
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "notebooks"))
 
-LOCKED_RUN = "tuning_results_20260824_140539"
+# [2026-08-26] auto-detect the newest tuning run (the corrective run,
+# once notebook 04 has been re-executed); falls back to the prior lock.
+import glob as _glob
+_runs = sorted(_glob.glob(os.path.join(HERE, "notebooks", "tuning_results_*")))
+LOCKED_RUN = os.path.basename(_runs[-1]) if _runs else "tuning_results_20260824_140539"
 SEED = 42
 
 from sklearn.metrics import roc_auc_score                            # noqa: E402

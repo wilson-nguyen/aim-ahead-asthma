@@ -73,7 +73,11 @@ PROTOCOL_ROUTING_VARS = ["ENQ020", "SPDBRONC", "SPXNSTAT", "SPQ060", "SPQ100",
 # [2026-08-24 codebook adjudication] HUQ071 (overnight hospital stay),
 # HUQ090 (saw mental-health professional), HUQ030 (usual source of care)
 # added under the same rationale as HUQ050.
-UTILIZATION_PROXIES = ["HUQ050", "HUQ071", "HUQ090", "HUQ030"]
+# [2026-08-26 KM ruling] PFQ041 (receives Special Education or Early
+# Intervention Services) excluded: services receipt brings in prior
+# recognition, referral, and system contact; PFQ020 retains the
+# functional-limitation signal.
+UTILIZATION_PROXIES = ["HUQ050", "HUQ071", "HUQ090", "HUQ030", "PFQ041"]
 
 # PFQ020 deliberately NOT listed: retained per Khamron (2026-08-14).
 

@@ -45,7 +45,11 @@ import matplotlib.pyplot as plt
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "notebooks"))
 
-LOCKED_RUN = "tuning_results_20260824_140539"
+# [2026-08-26] auto-detect the newest tuning run (the corrective run,
+# once notebook 04 has been re-executed); falls back to the prior lock.
+import glob as _glob
+_runs = sorted(_glob.glob(os.path.join(HERE, "notebooks", "tuning_results_*")))
+LOCKED_RUN = os.path.basename(_runs[-1]) if _runs else "tuning_results_20260824_140539"
 RANDOM_STATE = 42
 SENS_TARGET = 0.80
 
@@ -64,7 +68,7 @@ LABELS = {
     "RDQ070": "Wheezing (past yr)", "MCQ300B": "Family history of asthma",
     "HUQ010": "General health condition", "HUQ020": "Health vs 1 yr ago",
     "RDQ140": "Dry cough at night (past yr)", "AGQ030": "Hay fever (past yr)",
-    "PFQ020": "Activity limitation", "PFQ041": "Degree of activity difficulty",
+    "PFQ020": "Activity limitation", "PFQ041": "Special Ed/Early Intervention services",
     "fev1_fvc_ratio": "FEV1/FVC ratio", "SPXNFET": "Forced expiratory time",
     "family_spirometry_interaction": "Family history × lung function",
     "bmi_z_cdc": "CDC BMI-for-age z-score", "BMXWT": "Weight",

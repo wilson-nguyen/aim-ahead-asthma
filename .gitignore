@@ -54,3 +54,6 @@ Wilson_Nguyen_*
 
 # Frozen pre-correction snapshot lives outside the repo
 ../aim-ahead-asthma-FROZEN-*/
+
+# virtual environments, any name
+.venv*/

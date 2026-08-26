@@ -18,7 +18,8 @@ What this does, in order:
      the declared modification, threshold re-derived on validation by the
      SAME rule, then one test evaluation)
        A. no-resampling            (sampler step removed)
-       B. utilization add-back     (HUQ050/HUQ030/HUQ071/HUQ090 eligible again)
+       B. utilization add-back     (utilization-class vars eligible again:
+                                    HUQ050/HUQ030/HUQ071/HUQ090/PFQ041)
        C. age- and sex-matched     (1:1 nearest-age within sex, training set)
        D. age-dependent vars out   (BMXWT, SPXNFET, fev1_fvc_ratio,
                                     family_spirometry_interaction removed;
@@ -48,7 +49,11 @@ warnings.filterwarnings("ignore")
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "notebooks"))
 
-LOCKED_RUN = "tuning_results_20260824_140539"
+# [2026-08-26] auto-detect the newest tuning run (the corrective run,
+# once notebook 04 has been re-executed); falls back to the prior lock.
+import glob as _glob
+_runs = sorted(_glob.glob(os.path.join(HERE, "notebooks", "tuning_results_*")))
+LOCKED_RUN = os.path.basename(_runs[-1]) if _runs else "tuning_results_20260824_140539"
 RANDOM_STATE = 42
 SENS_TARGET = 0.80
 
@@ -265,7 +270,7 @@ def main():
     print(f"  TEST: AUC {t['auc']:.3f}  sens {t['sensitivity']:.3f}  spec {t['specificity']:.3f}")
 
     # ---- 3B: utilization add-back ----------------------------------------
-    print("B. utilization add-back (HUQ050/HUQ030/HUQ071/HUQ090 eligible)")
+    print("B. utilization add-back (eligible again: " + "/".join(UTILIZATION_PROXIES) + ")")
     excl = (LEAKY_PROXIES + AGE_RESTRICTED_VARS + IDENTIFIERS + PROTOCOL_ROUTING_VARS)
     prep = prepare(excl)                     # note: UTILIZATION_PROXIES not excluded
     bXtr, bytr, _, bXva, byva, bswva, bXte, byte_, bswte, bFN, _ = prep
