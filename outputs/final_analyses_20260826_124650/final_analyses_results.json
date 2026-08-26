@@ -1,0 +1,455 @@
+{
+  "locked_run": "tuning_results_20260826_124650",
+  "generated": "2026-08-26T13:32:08",
+  "sensitivity_target": 0.8,
+  "smoke": false,
+  "analyses": {
+    "primary": {
+      "analysis": "primary_smotenc",
+      "validation": {
+        "unweighted": {
+          "auc": 0.818,
+          "sensitivity": 0.8089,
+          "specificity": 0.662,
+          "ppv": 0.3554,
+          "npv": 0.9377,
+          "threshold": 0.1743,
+          "n": 1314
+        },
+        "survey_weighted": {
+          "auc": 0.8296,
+          "sensitivity": 0.8582,
+          "specificity": 0.6334,
+          "ppv": 0.356,
+          "npv": 0.9498,
+          "threshold": 0.1743,
+          "n": 1314
+        }
+      },
+      "test": {
+        "unweighted": {
+          "auc": 0.7714,
+          "sensitivity": 0.7602,
+          "specificity": 0.6433,
+          "ppv": 0.3292,
+          "npv": 0.9209,
+          "threshold": 0.1743,
+          "n": 1314
+        },
+        "survey_weighted": {
+          "auc": 0.7454,
+          "sensitivity": 0.7732,
+          "specificity": 0.5966,
+          "ppv": 0.2961,
+          "npv": 0.923,
+          "threshold": 0.1743,
+          "n": 1314
+        }
+      },
+      "threshold_locked_on_validation": {
+        "threshold": 0.1743,
+        "val_sens": 0.8089,
+        "val_spec": 0.662
+      }
+    },
+    "no_resampling": {
+      "analysis": "no_resampling",
+      "validation": {
+        "unweighted": {
+          "auc": 0.8475,
+          "sensitivity": 0.8333,
+          "specificity": 0.6507,
+          "ppv": 0.3547,
+          "npv": 0.9443,
+          "threshold": 0.1354,
+          "n": 1314
+        },
+        "survey_weighted": {
+          "auc": 0.8607,
+          "sensitivity": 0.8711,
+          "specificity": 0.6517,
+          "ppv": 0.3713,
+          "npv": 0.9554,
+          "threshold": 0.1354,
+          "n": 1314
+        }
+      },
+      "test": {
+        "unweighted": {
+          "auc": 0.8167,
+          "sensitivity": 0.7967,
+          "specificity": 0.6742,
+          "ppv": 0.3603,
+          "npv": 0.9351,
+          "threshold": 0.1354,
+          "n": 1314
+        },
+        "survey_weighted": {
+          "auc": 0.8006,
+          "sensitivity": 0.79,
+          "specificity": 0.6591,
+          "ppv": 0.3372,
+          "npv": 0.9346,
+          "threshold": 0.1354,
+          "n": 1314
+        }
+      },
+      "selected_features": [
+        "RIDRETH1",
+        "DMDCITZN",
+        "FIALANG",
+        "BMXWT",
+        "MCQ300B",
+        "SPXNFET",
+        "URDNALLC",
+        "HIQ011",
+        "HUQ010",
+        "HUQ020",
+        "PFQ020",
+        "RDQ070",
+        "RDQ140",
+        "AGQ030",
+        "DMDBORN_US",
+        "DMDHRBR_US",
+        "fev1_fvc_ratio",
+        "cotinine_log",
+        "bmi_z_cdc",
+        "family_spirometry_interaction",
+        "SPXNFEV1_missing",
+        "SPXNFVC_missing"
+      ],
+      "threshold_locked_on_validation": {
+        "threshold": 0.1354,
+        "val_sens": 0.8333,
+        "val_spec": 0.6507
+      }
+    },
+    "utilization_addback": {
+      "analysis": "utilization_addback",
+      "validation": {
+        "unweighted": {
+          "auc": 0.8226,
+          "sensitivity": 0.8537,
+          "specificity": 0.5468,
+          "ppv": 0.3026,
+          "npv": 0.9419,
+          "threshold": 0.1188,
+          "n": 1314
+        },
+        "survey_weighted": {
+          "auc": 0.8332,
+          "sensitivity": 0.8939,
+          "specificity": 0.5084,
+          "ppv": 0.3004,
+          "npv": 0.953,
+          "threshold": 0.1188,
+          "n": 1314
+        }
+      },
+      "test": {
+        "unweighted": {
+          "auc": 0.7595,
+          "sensitivity": 0.8171,
+          "specificity": 0.5412,
+          "ppv": 0.2909,
+          "npv": 0.9278,
+          "threshold": 0.1188,
+          "n": 1314
+        },
+        "survey_weighted": {
+          "auc": 0.7422,
+          "sensitivity": 0.8354,
+          "specificity": 0.479,
+          "ppv": 0.2603,
+          "npv": 0.9298,
+          "threshold": 0.1188,
+          "n": 1314
+        }
+      },
+      "selected_features": [
+        "RIDRETH1",
+        "DMDCITZN",
+        "BMXWT",
+        "MCQ300B",
+        "SPXNFET",
+        "HUQ010",
+        "HUQ020",
+        "HUQ050",
+        "HUQ071",
+        "HUQ090",
+        "PFQ020",
+        "PFQ041",
+        "RDQ070",
+        "RDQ140",
+        "AGQ030",
+        "DMDBORN_US",
+        "DMDHRBR_US",
+        "fev1_fvc_ratio",
+        "bmi_z_cdc",
+        "family_spirometry_interaction",
+        "SPXNFEV1_missing",
+        "SPXNFVC_missing"
+      ],
+      "threshold_locked_on_validation": {
+        "threshold": 0.1188,
+        "val_sens": 0.8537,
+        "val_spec": 0.5468
+      },
+      "utilization_variables_selected": [
+        "HUQ050",
+        "HUQ071",
+        "HUQ090",
+        "PFQ041"
+      ]
+    },
+    "age_sex_matched": {
+      "analysis": "age_sex_matched",
+      "validation": {
+        "unweighted": {
+          "auc": 0.8308,
+          "sensitivity": 0.8496,
+          "specificity": 0.6114,
+          "ppv": 0.3349,
+          "npv": 0.9464,
+          "threshold": 0.176,
+          "n": 1314
+        },
+        "survey_weighted": {
+          "auc": 0.8324,
+          "sensitivity": 0.8488,
+          "specificity": 0.6238,
+          "ppv": 0.3476,
+          "npv": 0.9458,
+          "threshold": 0.176,
+          "n": 1314
+        }
+      },
+      "test": {
+        "unweighted": {
+          "auc": 0.7962,
+          "sensitivity": 0.813,
+          "specificity": 0.618,
+          "ppv": 0.3289,
+          "npv": 0.9348,
+          "threshold": 0.176,
+          "n": 1314
+        },
+        "survey_weighted": {
+          "auc": 0.7825,
+          "sensitivity": 0.8001,
+          "specificity": 0.6037,
+          "ppv": 0.3071,
+          "npv": 0.9322,
+          "threshold": 0.176,
+          "n": 1314
+        }
+      },
+      "selected_features": [
+        "RIDRETH1",
+        "DMDCITZN",
+        "DMDHRMAR",
+        "MCQ300B",
+        "SPXNEV",
+        "SPXNFET",
+        "URXNAL",
+        "URDNALLC",
+        "FSQ165",
+        "HUQ010",
+        "HUQ020",
+        "PFQ020",
+        "RDQ070",
+        "RDQ140",
+        "AGQ030",
+        "DMDBORN_US",
+        "DMDHRBR_US",
+        "fev1_fvc_ratio",
+        "bmi_z_cdc",
+        "family_spirometry_interaction",
+        "SPXNFEV1_missing",
+        "SPXNFVC_missing"
+      ],
+      "threshold_locked_on_validation": {
+        "threshold": 0.176,
+        "val_sens": 0.8496,
+        "val_spec": 0.6114
+      },
+      "matched_training_n": 1474
+    },
+    "age_dependent_removed": {
+      "analysis": "age_dependent_removed",
+      "validation": {
+        "unweighted": {
+          "auc": 0.8279,
+          "sensitivity": 0.8659,
+          "specificity": 0.5871,
+          "ppv": 0.3257,
+          "npv": 0.95,
+          "threshold": 0.1449,
+          "n": 1314
+        },
+        "survey_weighted": {
+          "auc": 0.8287,
+          "sensitivity": 0.8592,
+          "specificity": 0.587,
+          "ppv": 0.3295,
+          "npv": 0.9464,
+          "threshold": 0.1449,
+          "n": 1314
+        }
+      },
+      "test": {
+        "unweighted": {
+          "auc": 0.7827,
+          "sensitivity": 0.813,
+          "specificity": 0.5815,
+          "ppv": 0.3091,
+          "npv": 0.931,
+          "threshold": 0.1449,
+          "n": 1314
+        },
+        "survey_weighted": {
+          "auc": 0.767,
+          "sensitivity": 0.8203,
+          "specificity": 0.5509,
+          "ppv": 0.2862,
+          "npv": 0.9332,
+          "threshold": 0.1449,
+          "n": 1314
+        }
+      },
+      "selected_features": [
+        "RIDRETH1",
+        "DMDCITZN",
+        "DMDHHSIZ",
+        "FIALANG",
+        "MCQ300B",
+        "ENQ100",
+        "URDNALLC",
+        "FSQ165",
+        "HIQ011",
+        "HSQ500",
+        "HUQ010",
+        "HUQ020",
+        "PFQ020",
+        "RDQ070",
+        "RDQ140",
+        "AGQ030",
+        "DMDBORN_US",
+        "DMDHRBR_US",
+        "cotinine_log",
+        "bmi_z_cdc",
+        "SPXNFEV1_missing",
+        "SPXNFVC_missing"
+      ],
+      "threshold_locked_on_validation": {
+        "threshold": 0.1449,
+        "val_sens": 0.8659,
+        "val_spec": 0.5871
+      },
+      "removed": [
+        "BMXWT",
+        "SPXNFET",
+        "fev1_fvc_ratio",
+        "family_spirometry_interaction"
+      ]
+    },
+    "missing_spirometry_subgroup": {
+      "analysis": "missing_spirometry_subgroup(primary model)",
+      "n_train/val/test": [
+        426,
+        148,
+        144
+      ],
+      "validation": {
+        "auc": 0.826,
+        "sensitivity": 0.8417,
+        "specificity": 0.6269,
+        "ppv": 0.3617,
+        "npv": 0.9404,
+        "threshold": 0.1743,
+        "n": 148
+      },
+      "test": {
+        "auc": 0.7588,
+        "sensitivity": 0.82,
+        "specificity": 0.5767,
+        "ppv": 0.3625,
+        "npv": 0.9161,
+        "threshold": 0.1743,
+        "n": 144
+      }
+    },
+    "missing_spirometry_excluded": {
+      "analysis": "missing_spirometry_excluded",
+      "validation": {
+        "unweighted": {
+          "auc": 0.8236,
+          "sensitivity": 0.8698,
+          "specificity": 0.5289,
+          "ppv": 0.2945,
+          "npv": 0.9473,
+          "threshold": 0.1023,
+          "n": 1166
+        },
+        "survey_weighted": {
+          "auc": 0.8346,
+          "sensitivity": 0.9097,
+          "specificity": 0.488,
+          "ppv": 0.2941,
+          "npv": 0.9584,
+          "threshold": 0.1023,
+          "n": 1166
+        }
+      },
+      "test": {
+        "unweighted": {
+          "auc": 0.7747,
+          "sensitivity": 0.8255,
+          "specificity": 0.501,
+          "ppv": 0.268,
+          "npv": 0.9284,
+          "threshold": 0.1023,
+          "n": 1170
+        },
+        "survey_weighted": {
+          "auc": 0.7391,
+          "sensitivity": 0.8061,
+          "specificity": 0.4371,
+          "ppv": 0.2324,
+          "npv": 0.9142,
+          "threshold": 0.1023,
+          "n": 1170
+        }
+      },
+      "selected_features": [
+        "RIDRETH1",
+        "DMDCITZN",
+        "DMDHHSIZ",
+        "BMXWT",
+        "MCQ300B",
+        "SPXNFET",
+        "URDNALLC",
+        "HIQ011",
+        "HUQ010",
+        "HUQ020",
+        "PFQ020",
+        "RDQ070",
+        "RDQ140",
+        "AGQ030",
+        "DMDBORN_US",
+        "DMDHRBR_US",
+        "fev1_fvc_ratio",
+        "cotinine_log",
+        "bmi_z_cdc",
+        "family_spirometry_interaction",
+        "SPXNFEV1_missing",
+        "SPXNFVC_missing"
+      ],
+      "threshold_locked_on_validation": {
+        "threshold": 0.1023,
+        "val_sens": 0.8698,
+        "val_spec": 0.5289
+      }
+    }
+  }
+}

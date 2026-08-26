@@ -1,0 +1,83 @@
+{
+  "generated": "2026-08-26T13:32:23",
+  "locked_run": "tuning_results_20260826_124650",
+  "smoke": false,
+  "full_model_test": {
+    "auc": 0.7714,
+    "sensitivity": 0.7602,
+    "specificity": 0.6433,
+    "ppv": 0.3292,
+    "npv": 0.9209,
+    "threshold": 0.1743,
+    "n": 1314
+  },
+  "reduced": {
+    "top10": [
+      "RDQ070",
+      "family_spirometry_interaction",
+      "HUQ010",
+      "fev1_fvc_ratio",
+      "MCQ300B",
+      "DMDHRBR_US",
+      "RIDRETH1",
+      "HIQ011",
+      "SPXNFET",
+      "cotinine_log"
+    ],
+    "reduced_features": [
+      "RDQ070",
+      "family_spirometry_interaction",
+      "HUQ010",
+      "fev1_fvc_ratio",
+      "MCQ300B",
+      "DMDHRBR_US",
+      "RIDRETH1",
+      "HIQ011",
+      "SPXNFET",
+      "cotinine_log",
+      "SPXNFEV1_missing",
+      "SPXNFVC_missing"
+    ],
+    "threshold": 0.1148,
+    "validation": {
+      "unweighted": {
+        "auc": 0.8273,
+        "sensitivity": 0.8211,
+        "specificity": 0.618,
+        "ppv": 0.3311,
+        "npv": 0.9375,
+        "threshold": 0.1148,
+        "n": 1314
+      },
+      "survey_weighted": {
+        "auc": 0.8332,
+        "sensitivity": 0.8452,
+        "specificity": 0.6014,
+        "ppv": 0.3337,
+        "npv": 0.9427,
+        "threshold": 0.1148,
+        "n": 1314
+      }
+    },
+    "test": {
+      "unweighted": {
+        "auc": 0.7914,
+        "sensitivity": 0.8171,
+        "specificity": 0.6133,
+        "ppv": 0.3274,
+        "npv": 0.9357,
+        "threshold": 0.1148,
+        "n": 1314
+      },
+      "survey_weighted": {
+        "auc": 0.7731,
+        "sensitivity": 0.8135,
+        "specificity": 0.569,
+        "ppv": 0.293,
+        "npv": 0.9329,
+        "threshold": 0.1148,
+        "n": 1314
+      }
+    }
+  }
+}
