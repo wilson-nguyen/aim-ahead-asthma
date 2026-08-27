@@ -114,6 +114,8 @@ def test_ambiguous_unlisted_variable_raises():
 
 def test_real_data_38_children_at_99_months_survive():
     if not os.path.exists(DATA):
+        print("SKIPPED test_real_data_38_children_at_99_months_survive "
+              "(03_cleaned.parquet not present)")
         return
     df = pd.read_parquet(DATA)
     an = df[df.WTMEC2YR > 0]

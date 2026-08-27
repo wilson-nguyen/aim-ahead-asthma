@@ -72,7 +72,7 @@ LABELS = {
     "fev1_fvc_ratio": "FEV1/FVC ratio", "SPXNFET": "Forced expiratory time",
     "family_spirometry_interaction": "Family history × lung function",
     "bmi_z_cdc": "CDC BMI-for-age z-score", "BMXWT": "Weight",
-    "cotinine_log": "Serum cotinine (log)", "URDNALLC": "Urinary NNAL (tobacco metabolite)",
+    "cotinine_log": "Serum cotinine (log)", "URDNALLC": "Urinary NNAL below detection limit (indicator)",
     "RIDRETH1": "Race/Hispanic origin",
     "DMDCITZN": "Citizenship", "FIALANG": "Family interview language",
     "DMDBORN_US": "Born in US", "DMDHRBR_US": "HH reference person born in US",

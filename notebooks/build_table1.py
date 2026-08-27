@@ -71,9 +71,11 @@ print(f"Design: {(_psu_per_stratum.index.size)} strata, "
 z, pct = cdc_bmi_z(an["BMXBMI"], an["RIDAGEEX_H"], an["RIAGENDR"])
 an["bmi_z_cdc"] = z
 an["bmi_pct_cdc"] = pct
-an["bmi_cat"] = pd.cut(pct, [-0.1, 5, 85, 95, 100.1],
-                       labels=["Underweight (<5th)", "Healthy (5th-85th)",
-                               "Overweight (85th-95th)", "Obese (>=95th)"])
+# CDC definitions: <5th underweight; 5th-<85th healthy; 85th-<95th
+# overweight; >=95th obese (left-closed bins, right=False).
+an["bmi_cat"] = pd.cut(pct, [-np.inf, 5, 85, 95, np.inf], right=False,
+                       labels=["Underweight (<5th)", "Healthy (5th-<85th)",
+                               "Overweight (85th-<95th)", "Obese (>=95th)"])
 
 def wmean(x, wt):
     m = np.isfinite(x) & np.isfinite(wt)
@@ -128,12 +130,15 @@ def add_cont(label, col, dp=1):
     rows.append(r)
 
 def add_cat(label, col, level):
+    """Percentages among NONMISSING values of `col` (missing excluded from
+    the denominator; missing count reported in its own column)."""
     mask = (an[col] == level).to_numpy()
+    known = an[col].notna().to_numpy()
     r = {"Variable": f"{label}: {level}", "Missing (n)": int(an[col].isna().sum())}
     for name, sub in [("Overall", np.ones(len(an), bool)),
                       ("No Asthma", an.asthma.values == 0),
                       ("Asthma", an.asthma.values == 1)]:
-        r[name] = f"{wpct(mask, w, denom=sub):.1f}%"
+        r[name] = f"{wpct(mask, w, denom=sub & known):.1f}%"
     rows.append(r)
 
 add_cont("Age, years", "RIDAGEYR")
@@ -144,8 +149,8 @@ rows.append({"Variable": "Female, %", "Missing (n)": 0,
              "Asthma": f"{wpct(_fem, w, denom=an.asthma.values == 1):.1f}%"})
 add_cont("Body Mass Index, kg/m2", "BMXBMI")
 add_cont("BMI-for-age z-score (CDC)", "bmi_z_cdc")
-for lev in ["Underweight (<5th)", "Healthy (5th-85th)",
-            "Overweight (85th-95th)", "Obese (>=95th)"]:
+for lev in ["Underweight (<5th)", "Healthy (5th-<85th)",
+            "Overweight (85th-<95th)", "Obese (>=95th)"]:
     add_cat("BMI-for-age category", "bmi_cat", lev)
 for col, lab in [("FEV1/FVC ratio", None)]:
     pass
