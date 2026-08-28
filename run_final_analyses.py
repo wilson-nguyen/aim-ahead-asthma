@@ -413,11 +413,42 @@ def main():
     print("F. spirometry quality grades A/B/C usable (primary gates to A/B)")
     prep = prepare(FULL_EXCLUSIONS, allowed_grades=SENSITIVITY_ALLOWED_GRADES)
     fXtr, fytr, _, fXva, fyva, fswva, fXte, fyte, fswte, fFN, _ = prep
-    res, _, _ = variant_run("quality_grades_ABC", fXtr, fytr, fXva, fyva, fswva,
-                            fXte, fyte, fswte, fFN, bp, resample=True)
+    res, pipeF, _ = variant_run("quality_grades_ABC", fXtr, fytr, fXva, fyva, fswva,
+                                fXte, fyte, fswte, fFN, bp, resample=True)
     res["allowed_grades"] = list(SENSITIVITY_ALLOWED_GRADES)
     res["note"] = ("primary analysis gates best-test FEV1/FVC to quality "
                    "grades A/B; this pre-declared arm admits grade C")
+
+    # [28 Aug] paired uncertainty for the A/B vs A/B/C contrast: same test
+    # participants (asserted), raw scores, stratified paired bootstrap.
+    assert np.array_equal(np.asarray(yte, float), np.asarray(fyte, float)), \
+        "arm F test outcomes differ from primary - split drift, do not compare"
+    rt_primary = primary.predict_proba(Xte)[:, 1]
+    rt_abc = pipeF.predict_proba(fXte)[:, 1]
+    yarr = np.asarray(yte, float)
+    ip, iq = np.where(yarr == 1)[0], np.where(yarr == 0)[0]
+    rng = np.random.default_rng(RANDOM_STATE)
+    n_boot = 200 if args.smoke else 2000
+    diffs = []
+    for _ in range(n_boot):
+        bi = np.concatenate([rng.choice(ip, len(ip), replace=True),
+                             rng.choice(iq, len(iq), replace=True)])
+        diffs.append(roc_auc_score(yarr[bi], rt_primary[bi])
+                     - roc_auc_score(yarr[bi], rt_abc[bi]))
+    dlo, dhi = np.percentile(diffs, [2.5, 97.5])
+    res["paired_auc_difference_AB_minus_ABC"] = {
+        "point": round(float(roc_auc_score(yarr, rt_primary)
+                             - roc_auc_score(yarr, rt_abc)), 4),
+        "ci95": [round(float(dlo), 4), round(float(dhi), 4)],
+        "n_boot": n_boot,
+        "note": ("paired stratified bootstrap of raw test scores, primary "
+                 "(A/B gating) minus arm F (A/B/C); same participants, "
+                 "different feature versions; CI covering 0 = no detectable "
+                 "dependence on the strictness of the quality criterion"),
+    }
+    p = res["paired_auc_difference_AB_minus_ABC"]
+    print(f"  paired AUC diff (A/B minus A/B/C): {p['point']} "
+          f"({p['ci95'][0]} to {p['ci95'][1]})")
     results["analyses"]["quality_grades_ABC"] = res
     t = res["test"]["unweighted"]
     print(f"  TEST: AUC {t['auc']:.3f}  sens {t['sensitivity']:.3f}  spec {t['specificity']:.3f}")
