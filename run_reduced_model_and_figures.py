@@ -60,8 +60,10 @@ from imblearn.pipeline import Pipeline as ImbPipeline                # noqa: E40
 
 from asthma_pipeline import AutoSMOTENCENN, preprocessing_steps      # noqa: E402
 from run_final_analyses import (                                     # noqa: E402
-    binary_metrics, fit_calibrator, lock_threshold,
+    binary_metrics, fit_calibrator, lock_threshold, calibration_summary,
 )
+# [2026-08-27 KM ruling] AUC is reported from RAW model scores; threshold
+# metrics use the calibrated scores; calibration is assessed separately.
 
 # Display labels for figures (verified against project label sources).
 LABELS = {
@@ -72,6 +74,7 @@ LABELS = {
     "fev1_fvc_ratio": "FEV1/FVC ratio", "SPXNFET": "Forced expiratory time",
     "family_spirometry_interaction": "Family history × lung function",
     "bmi_z_cdc": "CDC BMI-for-age z-score", "BMXWT": "Weight",
+    "DMDHHSIZ": "Household size",
     "cotinine_log": "Serum cotinine (log)", "URDNALLC": "Urinary NNAL below detection limit (indicator)",
     "RIDRETH1": "Race/Hispanic origin",
     "DMDCITZN": "Citizenship", "FIALANG": "Family interview language",
@@ -155,16 +158,22 @@ def main():
     print(f"  reduced threshold locked on validation: {thr_r:.4f} "
           f"(val sens {s_r:.3f}, spec {sp_r:.3f})")
 
-    prob_te_r = cal_r.predict(red.predict_proba(Xte[reduced_features])[:, 1])
+    raw_te_r = red.predict_proba(Xte[reduced_features])[:, 1]
+    prob_te_r = cal_r.predict(raw_te_r)
     prob_va_r = cal_r.predict(prob_val_r)
     reduced_results = {
         "top10": top10,
         "reduced_features": reduced_features,
         "threshold": round(thr_r, 4),
-        "validation": {"unweighted": binary_metrics(yva, prob_va_r, thr_r),
-                       "survey_weighted": binary_metrics(yva, prob_va_r, thr_r, swva)},
-        "test": {"unweighted": binary_metrics(yte, prob_te_r, thr_r),
-                 "survey_weighted": binary_metrics(yte, prob_te_r, thr_r, swte)},
+        "validation": {"unweighted": binary_metrics(yva, prob_va_r, thr_r,
+                                                    raw_scores=prob_val_r),
+                       "survey_weighted": binary_metrics(yva, prob_va_r, thr_r, swva,
+                                                         raw_scores=prob_val_r)},
+        "test": {"unweighted": binary_metrics(yte, prob_te_r, thr_r,
+                                              raw_scores=raw_te_r),
+                 "survey_weighted": binary_metrics(yte, prob_te_r, thr_r, swte,
+                                                   raw_scores=raw_te_r)},
+        "calibration_test": calibration_summary(yte, prob_te_r),
     }
     t = reduced_results["test"]["unweighted"]
     print(f"  reduced TEST (single pass): AUC {t['auc']:.3f}  sens {t['sensitivity']:.3f}  "
@@ -175,9 +184,11 @@ def main():
                 os.path.join(out_dir, "reduced_model_bundle.pkl"))
 
     # primary test probabilities for figures
-    prob_te_f = cal_full.predict(primary.predict_proba(Xte)[:, 1])
-    prob_va_f = cal_full.predict(primary.predict_proba(Xva)[:, 1])
-    full_test = binary_metrics(yte, prob_te_f, thr_full)
+    raw_te_f = primary.predict_proba(Xte)[:, 1]
+    raw_va_f = primary.predict_proba(Xva)[:, 1]
+    prob_te_f = cal_full.predict(raw_te_f)
+    prob_va_f = cal_full.predict(raw_va_f)
+    full_test = binary_metrics(yte, prob_te_f, thr_full, raw_scores=raw_te_f)
 
     with open(os.path.join(out_dir, "reduced_model_results.json"), "w") as f:
         json.dump({"generated": datetime.now().isoformat(timespec="seconds"),
@@ -187,10 +198,10 @@ def main():
     # ---- 3. Figures --------------------------------------------------------
     print("\nWriting figures ->", fig_dir)
 
-    # ROC full vs reduced (test)
+    # ROC full vs reduced (test) — raw scores, matching the reported AUC
     plt.figure(figsize=(6.5, 6))
-    for prob, label, style in ((prob_te_f, "Full model (22 features)", "-"),
-                               (prob_te_r, "Reduced model (top 10 + indicators)", "--")):
+    for prob, label, style in ((raw_te_f, "Full model (22 features)", "-"),
+                               (raw_te_r, "Reduced model (top 10 + indicators)", "--")):
         fpr, tpr, _ = roc_curve(yte, prob)
         plt.plot(fpr, tpr, style, lw=2,
                  label=f"{label}, AUC {roc_auc_score(yte, prob):.3f}")

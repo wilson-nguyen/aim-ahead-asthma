@@ -1,0 +1,93 @@
+{
+  "generated": "2026-08-28T11:36:58",
+  "locked_run": "tuning_results_20260828_110326",
+  "smoke": false,
+  "full_model_test": {
+    "auc": 0.7789,
+    "sensitivity": 0.7846,
+    "specificity": 0.5721,
+    "ppv": 0.2969,
+    "npv": 0.9202,
+    "threshold": 0.1331,
+    "n": 1314,
+    "auc_calibrated_scores": 0.7749
+  },
+  "reduced": {
+    "top10": [
+      "RDQ070",
+      "MCQ300B",
+      "family_spirometry_interaction",
+      "HUQ010",
+      "DMDHHSIZ",
+      "cotinine_log",
+      "fev1_fvc_ratio",
+      "HIQ011",
+      "RIDRETH1",
+      "DMDHRBR_US"
+    ],
+    "reduced_features": [
+      "RDQ070",
+      "MCQ300B",
+      "family_spirometry_interaction",
+      "HUQ010",
+      "DMDHHSIZ",
+      "cotinine_log",
+      "fev1_fvc_ratio",
+      "HIQ011",
+      "RIDRETH1",
+      "DMDHRBR_US",
+      "SPXNFEV1_missing",
+      "SPXNFVC_missing"
+    ],
+    "threshold": 0.0887,
+    "validation": {
+      "unweighted": {
+        "auc": 0.8209,
+        "sensitivity": 0.8537,
+        "specificity": 0.5393,
+        "ppv": 0.2991,
+        "npv": 0.9412,
+        "threshold": 0.0887,
+        "n": 1314,
+        "auc_calibrated_scores": 0.8286
+      },
+      "survey_weighted": {
+        "auc": 0.8197,
+        "sensitivity": 0.8704,
+        "specificity": 0.4984,
+        "ppv": 0.2907,
+        "npv": 0.9421,
+        "threshold": 0.0887,
+        "n": 1314,
+        "auc_calibrated_scores": 0.8277
+      }
+    },
+    "test": {
+      "unweighted": {
+        "auc": 0.8079,
+        "sensitivity": 0.8496,
+        "specificity": 0.5281,
+        "ppv": 0.2931,
+        "npv": 0.9384,
+        "threshold": 0.0887,
+        "n": 1314,
+        "auc_calibrated_scores": 0.8066
+      },
+      "survey_weighted": {
+        "auc": 0.7937,
+        "sensitivity": 0.8494,
+        "specificity": 0.4707,
+        "ppv": 0.2605,
+        "npv": 0.9344,
+        "threshold": 0.0887,
+        "n": 1314,
+        "auc_calibrated_scores": 0.7925
+      }
+    },
+    "calibration_test": {
+      "brier": 0.1122,
+      "intercept": -0.0641,
+      "slope": 0.9018
+    }
+  }
+}

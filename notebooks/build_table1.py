@@ -25,6 +25,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from pediatric_corrections import cdc_bmi_z
+from asthma_pipeline import apply_spirometry_quality_gating
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from verify_split_reconstruction import replay_phase3  # noqa: E402
@@ -52,6 +53,11 @@ assert df["SDMVSTRA"].notna().all() and df["SDMVPSU"].notna().all(), \
 n_eligible = len(df)
 an = df[df["WTMEC2YR"] > 0].copy()
 n_analytic = len(an)
+
+# [2026-08-27 KM ruling] descriptive spirometry uses the same quality gate
+# as the analysis: best-test FEV1/FVC usable only with quality grades A/B
+# (SPXNQFV1/SPXNQFVC); gated values count as missing in the table.
+an = apply_spirometry_quality_gating(an, verbose=False)
 print("SAMPLE FLOW")
 print(f"  Eligible children (aged 6-17, valid MCQ010): {n_eligible:,}")
 print(f"  Excluded, nonpositive examination weight:    {n_eligible - n_analytic:,}")

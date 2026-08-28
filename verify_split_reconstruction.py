@@ -88,7 +88,10 @@ def replay_phase3(processed_dir):
     df_cleaned.dropna(axis="columns", thresh=len(df_cleaned) / 2, inplace=True)
 
     for group in (
-        ["SPXNQEFF", "SPXBQEFF", "SPXNQFV1", "SPXBQFV1", "SPXBQFVC", "SPXNQFVC"],
+        # [2026-08-27 KM ruling] SPXNQFV1/SPXNQFVC RETAINED as QC metadata
+        # for spirometry quality gating in Phase 4 (removed from this drop
+        # group; bronchodilator/efficiency attributes still dropped).
+        ["SPXNQEFF", "SPXBQEFF", "SPXBQFV1", "SPXBQFVC"],
         ["MIAINTRP", "MIALANG", "MIAPROXY", "FIAINTRP", "RIDEXMON", "FIAPROXY",
          "SIAPROXY", "SIAINTRP", "SIALANG", "RIDSTATR", "SDDSRVYR"],
         ["BMDSTATS", "HSAQUEX"],
@@ -111,6 +114,11 @@ def replay_phase4_split(split_df, seqn):
     provenance = [c for c in ("NHANES_CYCLE",) if c in df.columns]  # cell 2 drop
     if provenance:
         df = df.drop(columns=provenance)
+
+    # [2026-08-27 KM ruling] cell-2 spirometry quality gating (A/B primary);
+    # unconditional so the replay can never validate ungated data.
+    from asthma_pipeline import apply_spirometry_quality_gating, PRIMARY_ALLOWED_GRADES
+    df = apply_spirometry_quality_gating(df, PRIMARY_ALLOWED_GRADES, verbose=False)
 
     TARGET, WEIGHT = "MCQ010", "WTMEC2YR"
     y = df[TARGET].copy()

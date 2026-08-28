@@ -1,8 +1,10 @@
 """
 run_final_analyses.py — post-sign-off package for the locked R3 specification.
 
-Locked spec: tuning_results_20260824_140539 (SMOTENC-ENN primary; KM sign-off
-24 Aug 2026, WN decision 24 Aug to proceed as signed).
+Locked spec: SMOTENC-ENN primary (KM sign-off 24 Aug 2026), amended by the
+27 Aug 2026 KM rulings (spirometry quality gating A/B, URDNALLC excluded,
+raw-score AUC reporting); runs against the newest tuning_results_* produced
+by the re-executed notebook 04.
 
 What this does, in order:
   1. THRESHOLD + CALIBRATION LOCK (validation only)
@@ -24,10 +26,22 @@ What this does, in order:
        D. age-dependent vars out   (BMXWT, SPXNFET, fev1_fvc_ratio,
                                     family_spirometry_interaction removed;
                                     bmi_z_cdc kept — it is age-referenced)
-       E. missing-spirometry       (primary evaluated on the 718-type
-                                    subgroup, plus refit excluding them)
+       E. missing-spirometry       (primary evaluated on the no-usable-
+                                    spirometry subgroup, plus refit
+                                    excluding them)
+       F. quality grades A/B/C     ([2026-08-27 KM ruling] primary gates
+                                    spirometry to grades A/B; this arm
+                                    widens to A/B/C to test whether
+                                    admitting grade C changes the results)
   4. Everything written to outputs/final_analyses_<runid>/ as JSON + pkl,
      traceable to the locked run directory.
+
+Reporting rule [2026-08-27 KM ruling]: "auc" is computed from RAW model
+scores (calibration-independent discrimination); sensitivity/specificity/
+PPV/NPV are at the locked threshold on isotonic-calibrated scores, whose
+own quality is summarized separately in "calibration_test" (Brier score,
+logistic recalibration intercept/slope). "auc_calibrated_scores" is kept
+for comparison with previously circulated numbers.
 
 Run from the repo root (full run):
     python run_final_analyses.py
@@ -68,14 +82,26 @@ from asthma_pipeline import (                                       # noqa: E402
     AutoSMOTENCENN, preprocessing_steps, apply_correlation_pruning,
     LEAKY_PROXIES, AGE_RESTRICTED_VARS, IDENTIFIERS,
     PROTOCOL_ROUTING_VARS, UTILIZATION_PROXIES, PROTECTED_FEATURES,
+    MEASUREMENT_VALIDITY_EXCLUSIONS, apply_spirometry_quality_gating,
+    PRIMARY_ALLOWED_GRADES, SENSITIVITY_ALLOWED_GRADES,
 )
+
+# Full primary-specification exclusion list (arm B removes the utilization
+# class from this; the measurement-validity exclusions apply in EVERY arm).
+FULL_EXCLUSIONS = (LEAKY_PROXIES + AGE_RESTRICTED_VARS + IDENTIFIERS
+                   + PROTOCOL_ROUTING_VARS + UTILIZATION_PROXIES
+                   + MEASUREMENT_VALIDITY_EXCLUSIONS)
 
 
 # ---------------------------------------------------------------------------
 # metrics helpers
 # ---------------------------------------------------------------------------
 
-def binary_metrics(y, prob, threshold, w=None):
+def binary_metrics(y, prob, threshold, w=None, raw_scores=None):
+    """Threshold metrics on `prob` (calibrated scores). [2026-08-27 ruling]
+    If `raw_scores` is given, "auc" is computed from the RAW model scores
+    (calibration-independent discrimination) and the calibrated-score AUC
+    is kept as "auc_calibrated_scores"; otherwise "auc" is from `prob`."""
     y = np.asarray(y, float)
     yhat = (np.asarray(prob) >= threshold).astype(float)
     w = np.ones_like(y) if w is None else np.asarray(w, float)
@@ -87,7 +113,8 @@ def binary_metrics(y, prob, threshold, w=None):
     tp, fn = wsum((yhat == 1) & pos), wsum((yhat == 0) & pos)
     tn, fp = wsum((yhat == 0) & neg), wsum((yhat == 1) & neg)
     out = {
-        "auc": float(roc_auc_score(y, prob, sample_weight=w)),
+        "auc": float(roc_auc_score(
+            y, prob if raw_scores is None else raw_scores, sample_weight=w)),
         "sensitivity": tp / (tp + fn) if tp + fn else float("nan"),
         "specificity": tn / (tn + fp) if tn + fp else float("nan"),
         "ppv": tp / (tp + fp) if tp + fp else float("nan"),
@@ -95,7 +122,25 @@ def binary_metrics(y, prob, threshold, w=None):
         "threshold": float(threshold),
         "n": int(len(y)),
     }
+    if raw_scores is not None:
+        out["auc_calibrated_scores"] = float(
+            roc_auc_score(y, prob, sample_weight=w))
     return {k: (round(v, 4) if isinstance(v, float) else v) for k, v in out.items()}
+
+
+def calibration_summary(y, prob_cal):
+    """Separate calibration assessment [2026-08-27 ruling]: Brier score and
+    logistic-recalibration intercept/slope of y on logit(calibrated p)."""
+    from sklearn.linear_model import LogisticRegression
+
+    y = np.asarray(y, float)
+    p = np.clip(np.asarray(prob_cal, float), 1e-6, 1 - 1e-6)
+    logit = np.log(p / (1 - p)).reshape(-1, 1)
+    lr = LogisticRegression(penalty=None, solver="lbfgs", max_iter=1000)
+    lr.fit(logit, y)
+    return {"brier": round(float(np.mean((p - y) ** 2)), 4),
+            "intercept": round(float(lr.intercept_[0]), 4),
+            "slope": round(float(lr.coef_[0][0]), 4)}
 
 
 def lock_threshold(y_val, prob_val_cal):
@@ -106,14 +151,17 @@ def lock_threshold(y_val, prob_val_cal):
 
 
 def evaluate(tag, pipe, calibrator, threshold, Xv, yv, swv, Xt, yt, swt):
-    pv = calibrator.predict(pipe.predict_proba(Xv)[:, 1])
-    pt = calibrator.predict(pipe.predict_proba(Xt)[:, 1])
+    rv = pipe.predict_proba(Xv)[:, 1]           # raw scores
+    rt = pipe.predict_proba(Xt)[:, 1]
+    pv = calibrator.predict(rv)                 # calibrated scores
+    pt = calibrator.predict(rt)
     return {
         "analysis": tag,
-        "validation": {"unweighted": binary_metrics(yv, pv, threshold),
-                       "survey_weighted": binary_metrics(yv, pv, threshold, swv)},
-        "test": {"unweighted": binary_metrics(yt, pt, threshold),
-                 "survey_weighted": binary_metrics(yt, pt, threshold, swt)},
+        "validation": {"unweighted": binary_metrics(yv, pv, threshold, raw_scores=rv),
+                       "survey_weighted": binary_metrics(yv, pv, threshold, swv, raw_scores=rv)},
+        "test": {"unweighted": binary_metrics(yt, pt, threshold, raw_scores=rt),
+                 "survey_weighted": binary_metrics(yt, pt, threshold, swt, raw_scores=rt)},
+        "calibration_test": calibration_summary(yt, pt),
     }
 
 
@@ -154,12 +202,18 @@ def variant_run(tag, Xtr, ytr, Xv, yv, swv, Xt, yt, swt, fn, bp, resample=True):
 # data preparation variants (replayed identically to the locked notebook)
 # ---------------------------------------------------------------------------
 
-def prepare(exclusions):
-    """Replay notebook-04 prep from 03_cleaned with a given exclusion list."""
+def prepare(exclusions, allowed_grades=PRIMARY_ALLOWED_GRADES):
+    """Replay notebook-04 prep from 03_cleaned with a given exclusion list.
+
+    [2026-08-27 KM ruling] Applies spirometry quality gating right after
+    load, exactly as notebook 04 cell 2 does; `allowed_grades` widens to
+    A/B/C for sensitivity arm F."""
     from sklearn.model_selection import train_test_split
 
     df = pd.read_parquet(os.path.join(HERE, "data", "processed", "03_cleaned.parquet"))
     df = df.drop(columns=[c for c in ("NHANES_CYCLE",) if c in df.columns])
+    df = apply_spirometry_quality_gating(df, allowed_grades=allowed_grades,
+                                         verbose=False)
     y = df["MCQ010"].copy()
     sw = df["WTMEC2YR"]
     X = df[[c for c in df.columns
@@ -271,7 +325,7 @@ def main():
 
     # ---- 3B: utilization add-back ----------------------------------------
     print("B. utilization add-back (eligible again: " + "/".join(UTILIZATION_PROXIES) + ")")
-    excl = (LEAKY_PROXIES + AGE_RESTRICTED_VARS + IDENTIFIERS + PROTOCOL_ROUTING_VARS)
+    excl = [c for c in FULL_EXCLUSIONS if c not in UTILIZATION_PROXIES]
     prep = prepare(excl)                     # note: UTILIZATION_PROXIES not excluded
     bXtr, bytr, _, bXva, byva, bswva, bXte, byte_, bswte, bFN, _ = prep
     res, _, _ = variant_run("utilization_addback", bXtr, bytr, bXva, byva, bswva,
@@ -336,6 +390,19 @@ def main():
     t = res["test"]["unweighted"]
     print(f"  excluded-refit TEST: AUC {t['auc']:.3f}  sens {t['sensitivity']:.3f}  "
           f"spec {t['specificity']:.3f}")
+
+    # ---- 3F: quality grades A/B/C usable ([2026-08-27 KM ruling]) ----------
+    print("F. spirometry quality grades A/B/C usable (primary gates to A/B)")
+    prep = prepare(FULL_EXCLUSIONS, allowed_grades=SENSITIVITY_ALLOWED_GRADES)
+    fXtr, fytr, _, fXva, fyva, fswva, fXte, fyte, fswte, fFN, _ = prep
+    res, _, _ = variant_run("quality_grades_ABC", fXtr, fytr, fXva, fyva, fswva,
+                            fXte, fyte, fswte, fFN, bp, resample=True)
+    res["allowed_grades"] = list(SENSITIVITY_ALLOWED_GRADES)
+    res["note"] = ("primary analysis gates best-test FEV1/FVC to quality "
+                   "grades A/B; this pre-declared arm admits grade C")
+    results["analyses"]["quality_grades_ABC"] = res
+    t = res["test"]["unweighted"]
+    print(f"  TEST: AUC {t['auc']:.3f}  sens {t['sensitivity']:.3f}  spec {t['specificity']:.3f}")
 
     # ---- write -------------------------------------------------------------
     with open(os.path.join(out_dir, "final_analyses_results.json"), "w") as f:

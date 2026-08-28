@@ -116,7 +116,7 @@ def test_real_data_38_children_at_99_months_survive():
     if not os.path.exists(DATA):
         print("SKIPPED test_real_data_38_children_at_99_months_survive "
               "(03_cleaned.parquet not present)")
-        return
+        return True                      # signals SKIP to the __main__ runner
     df = pd.read_parquet(DATA)
     an = df[df.WTMEC2YR > 0]
     X = an.drop(columns=[c for c in ("MCQ010", "WTMEC2YR") if c in an.columns])
@@ -133,8 +133,13 @@ def test_real_data_38_children_at_99_months_survive():
 
 
 if __name__ == "__main__":
+    # [fixed 2026-08-27] skipped tests no longer also print PASS
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
+    n_pass = n_skip = 0
     for fn in fns:
-        fn()
-        print(f"PASS {fn.__name__}")
-    print(f"\n{len(fns)} tests passed")
+        if fn():
+            n_skip += 1
+        else:
+            print(f"PASS {fn.__name__}")
+            n_pass += 1
+    print(f"\n{n_pass} tests passed" + (f", {n_skip} skipped" if n_skip else ""))

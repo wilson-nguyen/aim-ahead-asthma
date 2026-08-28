@@ -1,12 +1,12 @@
 {
-  "verified_at": "2026-08-26T13:32:40",
-  "run_dir": "tuning_results_20260826_124650",
+  "verified_at": "2026-08-28T11:36:48",
+  "run_dir": "tuning_results_20260828_110326",
   "random_state": 42,
   "n_analytic": 6567,
   "n_train": 3939,
   "n_val": 1314,
   "n_test": 1314,
-  "phase3_content_hash": "dad27016993c998d15e9de1147a5fa35425733bc8233ddaaf87878baf1e71347",
+  "phase3_content_hash": "f40b776942ab350b3cd53c331a6502843a865843169458ee27caaf928d491166",
   "split_assignment_sha256": "ca5a8aaf3ac9cdefbe69e9d96530324e2d6821da459c0aabbc43311a370ec90e",
   "pandas": "2.3.3",
   "numpy": "2.4.4",
@@ -29,7 +29,7 @@
     },
     "content hash": {
       "pass": true,
-      "detail": "dad27016993c998d vs dad27016993c998d"
+      "detail": "f40b776942ab350b vs f40b776942ab350b"
     },
     "SEQN unique + fully observed": {
       "pass": true,
@@ -129,15 +129,15 @@
     },
     "X_train_feat exact + hash": {
       "pass": true,
-      "detail": "hash=34e2cc8b79c97ac6"
+      "detail": "hash=21b301ccc25a8dc9"
     },
     "X_val_feat exact + hash": {
       "pass": true,
-      "detail": "hash=4f4ae860cf77faf1"
+      "detail": "hash=7c138f0a0cc58616"
     },
     "X_test_feat exact + hash": {
       "pass": true,
-      "detail": "hash=80a7ae270c88431e"
+      "detail": "hash=3c9ff4b870945b8d"
     }
   },
   "historical_runs_checked": [

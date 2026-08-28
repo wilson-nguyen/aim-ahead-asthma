@@ -1,0 +1,133 @@
+{
+  "generated": "2026-08-28T11:37:04",
+  "locked_run": "tuning_results_20260828_110326",
+  "n_boot": 2000,
+  "seed": 42,
+  "n_test": 1314,
+  "models": {
+    "primary_22": {
+      "auc": {
+        "point": 0.7789,
+        "ci95": [
+          0.7453,
+          0.813
+        ]
+      },
+      "sensitivity": {
+        "point": 0.7846,
+        "ci95": [
+          0.7317,
+          0.8374
+        ]
+      },
+      "specificity": {
+        "point": 0.5721,
+        "ci95": [
+          0.5431,
+          0.6021
+        ]
+      },
+      "ppv": {
+        "point": 0.2969,
+        "ci95": [
+          0.2775,
+          0.3174
+        ]
+      },
+      "npv": {
+        "point": 0.9202,
+        "ci95": [
+          0.902,
+          0.9387
+        ]
+      },
+      "auc_weighted": {
+        "point": 0.7502,
+        "ci95": [
+          0.7034,
+          0.7957
+        ]
+      },
+      "sensitivity_weighted": {
+        "point": 0.8023,
+        "ci95": [
+          0.7417,
+          0.8588
+        ]
+      },
+      "specificity_weighted": {
+        "point": 0.4871,
+        "ci95": [
+          0.4495,
+          0.5271
+        ]
+      }
+    },
+    "reduced_top10_plus_indicators": {
+      "auc": {
+        "point": 0.8079,
+        "ci95": [
+          0.7748,
+          0.8398
+        ]
+      },
+      "sensitivity": {
+        "point": 0.8496,
+        "ci95": [
+          0.8008,
+          0.8943
+        ]
+      },
+      "specificity": {
+        "point": 0.5281,
+        "ci95": [
+          0.4972,
+          0.559
+        ]
+      },
+      "ppv": {
+        "point": 0.2931,
+        "ci95": [
+          0.2758,
+          0.311
+        ]
+      },
+      "npv": {
+        "point": 0.9384,
+        "ci95": [
+          0.9195,
+          0.956
+        ]
+      },
+      "auc_weighted": {
+        "point": 0.7937,
+        "ci95": [
+          0.7486,
+          0.8366
+        ]
+      },
+      "sensitivity_weighted": {
+        "point": 0.8494,
+        "ci95": [
+          0.7931,
+          0.8991
+        ]
+      },
+      "specificity_weighted": {
+        "point": 0.4707,
+        "ci95": [
+          0.4312,
+          0.5119
+        ]
+      }
+    }
+  },
+  "paired_auc_difference_full_minus_reduced": {
+    "point": -0.029,
+    "ci95": [
+      -0.0476,
+      -0.0101
+    ],
+    "note": "paired stratified bootstrap on raw model scores; CI covering 0 = no detectable difference"
+  }
+}

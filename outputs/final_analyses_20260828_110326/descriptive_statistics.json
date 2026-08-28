@@ -1,0 +1,41 @@
+{
+  "run": "tuning_results_20260828_110326",
+  "generated_by": "generate_descriptives.py",
+  "basis": "descriptive stratification of the locked test predictions (raw scores); no modeling decisions",
+  "age_smd_cases_vs_controls": 0.072,
+  "age_smd_cases_vs_controls_weighted": 0.126,
+  "bmi_z_computable": {
+    "n": 6519,
+    "of": 6567,
+    "pct": 99.3
+  },
+  "weighted_obesity_pct_ge95th_nonmissing_denominator": {
+    "asthma": 24.1,
+    "no_asthma": 17.9
+  },
+  "age_tertile_test_auc": {
+    "6-9": {
+      "n": 474,
+      "auc": 0.847
+    },
+    "10-13": {
+      "n": 451,
+      "auc": 0.731
+    },
+    "14-17": {
+      "n": 389,
+      "auc": 0.739
+    }
+  },
+  "spirometry_availability_test_auc": {
+    "note": "'missing' = no usable baseline spirometry; from the 2026-08-27 quality gating onward this includes measurements gated out for quality grade C/D/F",
+    "complete": {
+      "n": 1064,
+      "auc": 0.775
+    },
+    "missing": {
+      "n": 250,
+      "auc": 0.794
+    }
+  }
+}

@@ -12,8 +12,10 @@ from the locked pipelines, calibrators, and thresholds, then resampled.
     be added the same way if their pipelines are persisted.
   - Metrics: AUC, sensitivity, specificity, PPV, NPV at the locked thresholds,
     unweighted and survey-weighted (weights resampled with the rows).
+    [2026-08-27 KM ruling] AUC is computed from RAW model scores
+    (calibration-independent); threshold metrics use calibrated scores.
   - Paired full-vs-reduced AUC difference with bootstrap CI (same resample
-    indices for both models — a paired comparison).
+    indices for both models — a paired comparison, on raw scores).
 
 Output: outputs/final_analyses_<runid>/uncertainty_bootstrap.json
 
@@ -80,11 +82,12 @@ def main():
 
     Xte, yte, swte = art["X_test_feat"], np.asarray(art["y_test"], float), np.asarray(art["sw_test"], float)
 
-    prob_full = lock["calibrator"].predict(primary.predict_proba(Xte)[:, 1])
+    raw_full = primary.predict_proba(Xte)[:, 1]
+    prob_full = lock["calibrator"].predict(raw_full)
     thr_full = lock["threshold"]
     rf = red_bundle["feature_names"]
-    prob_red = red_bundle["calibrator"].predict(
-        red_bundle["pipeline"].predict_proba(Xte[rf])[:, 1])
+    raw_red = red_bundle["pipeline"].predict_proba(Xte[rf])[:, 1]
+    prob_red = red_bundle["calibrator"].predict(raw_red)
     thr_red = red_bundle["threshold"]
 
     rng = np.random.default_rng(SEED)
@@ -92,14 +95,15 @@ def main():
                "locked_run": LOCKED_RUN, "n_boot": n_boot, "seed": SEED,
                "n_test": int(len(yte)), "models": {}}
 
-    for tag, prob, thr in (("primary_22", prob_full, thr_full),
-                           ("reduced_top10_plus_indicators", prob_red, thr_red)):
-        point_u = binary_metrics(yte, prob, thr)
-        point_w = binary_metrics(yte, prob, thr, swte)
+    for tag, prob, raw, thr in (
+            ("primary_22", prob_full, raw_full, thr_full),
+            ("reduced_top10_plus_indicators", prob_red, raw_red, thr_red)):
+        point_u = binary_metrics(yte, prob, thr, raw_scores=raw)
+        point_w = binary_metrics(yte, prob, thr, swte, raw_scores=raw)
 
-        def stat(bi, prob=prob, thr=thr):
-            mu = binary_metrics(yte[bi], prob[bi], thr)
-            mw = binary_metrics(yte[bi], prob[bi], thr, swte[bi])
+        def stat(bi, prob=prob, raw=raw, thr=thr):
+            mu = binary_metrics(yte[bi], prob[bi], thr, raw_scores=raw[bi])
+            mw = binary_metrics(yte[bi], prob[bi], thr, swte[bi], raw_scores=raw[bi])
             return [mu["auc"], mu["sensitivity"], mu["specificity"], mu["ppv"], mu["npv"],
                     mw["auc"], mw["sensitivity"], mw["specificity"]]
 
@@ -119,15 +123,16 @@ def main():
               f"spec {m['specificity']['point']} ({m['specificity']['ci95'][0]}-"
               f"{m['specificity']['ci95'][1]})")
 
-    # paired full-vs-reduced AUC difference (same bootstrap indices)
+    # paired full-vs-reduced AUC difference (same bootstrap indices; raw scores)
     def diff_stat(bi):
-        return [roc_auc_score(yte[bi], prob_full[bi]) - roc_auc_score(yte[bi], prob_red[bi])]
+        return [roc_auc_score(yte[bi], raw_full[bi]) - roc_auc_score(yte[bi], raw_red[bi])]
     _, dlo, dhi = boot_ci(diff_stat, len(yte), n_boot, rng, yte)
-    d_point = roc_auc_score(yte, prob_full) - roc_auc_score(yte, prob_red)
+    d_point = roc_auc_score(yte, raw_full) - roc_auc_score(yte, raw_red)
     results["paired_auc_difference_full_minus_reduced"] = {
         "point": round(float(d_point), 4),
         "ci95": [round(float(dlo[0]), 4), round(float(dhi[0]), 4)],
-        "note": "paired stratified bootstrap; CI covering 0 = no detectable difference",
+        "note": ("paired stratified bootstrap on raw model scores; "
+                 "CI covering 0 = no detectable difference"),
     }
     p = results["paired_auc_difference_full_minus_reduced"]
     print(f"paired AUC diff (full - reduced): {p['point']} ({p['ci95'][0]} to {p['ci95'][1]})")

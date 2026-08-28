@@ -16,7 +16,7 @@ Decisions implemented here, agreed with K. Micheals 2026-08-14:
     set (categories remain descriptive, in Table 1 via build_table1.py).
   - The fixed 0.80 FEV1/FVC obstruction indicator is removed.
   - Spirometry-availability indicators are protected through feature
-    selection (ProtectedSelectKBest) so the 718 children missing baseline
+    selection (ProtectedSelectKBest) so children without usable baseline
     spirometry remain visible to the model.
   - Correlation pruning (|r| > 0.90) is executed on training data only.
   - Imputation and scaling live INSIDE the model pipelines so they are
@@ -25,6 +25,18 @@ Decisions implemented here, agreed with K. Micheals 2026-08-14:
 
 Model fitting remains UNWEIGHTED pending a coauthor decision on survey
 weights; weighted evaluation is reported alongside (see notebook 04).
+
+Decisions added 2026-08-27 (K. Micheals email of 27 Aug 2026):
+  - Spirometry quality gating: NHANES best-test quality attributes
+    SPXNQFV1/SPXNQFVC are retained in Phase 3 as QC metadata and consumed
+    by apply_spirometry_quality_gating(). PRIMARY analysis: grades A/B
+    usable; C/D/F and ungraded treated as not measured. Pre-declared
+    sensitivity arm: A/B/C usable. Grade variables and curve counts never
+    enter the predictor set.
+  - URDNALLC excluded (measurement validity): it is the below-detection-
+    limit comment flag for urinary NNAL, and the detection limit varied
+    within cycles, so the flag partly encodes assay batch. Serum cotinine
+    (LBXCOT) remains the tobacco-exposure biomarker.
 """
 from functools import partial
 
@@ -81,7 +93,14 @@ UTILIZATION_PROXIES = ["HUQ050", "HUQ071", "HUQ090", "HUQ030", "PFQ041"]
 
 # PFQ020 deliberately NOT listed: retained per Khamron (2026-08-14).
 
-PRIMARY_MODEL_EXCLUSIONS = PROTOCOL_ROUTING_VARS + UTILIZATION_PROXIES
+# Measurement-validity exclusions.
+# [2026-08-27 KM ruling] URDNALLC is the below-LOD comment flag for urinary
+# NNAL (URXNAL is the concentration); the detection limit varied within
+# cycles, so the flag partly encodes assay batch rather than exposure.
+MEASUREMENT_VALIDITY_EXCLUSIONS = ["URDNALLC"]
+
+PRIMARY_MODEL_EXCLUSIONS = (PROTOCOL_ROUTING_VARS + UTILIZATION_PROXIES
+                            + MEASUREMENT_VALIDITY_EXCLUSIONS)
 
 # Kept regardless of univariate selection score.
 PROTECTED_FEATURES = ["SPXNFEV1_missing", "SPXNFVC_missing"]
@@ -98,6 +117,80 @@ PRUNE_PROTECT = (
 )
 
 PRUNE_THRESHOLD = 0.90
+
+# ---------------------------------------------------------------------------
+# Spirometry quality gating [2026-08-27 KM ruling]
+#
+# NHANES grades the best-test FEV1 and FVC with quality attributes A-F
+# (SPXNQFV1, SPXNQFVC; D = questionable, F = invalid, no grade E). The
+# primary analysis treats only A/B as usable (Khamron, 27 Aug 2026: more
+# conservative than the proposed A-C, matching his prior NHANES work); a
+# pre-declared sensitivity arm widens to A/B/C. Gated measurements become
+# missing and are captured by the existing availability indicators. The
+# grade variables themselves are QC metadata only and are dropped here,
+# so they can never enter the predictor set.
+# ---------------------------------------------------------------------------
+
+SPIRO_GRADE_COLS = ("SPXNQFV1", "SPXNQFVC")
+PRIMARY_ALLOWED_GRADES = ("A", "B")
+SENSITIVITY_ALLOWED_GRADES = ("A", "B", "C")
+
+
+def apply_spirometry_quality_gating(df, allowed_grades=PRIMARY_ALLOWED_GRADES,
+                                    verbose=True):
+    """Null spirometry measurements whose quality grade is not allowed.
+
+    Rules (per-measurement, matching the availability-indicator structure):
+      - SPXNFEV1 and other FEV-family timed volumes (SPXNFEV3/5/6/7) are
+        usable iff SPXNQFV1 is in `allowed_grades`.
+      - SPXNFVC is usable iff SPXNQFVC is in `allowed_grades`.
+      - All other best-test spirometry measures (SPXNFET, SPXNPEF,
+        SPXNF257, SPXNEV, ...) come from the same maneuvers and have no
+        grade of their own: usable iff BOTH grades are allowed.
+    Ungraded ('' / NaN) measurements fail the criterion by construction
+    (verified: no present measurement is ungraded in 02b_harmonized).
+
+    Raises if the grade columns are absent, so the corrected specification
+    can never silently run ungated against a stale 03_cleaned.
+    Returns a gated copy with the grade columns dropped.
+    """
+    missing_grade_cols = [c for c in SPIRO_GRADE_COLS if c not in df.columns]
+    if missing_grade_cols:
+        raise ValueError(
+            f"apply_spirometry_quality_gating: {missing_grade_cols} not in "
+            f"the frame. Re-run notebook 03 (patched 2026-08-27) so "
+            f"03_cleaned.parquet retains the quality-grade columns.")
+
+    out = df.copy()
+    allowed = set(allowed_grades)
+    fev1_ok = out["SPXNQFV1"].isin(allowed).to_numpy()
+    fvc_ok = out["SPXNQFVC"].isin(allowed).to_numpy()
+    both_ok = fev1_ok & fvc_ok
+
+    fev_family = [c for c in ("SPXNFEV1", "SPXNFEV3", "SPXNFEV5",
+                              "SPXNFEV6", "SPXNFEV7") if c in out.columns]
+    fvc_family = [c for c in ("SPXNFVC",) if c in out.columns]
+    session_family = [c for c in out.columns
+                      if c.startswith("SPXN")
+                      and c not in fev_family + fvc_family
+                      and c not in SPIRO_GRADE_COLS
+                      and c != "SPXNSTAT"]        # protocol var, not a measurement
+
+    n_gated = 0
+    for cols, ok in ((fev_family, fev1_ok), (fvc_family, fvc_ok),
+                     (session_family, both_ok)):
+        for c in cols:
+            gate = out[c].notna().to_numpy() & ~ok
+            n_gated += int(gate.sum())
+            out.loc[gate, c] = np.nan
+
+    if verbose:
+        print(f"[spirometry quality gating] allowed grades {sorted(allowed)}: "
+              f"FEV1 usable {int((out['SPXNFEV1'].notna()).sum()) if 'SPXNFEV1' in out else 'n/a'}, "
+              f"FVC usable {int((out['SPXNFVC'].notna()).sum()) if 'SPXNFVC' in out else 'n/a'}, "
+              f"{n_gated} measurement values set to missing; "
+              f"grade columns dropped (QC only)")
+    return out.drop(columns=list(SPIRO_GRADE_COLS))
 
 
 def mutual_info_seeded(X, y):
