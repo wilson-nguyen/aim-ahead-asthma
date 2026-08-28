@@ -363,30 +363,48 @@ def main():
     t = res["test"]["unweighted"]
     print(f"  TEST: AUC {t['auc']:.3f}  sens {t['sensitivity']:.3f}  spec {t['specificity']:.3f}")
 
-    # ---- 3E: missing-spirometry children ----------------------------------
-    print("E. children missing baseline spirometry (SPXNFEV1 & SPXNFVC)")
+    # ---- 3E: children with no usable baseline spirometry -------------------
+    # [28 Aug estimand fix] AUC from raw scores, unweighted and weighted
+    # reported side by side with labels; the subgroup is explicitly defined.
+    print("E. children with no usable baseline spirometry (neither FEV1 nor FVC)")
     miss_tr = (Xtr["SPXNFEV1_missing"] == 1) & (Xtr["SPXNFVC_missing"] == 1)
     miss_va = (Xva["SPXNFEV1_missing"] == 1) & (Xva["SPXNFVC_missing"] == 1)
     miss_te = (Xte["SPXNFEV1_missing"] == 1) & (Xte["SPXNFVC_missing"] == 1)
 
-    pv = cal.predict(primary.predict_proba(Xva[miss_va])[:, 1])
-    pt = cal.predict(primary.predict_proba(Xte[miss_te])[:, 1])
+    rv_sub = primary.predict_proba(Xva[miss_va])[:, 1]
+    rt_sub = primary.predict_proba(Xte[miss_te])[:, 1]
+    pv = cal.predict(rv_sub)
+    pt = cal.predict(rt_sub)
+    swva_s = np.asarray(swva)[np.asarray(miss_va)]
+    swte_s = np.asarray(swte)[np.asarray(miss_te)]
     sub = {
-        "analysis": "missing_spirometry_subgroup(primary model)",
+        "analysis": "no_usable_spirometry_subgroup(primary model)",
+        "definition": ("neither FEV1 nor FVC usable (both availability "
+                       "indicators = 1; quality-gated measurements count as "
+                       "unusable). AUC from raw scores; threshold metrics on "
+                       "calibrated scores."),
         "n_train/val/test": [int(miss_tr.sum()), int(miss_va.sum()), int(miss_te.sum())],
-        "validation": binary_metrics(yva[miss_va], pv, thr, np.asarray(swva)[np.asarray(miss_va)]),
-        "test": binary_metrics(yte[miss_te], pt, thr, np.asarray(swte)[np.asarray(miss_te)]),
+        "validation": {
+            "unweighted": binary_metrics(yva[miss_va], pv, thr, raw_scores=rv_sub),
+            "survey_weighted": binary_metrics(yva[miss_va], pv, thr, swva_s,
+                                              raw_scores=rv_sub)},
+        "test": {
+            "unweighted": binary_metrics(yte[miss_te], pt, thr, raw_scores=rt_sub),
+            "survey_weighted": binary_metrics(yte[miss_te], pt, thr, swte_s,
+                                              raw_scores=rt_sub)},
     }
-    results["analyses"]["missing_spirometry_subgroup"] = sub
+    results["analyses"]["no_usable_spirometry_subgroup"] = sub
     print(f"  subgroup n (train/val/test): {sub['n_train/val/test']} | "
-          f"TEST AUC {sub['test']['auc']:.3f}")
+          f"TEST AUC {sub['test']['unweighted']['auc']:.3f} unweighted, "
+          f"{sub['test']['survey_weighted']['auc']:.3f} weighted")
 
-    res, _, _ = variant_run("missing_spirometry_excluded",
+    res, _, _ = variant_run("no_usable_spirometry_excluded",
                             Xtr[~miss_tr], ytr[~miss_tr.values],
                             Xva[~miss_va], yva[~miss_va.values], np.asarray(swva)[~miss_va.values],
                             Xte[~miss_te], yte[~miss_te.values], np.asarray(swte)[~miss_te.values],
                             FN, bp, resample=True)
-    results["analyses"]["missing_spirometry_excluded"] = res
+    res["definition"] = "refit excluding children with neither FEV1 nor FVC usable"
+    results["analyses"]["no_usable_spirometry_excluded"] = res
     t = res["test"]["unweighted"]
     print(f"  excluded-refit TEST: AUC {t['auc']:.3f}  sens {t['sensitivity']:.3f}  "
           f"spec {t['specificity']:.3f}")

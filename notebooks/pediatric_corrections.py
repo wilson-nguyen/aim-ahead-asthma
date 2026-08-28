@@ -35,12 +35,21 @@ def _load_lms() -> pd.DataFrame:
     return lms.sort_values(["Sex", "Agemos"])
 
 
-def cdc_bmi_z(bmi, age_months, sex):
+def cdc_bmi_z(bmi, age_months, sex, completed_months=True):
     """
     CDC BMI-for-age z-score and percentile.
 
     bmi        : array-like, kg/m^2
-    age_months : array-like, EXACT age in months (use RIDAGEEX_H, not RIDAGEYR*12)
+    age_months : array-like, age in months (use RIDAGEEX_H, not RIDAGEYR*12).
+                 NHANES reports age in COMPLETED months, and the CDC growth
+                 chart SAS-program instructions state: "If only the completed
+                 number of months is known (as in NHANES), add 0.5 to the age"
+                 (the LMS reference rows are month midpoints). With the default
+                 completed_months=True this function adds the 0.5 internally.
+                 Pass completed_months=False only if the ages are already
+                 exact (e.g., computed from dates). [Corrected 28 Aug 2026;
+                 the earlier version interpolated at the completed month,
+                 understating age by half a month on average.]
     sex        : array-like, 1=male, 2=female
 
     Returns (z, percentile). NaN inputs and out-of-range ages (<24 or >240 months)
@@ -50,6 +59,8 @@ def cdc_bmi_z(bmi, age_months, sex):
 
     bmi = pd.Series(np.asarray(bmi, dtype=float)).reset_index(drop=True)
     age = pd.Series(np.asarray(age_months, dtype=float)).reset_index(drop=True)
+    if completed_months:
+        age = age + 0.5
     sx = pd.Series(np.asarray(sex, dtype=float)).reset_index(drop=True)
 
     # Accept either NHANES coding (1=male, 2=female) or the pipeline's

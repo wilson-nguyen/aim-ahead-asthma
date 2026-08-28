@@ -9,10 +9,15 @@ predictions are stratified; no modeling or threshold decisions are made.
 
 Contents:
   - age SMD, cases vs controls, unweighted AND survey-weighted (WTMEC2YR)
-  - test-set AUC by age tertile (6-9 / 10-13 / 14-17), raw scores
-  - test-set AUC by spirometry availability (both indicators), raw scores
+  - test-set AUC by fixed age group (6-9 / 10-13 / 14-17; these are age
+    BANDS, not empirical tertiles), raw scores, with stratified-bootstrap
+    95% CIs (descriptive; the predictions are fixed)
+  - test-set AUC by spirometry availability in three groups (both usable /
+    one usable / neither usable), raw scores, unweighted and weighted
   - CDC BMI-for-age coverage, and weighted obesity prevalence (>=95th
-    percentile) by asthma status, nonmissing denominators
+    percentile) by asthma status, nonmissing denominators; ages enter the
+    CDC reference as completed months + 0.5 per the CDC instruction
+    [28 Aug 2026 correction]
 
 Run from the repo root, AFTER run_final_analyses.py:
     python generate_descriptives.py
@@ -101,25 +106,55 @@ def main():
     out["weighted_obesity_pct_ge95th_nonmissing_denominator"] = ob
 
     # ---- test-set stratifications (fixed predictions) ----------------------
+    swte = np.asarray(art["sw_test"], float)
+    rng = np.random.default_rng(42)
+
+    def auc_ci(m, n_boot=2000):
+        """Stratified-bootstrap 95% CI of the raw-score AUC in subgroup m."""
+        y, r = yte[m], raw_te[m]
+        ip, iq = np.where(y == 1)[0], np.where(y == 0)[0]
+        stats = []
+        for _ in range(n_boot):
+            bi = np.concatenate([rng.choice(ip, len(ip), replace=True),
+                                 rng.choice(iq, len(iq), replace=True)])
+            stats.append(roc_auc_score(y[bi], r[bi]))
+        lo, hi = np.percentile(stats, [2.5, 97.5])
+        return [round(float(lo), 3), round(float(hi), 3)]
+
     age_te = Xte["RIDAGEYR"].to_numpy(float)
-    tert = {}
+    groups = {}
     for label, lo, hi in (("6-9", 6, 9), ("10-13", 10, 13), ("14-17", 14, 17)):
         m = (age_te >= lo) & (age_te <= hi)
-        tert[label] = {"n": int(m.sum()),
-                       "auc": round(float(roc_auc_score(yte[m], raw_te[m])), 3)}
-    out["age_tertile_test_auc"] = tert
+        groups[label] = {"n": int(m.sum()),
+                         "auc": round(float(roc_auc_score(yte[m], raw_te[m])), 3),
+                         "auc_ci95": auc_ci(m)}
+    out["age_group_test_auc"] = {
+        "note": ("fixed age BANDS (not empirical tertiles); exploratory "
+                 "description of the fixed test predictions; raw-score AUC "
+                 "with stratified-bootstrap CIs"),
+        **groups}
 
-    miss = ((Xte["SPXNFEV1_missing"] == 1)
-            & (Xte["SPXNFVC_missing"] == 1)).to_numpy()
-    out["spirometry_availability_test_auc"] = {
-        "note": ("'missing' = no usable baseline spirometry; from the "
-                 "2026-08-27 quality gating onward this includes "
-                 "measurements gated out for quality grade C/D/F"),
-        "complete": {"n": int((~miss).sum()),
-                     "auc": round(float(roc_auc_score(yte[~miss], raw_te[~miss])), 3)},
-        "missing": {"n": int(miss.sum()),
-                    "auc": round(float(roc_auc_score(yte[miss], raw_te[miss])), 3)},
-    }
+    f_ok = (Xte["SPXNFEV1_missing"] == 0).to_numpy()
+    v_ok = (Xte["SPXNFVC_missing"] == 0).to_numpy()
+    avail = {"both_usable": f_ok & v_ok,
+             "one_usable": f_ok ^ v_ok,
+             "neither_usable": ~f_ok & ~v_ok}
+    def safe_auc(m, w=None):
+        """AUC or None when the subgroup is empty or single-class."""
+        if m.sum() == 0 or len(np.unique(yte[m])) < 2:
+            return None
+        return round(float(roc_auc_score(
+            yte[m], raw_te[m], sample_weight=None if w is None else w[m])), 3)
+
+    block = {"note": ("usable = measured AND quality grade A/B (2026-08-27 "
+                      "gating); AUC from raw scores, unweighted and "
+                      "survey-weighted (WTMEC2YR); null = subgroup empty or "
+                      "single-class")}
+    for name, m in avail.items():
+        block[name] = {"n": int(m.sum()),
+                       "auc_unweighted": safe_auc(m),
+                       "auc_weighted": safe_auc(m, swte)}
+    out["spirometry_availability_test_auc"] = block
 
     os.makedirs(fin_dir, exist_ok=True)
     path = os.path.join(fin_dir, "descriptive_statistics.json")

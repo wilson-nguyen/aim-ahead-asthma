@@ -80,7 +80,7 @@ LABELS = {
     "DMDCITZN": "Citizenship", "FIALANG": "Family interview language",
     "DMDBORN_US": "Born in US", "DMDHRBR_US": "HH reference person born in US",
     "HIQ011": "Health insurance coverage",
-    "SPXNFEV1_missing": "FEV1 not measured", "SPXNFVC_missing": "FVC not measured",
+    "SPXNFEV1_missing": "No usable FEV1", "SPXNFVC_missing": "No usable FVC",
 }
 
 
