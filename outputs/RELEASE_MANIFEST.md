@@ -1,9 +1,9 @@
 # Release manifest — analysis of record
 
-- Generated: 2026-08-31T11:27:12
+- Generated: 2026-08-31T11:29:42
 - Pinned run: `tuning_results_20260831_103201`
-- Git commit: `5058f4679ae879ecd542cdb043146031a7c68047` (branch `master`)
-- Working tree at generation: MODIFIED (see below)
+- Git commit: `a43735f31840315fcc5da33debeeb185e55c0a8a` (branch `master`)
+- Working tree at generation: CLEAN
 - Python 3.12.13 on Windows-11-10.0.26200-SP0
 
 This manifest binds the reported numbers to specific file contents. To
@@ -106,17 +106,6 @@ let a recipient confirm that a transferred copy is the one used here.
 | `data\processed\02_recoded.parquet` | 4071526 | `7054a6fb07fd0848912ef849f17f136c1ec390682f7ed586a1c4d022f5e63baa` |
 | `data\processed\02b_harmonized.parquet` | 4121522 | `04b65673360c12a16327c62a2df6d84e87cf0f427c77c293ebcd7f8b3c3b5524` |
 | `data\processed\03_cleaned.parquet` | 538075 | `8a6c17b36c26486323b92270d0d1b1a93dcb8c45f489a49dc561904c29fcd84a` |
-
-## Uncommitted changes at generation time
-
-```
-M notebooks/01_load_and_harmonize.ipynb
- M notebooks/04_model.ipynb
- M outputs/final_analyses_20260824_140539/final_analyses_results.json
- M outputs/final_analyses_20260824_140539/uncertainty_bootstrap.json
- M outputs/reduced_model_20260824_140539/reduced_model_results.json
- M outputs/reduced_model_20260826_124650/reduced_model_results.json
-```
 
 ## Environment
 
