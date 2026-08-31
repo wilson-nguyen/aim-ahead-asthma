@@ -37,9 +37,9 @@ warnings.filterwarnings("ignore")
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "notebooks"))
 
-import glob as _glob
-_runs = sorted(_glob.glob(os.path.join(HERE, "notebooks", "tuning_results_*")))
-LOCKED_RUN = os.path.basename(_runs[-1]) if _runs else "tuning_results_20260824_140539"
+# [2026-08-31] pinned to the analysis of record
+PINNED_RUN = "tuning_results_20260831_103201"
+LOCKED_RUN = PINNED_RUN
 
 from sklearn.metrics import roc_auc_score                            # noqa: E402
 from pediatric_corrections import cdc_bmi_z                          # noqa: E402

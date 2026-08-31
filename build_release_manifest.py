@@ -48,9 +48,24 @@ def git(*args, default="(unavailable)"):
         return default
 
 
+def committed_sha256(relpath):
+    """SHA-256 of the COMMITTED bytes (git blob content at HEAD), so the
+    hash matches what a clean clone checks out regardless of the local
+    line-ending configuration. [Fixed 31 Aug: the first manifest hashed
+    working-tree CRLF bytes, which did not match git's stored LF bytes.]
+    Returns None if the path is not tracked at HEAD."""
+    try:
+        r = subprocess.run(["git", "show", f"HEAD:{relpath}"], cwd=REPO,
+                           capture_output=True, timeout=60)
+        if r.returncode != 0:
+            return None
+        return hashlib.sha256(r.stdout).hexdigest()
+    except Exception:
+        return None
+
+
 def main():
-    runs = sorted(glob.glob(str(REPO / "notebooks" / "tuning_results_*")))
-    run_id = os.path.basename(runs[-1]).replace("tuning_results_", "")
+    run_id = "20260831_103201"  # [31 Aug] pinned to the analysis of record
     fin = OUT / f"final_analyses_{run_id}"
     red = OUT / f"reduced_model_{run_id}"
 
@@ -73,9 +88,10 @@ def main():
         f"outputs/reduced_model_{run_id}/reduced_model_results.json",
         f"outputs/reduced_model_{run_id}/shap_ranking.json",
         "outputs/split_verification_report.json",
+        "outputs/cleaner_replacement_audit.json",
         "outputs/table1_baseline.csv", "outputs/table1_baseline.md",
     ]
-    uncommitted = [
+    artifacts = [
         f"notebooks/tuning_results_{run_id}/preprocessed_data.pkl",
         f"notebooks/tuning_results_{run_id}/catboost_best_model.pkl",
         f"notebooks/tuning_results_{run_id}/catboost_study.pkl",
@@ -83,19 +99,30 @@ def main():
         f"outputs/reduced_model_{run_id}/reduced_model_bundle.pkl",
         f"outputs/reduced_model_{run_id}/shap_values_train_full.npy",
         "outputs/split_assignment_SEQN.csv",
+        "data/reference/bmiagerev.csv",
     ]
     figures = sorted(glob.glob(str(OUT / "figures_R3" / "*.png")))
     data = sorted(glob.glob(str(REPO / "data" / "processed" / "*.parquet")))
 
     def table(paths, base=REPO):
+        """Tracked files: hash of committed bytes at HEAD (portable across
+        line-ending configs). Untracked files: hash of working-tree bytes,
+        marked as such. Paths shown with forward slashes."""
         rows = []
         for rel in paths:
             p = Path(rel) if os.path.isabs(rel) else base / rel
-            shown = str(p.relative_to(base)) if p.is_absolute() and base in p.parents else str(rel)
-            if p.exists():
-                rows.append(f"| `{shown}` | {p.stat().st_size} | `{sha256(p)}` |")
-            else:
+            shown = (p.relative_to(base).as_posix()
+                     if p.is_absolute() and base in p.parents
+                     else Path(rel).as_posix())
+            if not p.exists():
                 rows.append(f"| `{shown}` | — | (absent) |")
+                continue
+            h = committed_sha256(shown)
+            if h is None:
+                rows.append(f"| `{shown}` | {p.stat().st_size} | "
+                            f"`{sha256(p)}` (working tree, untracked) |")
+            else:
+                rows.append(f"| `{shown}` | {p.stat().st_size} | `{h}` |")
         return rows
 
     # headline numbers, read from the artifacts
@@ -118,13 +145,19 @@ def main():
         f"- Working tree at generation: {'CLEAN' if not dirty else 'MODIFIED (see below)'}",
         f"- Python {sys.version.split()[0]} on {platform.platform()}",
         "",
-        "This manifest binds the reported numbers to specific file contents. To",
-        "confirm a clean clone matches the analysis of record, check out the commit",
-        "above and compare SHA-256 values. The manifest documents the state at that",
-        "commit and is itself committed immediately afterwards, so it lives one",
-        "commit later than the SHA it names.",
+        "This manifest binds the reported numbers to specific file contents. Hashes",
+        "for tracked files are computed from the committed bytes at the named commit,",
+        "so `sha256sum` on a clean clone reproduces them regardless of line-ending",
+        "configuration. The manifest documents the state at that commit and is itself",
+        "committed immediately afterwards, so it lives one commit later than the SHA",
+        "it names.",
         "",
-        "## Headline results (held-out test set, single evaluation pass)",
+        "Test-set status: the test split is a historically reused internal holdout —",
+        "it also produced previously submitted results — evaluated in this revision",
+        "as a versioned batch after the specification was locked. 'Single evaluation",
+        "pass' below refers to this run's locked pass, not to the split's history.",
+        "",
+        "## Headline results (test split, single locked evaluation pass in this run)",
         "",
         "| Model | AUC (raw scores) | Sensitivity | Specificity | PPV | NPV |",
         "|---|---|---|---|---|---|",
@@ -165,14 +198,15 @@ def main():
           "| File | Bytes | SHA-256 |", "|---|---:|---|", *table(tracked),
           "", "## Result files (committed)", "",
           "| File | Bytes | SHA-256 |", "|---|---:|---|", *table(results),
-          "", "## Model artifacts (not committed; too large for git)", "",
-          "These are required to reproduce predictions without refitting. Hashes",
-          "let a recipient confirm that a transferred copy is the one used here.",
+          "", "## Model artifacts and reference data (committed 31 Aug)", "",
+          "Fitted pipelines, calibrators, the SHAP matrix, the split record,",
+          "and the CDC LMS reference (~5 MB total) are committed so a clean",
+          "clone reproduces predictions without refitting.",
           "",
-          "| File | Bytes | SHA-256 |", "|---|---:|---|", *table(uncommitted),
+          "| File | Bytes | SHA-256 |", "|---|---:|---|", *table(artifacts),
           "", "## Figures", "",
           "| File | Bytes | SHA-256 |", "|---|---:|---|", *table(figures),
-          "", "## Input data (hashed, not committed)", "",
+          "", "## Processed input data (committed 31 Aug)", "",
           "| File | Bytes | SHA-256 |", "|---|---:|---|", *table(data)]
 
     if dirty:

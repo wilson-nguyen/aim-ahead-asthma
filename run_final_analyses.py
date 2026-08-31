@@ -63,11 +63,10 @@ warnings.filterwarnings("ignore")
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "notebooks"))
 
-# [2026-08-26] auto-detect the newest tuning run (the corrective run,
-# once notebook 04 has been re-executed); falls back to the prior lock.
-import glob as _glob
-_runs = sorted(_glob.glob(os.path.join(HERE, "notebooks", "tuning_results_*")))
-LOCKED_RUN = os.path.basename(_runs[-1]) if _runs else "tuning_results_20260824_140539"
+# [2026-08-31] the analysis of record is PINNED. A newer scratch run can no
+# longer silently become the evaluation target; override only with --run.
+PINNED_RUN = "tuning_results_20260831_103201"
+LOCKED_RUN = PINNED_RUN
 RANDOM_STATE = 42
 SENS_TARGET = 0.80
 
@@ -270,12 +269,33 @@ def match_age_sex(Xtr, ytr, seed=RANDOM_STATE):
 # ---------------------------------------------------------------------------
 
 def main():
+    global LOCKED_RUN
     ap = argparse.ArgumentParser()
     ap.add_argument("--smoke", action="store_true",
                     help="tiny models, results to /tmp, no outputs/ writes")
+    ap.add_argument("--run", default=None,
+                    help=f"tuning run to evaluate (default: pinned {PINNED_RUN})")
     args = ap.parse_args()
+    if args.run:
+        LOCKED_RUN = (args.run if args.run.startswith("tuning_results_")
+                      else f"tuning_results_{args.run}")
 
     run_dir = os.path.join(HERE, "notebooks", LOCKED_RUN)
+
+    # [31 Aug] fail-closed gate: split verification must have ACCEPTED this
+    # exact run before any test-set evaluation happens here.
+    rep_path = os.path.join(HERE, "outputs", "split_verification_report.json")
+    if not os.path.exists(rep_path):
+        sys.exit("GATE: outputs/split_verification_report.json is missing. "
+                 "Run verify_split_reconstruction.py first.")
+    rep = json.load(open(rep_path))
+    if (rep.get("run_dir") != LOCKED_RUN
+            or not str(rep.get("verdict", "")).startswith("ACCEPTED")):
+        sys.exit(f"GATE: split verification covers '{rep.get('run_dir')}' "
+                 f"(verdict: {str(rep.get('verdict', ''))[:30]}...). Re-run "
+                 f"verify_split_reconstruction.py against {LOCKED_RUN}; do not "
+                 f"evaluate unless it is ACCEPTED for this run.")
+    print(f"gate: split verification ACCEPTED for {LOCKED_RUN}")
     art = joblib.load(os.path.join(run_dir, "preprocessed_data.pkl"))
     study = joblib.load(os.path.join(run_dir, "catboost_study.pkl"))
     bp = study.best_params.copy()

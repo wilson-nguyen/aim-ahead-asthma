@@ -27,6 +27,15 @@ from asthma_pipeline import NHANESCleaner  # noqa: E402
 DATA = os.path.join(HERE, "..", "data", "processed", "03_cleaned.parquet")
 
 
+def _skip(msg):
+    """Skip that works under pytest AND the plain-python runner."""
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        import pytest
+        pytest.skip(msg)
+    print("SKIPPED " + msg)
+    return True
+
+
 def _clean(df):
     cl = NHANESCleaner().fit(df)
     return cl, cl.transform(df)
@@ -114,9 +123,8 @@ def test_ambiguous_unlisted_variable_raises():
 
 def test_real_data_38_children_at_99_months_survive():
     if not os.path.exists(DATA):
-        print("SKIPPED test_real_data_38_children_at_99_months_survive "
-              "(03_cleaned.parquet not present)")
-        return True                      # signals SKIP to the __main__ runner
+        return _skip("test_real_data_38_children_at_99_months_survive "
+                     "(03_cleaned.parquet not present)")
     df = pd.read_parquet(DATA)
     an = df[df.WTMEC2YR > 0]
     X = an.drop(columns=[c for c in ("MCQ010", "WTMEC2YR") if c in an.columns])

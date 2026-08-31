@@ -30,6 +30,15 @@ from asthma_pipeline import (  # noqa: E402
 DATA = os.path.join(HERE, "..", "data", "processed", "03_cleaned.parquet")
 
 
+def _skip(msg):
+    """Skip that works under pytest AND the plain-python runner."""
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        import pytest
+        pytest.skip(msg)
+    print("SKIPPED " + msg)
+    return True
+
+
 def _frame():
     # rows: (FEV1 grade, FVC grade) = (A,A) (B,B) (C,C) (D,D) (F,A) (A,D) ('',''), no-spiro
     return pd.DataFrame({
@@ -97,13 +106,11 @@ def test_real_data_gating_counts():
     Runs only after notebook 03 has been re-executed with the grade
     columns retained (patched 2026-08-27)."""
     if not os.path.exists(DATA):
-        print("SKIPPED test_real_data_gating_counts (03_cleaned.parquet absent)")
-        return True
+        return _skip("test_real_data_gating_counts (03_cleaned.parquet absent)")
     df = pd.read_parquet(DATA)
     if "SPXNQFV1" not in df.columns:
-        print("SKIPPED test_real_data_gating_counts "
-              "(03_cleaned predates the 2026-08-27 grade-retention patch)")
-        return True
+        return _skip("test_real_data_gating_counts "
+                     "(03_cleaned predates the grade-retention patch)")
     an = df[df.WTMEC2YR > 0]
     assert len(an) == 6567
     ab = apply_spirometry_quality_gating(an, PRIMARY_ALLOWED_GRADES, verbose=False)

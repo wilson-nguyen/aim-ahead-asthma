@@ -26,9 +26,9 @@ import matplotlib.pyplot as plt
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "notebooks"))
 
-import glob as _glob
-_runs = sorted(_glob.glob(os.path.join(HERE, "notebooks", "tuning_results_*")))
-LOCKED_RUN = os.path.basename(_runs[-1])
+# [2026-08-31] pinned to the analysis of record
+PINNED_RUN = "tuning_results_20260831_103201"
+LOCKED_RUN = PINNED_RUN
 
 from run_reduced_model_and_figures import lab                        # noqa: E402
 

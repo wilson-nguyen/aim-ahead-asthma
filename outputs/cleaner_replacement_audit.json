@@ -1,0 +1,530 @@
+{
+  "generated": "2026-08-31T11:59:14",
+  "frame": "notebook-04 analytic frame (gated, excluded, filtered), n=6567, 75 columns",
+  "total_values_replaced": 0,
+  "interpretation": "0 means the model-stage cleaner changes nothing on real data: Phase 2 recoding already handled nonresponse codes, and the cleaner is a defensive regression guard. Any nonzero count must be adjudicated against the NHANES codebook before the affected run is treated as final.",
+  "variables": {
+    "RIAGENDR": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "RIDAGEYR": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "RIDRETH1": {
+      "class": "categorical",
+      "sentinel_source": "width rule (2% ambiguity guard)",
+      "sentinel_codes": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "DMDCITZN": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "DMDEDUC3": {
+      "class": "categorical",
+      "sentinel_source": "explicit codebook entry",
+      "sentinel_codes": [
+        77,
+        99
+      ],
+      "values_replaced": 0
+    },
+    "DMDHHSIZ": {
+      "class": "categorical",
+      "sentinel_source": "explicit codebook entry",
+      "sentinel_codes": [],
+      "values_replaced": 0
+    },
+    "DMDFMSIZ": {
+      "class": "categorical",
+      "sentinel_source": "explicit codebook entry",
+      "sentinel_codes": [],
+      "values_replaced": 0
+    },
+    "INDHHIN2": {
+      "class": "categorical",
+      "sentinel_source": "explicit codebook entry",
+      "sentinel_codes": [
+        77,
+        99
+      ],
+      "values_replaced": 0
+    },
+    "INDFMIN2": {
+      "class": "categorical",
+      "sentinel_source": "explicit codebook entry",
+      "sentinel_codes": [
+        77,
+        99
+      ],
+      "values_replaced": 0
+    },
+    "INDFMPIR": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "DMDHRGND": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "DMDHRAGE": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "DMDHREDU": {
+      "class": "categorical",
+      "sentinel_source": "width rule (2% ambiguity guard)",
+      "sentinel_codes": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "DMDHRMAR": {
+      "class": "categorical",
+      "sentinel_source": "width rule (2% ambiguity guard)",
+      "sentinel_codes": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "DMDHSEDU": {
+      "class": "categorical",
+      "sentinel_source": "width rule (2% ambiguity guard)",
+      "sentinel_codes": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "FIALANG": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "BMXWT": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "BMXHT": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "BMXBMI": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "BMXLEG": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "BMXARML": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "BMXARMC": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "BMXWAIST": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "MCQ053": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "MCQ092": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "MCQ140": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "MCQ300B": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "ENQ010": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "SPQ010": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "SPQ020": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "SPQ040": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "ENQ100": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "SPXNFVC": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "SPXNEV": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "SPXNFEV5": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "SPXNFEV7": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "SPXNFEV1": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "SPXNFEV3": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "SPXNFEV6": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "SPXNPEF": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "SPXNF257": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "SPXNFET": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "LBXCOT": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "LBDCOTLC": {
+      "class": "categorical",
+      "sentinel_source": "width rule (2% ambiguity guard)",
+      "sentinel_codes": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "URXNAL": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "URXUCR": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    },
+    "FSD032A": {
+      "class": "categorical",
+      "sentinel_source": "width rule (2% ambiguity guard)",
+      "sentinel_codes": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "FSD032B": {
+      "class": "categorical",
+      "sentinel_source": "width rule (2% ambiguity guard)",
+      "sentinel_codes": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "FSD032C": {
+      "class": "categorical",
+      "sentinel_source": "width rule (2% ambiguity guard)",
+      "sentinel_codes": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "FSD032D": {
+      "class": "categorical",
+      "sentinel_source": "width rule (2% ambiguity guard)",
+      "sentinel_codes": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "FSD032E": {
+      "class": "categorical",
+      "sentinel_source": "width rule (2% ambiguity guard)",
+      "sentinel_codes": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "FSD032F": {
+      "class": "categorical",
+      "sentinel_source": "width rule (2% ambiguity guard)",
+      "sentinel_codes": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "FSDHH": {
+      "class": "categorical",
+      "sentinel_source": "width rule (2% ambiguity guard)",
+      "sentinel_codes": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "FSDAD": {
+      "class": "categorical",
+      "sentinel_source": "width rule (2% ambiguity guard)",
+      "sentinel_codes": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "FSDCH": {
+      "class": "categorical",
+      "sentinel_source": "width rule (2% ambiguity guard)",
+      "sentinel_codes": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "FSD151": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "FSQ165": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "FSQ162": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "HIQ011": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "HIQ270": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "HIQ210": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "HSQ500": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "HSQ510": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "HSQ520": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "HUQ010": {
+      "class": "categorical",
+      "sentinel_source": "width rule (2% ambiguity guard)",
+      "sentinel_codes": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "HUQ020": {
+      "class": "categorical",
+      "sentinel_source": "width rule (2% ambiguity guard)",
+      "sentinel_codes": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "HUQ040": {
+      "class": "categorical",
+      "sentinel_source": "width rule (2% ambiguity guard)",
+      "sentinel_codes": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "PFQ020": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "RDQ070": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "RDQ140": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "AGQ030": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "SMD410": {
+      "class": "binary",
+      "codes_scrubbed": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "DMDBORN_US": {
+      "class": "categorical",
+      "sentinel_source": "width rule (2% ambiguity guard)",
+      "sentinel_codes": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "DMDHRBR_US": {
+      "class": "categorical",
+      "sentinel_source": "width rule (2% ambiguity guard)",
+      "sentinel_codes": [
+        7,
+        9
+      ],
+      "values_replaced": 0
+    },
+    "RIDAGEEX_H": {
+      "class": "continuous (no replacement by design)",
+      "values_replaced": 0
+    }
+  }
+}

@@ -25,6 +25,15 @@ from pediatric_corrections import cdc_bmi_z  # noqa: E402
 DATA = os.path.join(HERE, "..", "data", "processed", "03_cleaned.parquet")
 
 
+def _skip(msg):
+    """Skip that works under pytest AND the plain-python runner."""
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        import pytest
+        pytest.skip(msg)
+    print("SKIPPED " + msg)
+    return True
+
+
 def test_completed_months_adds_half():
     z_completed, _ = cdc_bmi_z([18.0], [99], [1])                       # default
     z_exact, _ = cdc_bmi_z([18.0], [99.5], [1], completed_months=False)
@@ -51,8 +60,7 @@ def test_real_data_weighted_obesity():
     weighted obesity (>=95th pct, nonmissing denominators)
     asthma 24.1%, controls 17.8% (was 17.9% under the uncorrected ages)."""
     if not os.path.exists(DATA):
-        print("SKIPPED test_real_data_weighted_obesity (03_cleaned.parquet absent)")
-        return True
+        return _skip("test_real_data_weighted_obesity (03_cleaned.parquet absent)")
     df = pd.read_parquet(DATA)
     an = df[df.WTMEC2YR > 0]
     _, pct = cdc_bmi_z(an.BMXBMI, an.RIDAGEEX_H, an.RIAGENDR)

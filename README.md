@@ -12,7 +12,9 @@ An explainable machine-learning analysis identifying the clinical, environmental
 - **Operating point:** isotonic calibration and threshold both selected on the **validation** set (first point reaching sensitivity ≥ 0.80) and frozen before any test-set evaluation.
 - **Reporting:** discrimination (AUC) from **raw model scores**; threshold metrics from calibrated scores; calibration assessed separately.
 
-### Held-out test results (single evaluation pass, n = 1,314)
+### Test-set results (n = 1,314)
+
+The test split is a **historically reused internal holdout** — it also produced previously submitted results — evaluated in this revision as a versioned batch after the specification was locked. "Single evaluation pass" refers to this run's locked pass, not the split's history; it is not untouched data and not independent validation.
 
 | Model | AUC (95% CI) | Sensitivity | Specificity | PPV | NPV |
 |---|---|---|---|---|---|
@@ -21,7 +23,7 @@ An explainable machine-learning analysis identifying the clinical, environmental
 
 The reduced model — the ten highest-SHAP features plus the two protected spirometry-availability indicators — has the higher AUC in a paired bootstrap (difference 0.023, 95% CI 0.007 to 0.041) and better calibration (slope 0.87 vs 0.71) while using half as many variables. **Neither model meets the originally stated 0.80 sensitivity / 0.70 specificity targets as point estimates on held-out data**; both sensitivity intervals include 0.80. This is reported plainly rather than tuned away.
 
-CIs are stratified bootstrap, 2,000 resamples, seed 42.
+CIs are stratified bootstrap, 2,000 resamples, seed 42, conditional on the fitted models and locked thresholds (they do not propagate tuning, selection, or calibration uncertainty); the survey-weighted variants resample participants with their weights and do not model the design's clustering.
 
 ## Top 10 predictors (mean |SHAP|, training data only)
 
@@ -79,11 +81,12 @@ Order matters: the verifier gates the test evaluation, and the uncertainty scrip
 - `run_*.py` — locked evaluation, reduced model and figures, bootstrap uncertainty
 - `verify_split_reconstruction.py` — replays Phase 3 and the seeded split; 32 checks including frozen historical runs
 - `generate_descriptives.py`, `notebooks/build_table1.py` — every reported descriptive number
-- `build_release_manifest.py` — binds commit SHA, run ID, and file hashes
+- `build_release_manifest.py` — binds commit SHA, run ID, and file hashes (committed bytes, so a clean clone verifies)
+- `audit_cleaner_replacements.py` — per-variable evidence that the model-stage cleaner replaces **zero** values on the real analytic frame (Phase 2 recoding already handled nonresponse codes)
 - `tests/` — regression tests for sentinel handling, quality gating, and the CDC BMI age offset
-- `data/`, `outputs/` — git-ignored except the committed result JSONs and tables
+- `data/`, `outputs/` — git-ignored by default, with the analysis-of-record files force-committed: result JSONs, tables, figures, fitted pipelines, calibrators, the SHAP matrix, the split record, the CDC LMS reference, and the processed parquet inputs (~10 MB total), so a clean clone reproduces predictions without refitting
 
-Model pickles, prediction arrays, and the SHAP matrix are too large for git; `outputs/RELEASE_MANIFEST.md` hashes them so a transferred copy can be verified.
+Run scripts are pinned to `tuning_results_20260831_103201`; `run_final_analyses.py` refuses to evaluate unless the split verifier has ACCEPTED that exact run.
 
 ## Revision history
 
