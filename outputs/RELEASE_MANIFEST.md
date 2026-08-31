@@ -1,18 +1,24 @@
 # Release manifest — analysis of record
 
-- Generated: 2026-08-31T11:29:42
+- Generated: 2026-08-31T11:59:22
 - Pinned run: `tuning_results_20260831_103201`
-- Git commit: `a43735f31840315fcc5da33debeeb185e55c0a8a` (branch `master`)
+- Git commit: `47ea4f520d2c1e7a131f617af3631cac105a3c02` (branch `master`)
 - Working tree at generation: CLEAN
 - Python 3.12.13 on Windows-11-10.0.26200-SP0
 
-This manifest binds the reported numbers to specific file contents. To
-confirm a clean clone matches the analysis of record, check out the commit
-above and compare SHA-256 values. The manifest documents the state at that
-commit and is itself committed immediately afterwards, so it lives one
-commit later than the SHA it names.
+This manifest binds the reported numbers to specific file contents. Hashes
+for tracked files are computed from the committed bytes at the named commit,
+so `sha256sum` on a clean clone reproduces them regardless of line-ending
+configuration. The manifest documents the state at that commit and is itself
+committed immediately afterwards, so it lives one commit later than the SHA
+it names.
 
-## Headline results (held-out test set, single evaluation pass)
+Test-set status: the test split is a historically reused internal holdout —
+it also produced previously submitted results — evaluated in this revision
+as a versioned batch after the specification was locked. 'Single evaluation
+pass' below refers to this run's locked pass, not to the split's history.
+
+## Headline results (test split, single locked evaluation pass in this run)
 
 | Model | AUC (raw scores) | Sensitivity | Specificity | PPV | NPV |
 |---|---|---|---|---|---|
@@ -43,69 +49,72 @@ commit later than the SHA it names.
 
 | File | Bytes | SHA-256 |
 |---|---:|---|
-| `notebooks\asthma_pipeline.py` | 24135 | `3a9d12922ee805904526e80f8b69c198d50bdab9420826143369aeff109464a6` |
-| `notebooks\pediatric_corrections.py` | 6328 | `e473434463d47073c95b0e40484ef860d4d882a4a88d252f8ab09a008d703520` |
-| `notebooks\build_table1.py` | 9113 | `03cf7ee05b9e8a1a3b1a6296ad26dac419318e1f657d146d6a9898569cc0e3b3` |
-| `notebooks\03_clean_and_filter.ipynb` | 11389 | `da90304f947eb27de32cfdf43206eb44493a23028bba7136861796a75f7188f2` |
-| `notebooks\04_model.ipynb` | 127469 | `fef4a3ba2a3960ea143784f43cddd6e6c3accfa33838d1ec89efe8f6d3fd31cb` |
+| `notebooks/asthma_pipeline.py` | 24135 | `3a9d12922ee805904526e80f8b69c198d50bdab9420826143369aeff109464a6` |
+| `notebooks/pediatric_corrections.py` | 6328 | `e473434463d47073c95b0e40484ef860d4d882a4a88d252f8ab09a008d703520` |
+| `notebooks/build_table1.py` | 9113 | `03cf7ee05b9e8a1a3b1a6296ad26dac419318e1f657d146d6a9898569cc0e3b3` |
+| `notebooks/03_clean_and_filter.ipynb` | 11389 | `ba9690be760cb1d4676b9a8c27bec5c81517552d17573545c4c167303bc5d360` |
+| `notebooks/04_model.ipynb` | 127469 | `9f767e6c42f65a4fed4a20159f135792471b8e98a4de821dfb3cac01ff7daea6` |
 | `verify_split_reconstruction.py` | 16496 | `947253cdd935b1b2fbc51360e75c2cb601aa9d97229a2c33c2bd8b36216ccf97` |
-| `run_final_analyses.py` | 23833 | `d13a1151a78cb17650fd65d567034f9726217b2dc323dc8571490f6d3813ea18` |
-| `run_reduced_model_and_figures.py` | 14605 | `dc34f18180c49b4e050c4643d2f25268d2ff310dd5b83f646a26587c176970e2` |
-| `run_uncertainty.py` | 6883 | `eea6ddb19fadcfe4cf7ac1c41c0d9f9b552199aa66b0e7343056a5c8faa21a80` |
-| `generate_descriptives.py` | 6906 | `9a9cb3c081430a82d72caef0d94c8104e075d9ee41f03fe32d5e766388550296` |
-| `redraw_shap_figures.py` | 2759 | `3936c91448ec524df63a23d5010575758f7b47c95a96ebef31ee593527cbe26d` |
+| `run_final_analyses.py` | 24925 | `b53ec7b27f173a806e493092f915b014887838dd91e5aa7868d3a37cee72395a` |
+| `run_reduced_model_and_figures.py` | 14534 | `0acbf6140f27f0e5d474486705ed52914dea19f604f89473726a05b54e7c99ee` |
+| `run_uncertainty.py` | 6812 | `4ad2c9351ec4a2836a6736278208eeac341b951e6a2455e2ce2cd8eb6c4b4c7f` |
+| `generate_descriptives.py` | 6835 | `0ad5f5d75cc4fbd2f9fcadbda05eab3ecfe2e33d1b305a00f1e0fca06869eeb9` |
+| `redraw_shap_figures.py` | 2735 | `8a89bfa4a1c1ce5bde6447aa74689530e800c6043c327ff98a5e5c3201376783` |
 | `patch11_r3_quality_gating.py` | 5371 | `bd8be8eab51816e75c992aa019e3c2e9d72e68b569dec80b5331b5127b695060` |
-| `tests\test_cleaner_sentinels.py` | 5437 | `578eb72510bd373cb73c00b89857b678f7c6f8b4240f116517ceca10a39d3d16` |
-| `tests\test_quality_gating.py` | 5206 | `db0ab1570658e37d78f498b584f6942f6a929fba8b46e733989c11b2f030dd98` |
-| `tests\test_cdc_bmi_age.py` | 2956 | `58d6931f39656980ac067d79d5f20a92ef4d1e77996fde8d27a5a9cb7653e79a` |
+| `tests/test_cleaner_sentinels.py` | 5587 | `ab0dfd819395f6a71cf5f6e8cd327dff535b6bdd406e295acb62852de65e14fc` |
+| `tests/test_quality_gating.py` | 5383 | `a6d640586dae01a1eee03fdcf7491d5417e2f5bee4663f4fc2cf97e0eea35a8b` |
+| `tests/test_cdc_bmi_age.py` | 3158 | `07afceb31423dc27fa7679dac5107ec4a9786d05cf2d61e0fd71569207211387` |
 
 ## Result files (committed)
 
 | File | Bytes | SHA-256 |
 |---|---:|---|
-| `outputs\final_analyses_20260831_103201\final_analyses_results.json` | 16540 | `e9fb3f8a7fcec97271cf6bc3562c9a443e85d5a2915064d2d3ef1b770ad13e88` |
-| `outputs\final_analyses_20260831_103201\uncertainty_bootstrap.json` | 2496 | `c3f17f94059648b3e106a37da5fe3825047d70f6e819fabbfb19d8a5678fa163` |
-| `outputs\final_analyses_20260831_103201\descriptive_statistics.json` | 1584 | `40d88074c307d7121ab2fbb0732c658b764c081a1b45bbde4cbd854ac11a1c2e` |
-| `outputs\reduced_model_20260831_103201\reduced_model_results.json` | 2131 | `4aa89221c3762caa39f941f54599fb713739c67b6d5053a45fd42d0c310f6716` |
-| `outputs\reduced_model_20260831_103201\shap_ranking.json` | 1663 | `af17b49adbcf9ef879bd18b8b20a4426b616e66e99faa5cb54eee337dded23b7` |
-| `outputs\split_verification_report.json` | 4125 | `d5faa18427f2458ca82c6f8f29176a6d28d537e1258cef199e8f31a81cef71ad` |
-| `outputs\table1_baseline.csv` | 646 | `a01ffc60ba13822891303b7ed9659c9b35efb600698e70b17d55ae17057ad426` |
-| `outputs\table1_baseline.md` | 1844 | `10b7faf35bf3e377260c003ead7757b58d4f2d06907d146be3e7a94127b73926` |
+| `outputs/final_analyses_20260831_103201/final_analyses_results.json` | 16540 | `d590dc5bcdfd344ed988c22a5a6e1cf65c12c9eba2cde32a3dd3233569ab931b` |
+| `outputs/final_analyses_20260831_103201/uncertainty_bootstrap.json` | 2496 | `6cd7d34159db468c5e731afeff2a24bf47f488d57760f17fa652e0d170b8ce45` |
+| `outputs/final_analyses_20260831_103201/descriptive_statistics.json` | 1584 | `f54fb12902ff3820f0f4197b42b4ea05f05eb542d325c1f6b6530dffc97c3e88` |
+| `outputs/reduced_model_20260831_103201/reduced_model_results.json` | 2131 | `cb987df88c0fbbb94ffee0043b05eaa963f415fcc19a1dddf1f6ec7c5cde0103` |
+| `outputs/reduced_model_20260831_103201/shap_ranking.json` | 1663 | `c298b92185478969f46f1ccbd752ff1c35241083bcbfc18be85f929f3467533c` |
+| `outputs/split_verification_report.json` | 4125 | `154ce6422e4334d097a204e32e928f560fbd987b4c099056a86b6b0eee6ebb22` |
+| `outputs/cleaner_replacement_audit.json` | 11767 | `fe57b39435be4a84d1b9fd494e20365a29ce90db81cc11737df239da94ec7e56` |
+| `outputs/table1_baseline.csv` | 646 | `c7beef0b3f6ad2676e154eeeac071e2da67190611b4be1570828aefcdb59a40a` |
+| `outputs/table1_baseline.md` | 1844 | `09462b16d70b1afa3f7fbd5f31e18ce55a85aea0c33000056f21accc04eb110d` |
 
-## Model artifacts (not committed; too large for git)
+## Model artifacts and reference data (committed 31 Aug)
 
-These are required to reproduce predictions without refitting. Hashes
-let a recipient confirm that a transferred copy is the one used here.
+Fitted pipelines, calibrators, the SHAP matrix, the split record,
+and the CDC LMS reference (~5 MB total) are committed so a clean
+clone reproduces predictions without refitting.
 
 | File | Bytes | SHA-256 |
 |---|---:|---|
-| `notebooks\tuning_results_20260831_103201\preprocessed_data.pkl` | 4059933 | `2285a676c8e2ea9c7c7e81b1da1cf5d4256b853250e874ed906fcff57e9f5f41` |
-| `notebooks\tuning_results_20260831_103201\catboost_best_model.pkl` | 62693 | `0250dd73d681fcacbf40ddcb43690251fa99cd8e4e4abb0b22251372c8e42d66` |
-| `notebooks\tuning_results_20260831_103201\catboost_study.pkl` | 60223 | `20f60a0eb44fb2c6db003758a8f11be3974c74680a395c5cf6c1d60a4a9126ad` |
-| `outputs\final_analyses_20260831_103201\locked_threshold_calibration.pkl` | 1215 | `8bdb4e21f7a70a02547bd7f517e6397a5c046b0edcc5d894ac3e4486bbbc5bde` |
-| `outputs\reduced_model_20260831_103201\reduced_model_bundle.pkl` | 59285 | `992866815546bd64969504531fd0bd53b24a138ff2cb8360416ec0e6a27cf690` |
-| `outputs\reduced_model_20260831_103201\shap_values_train_full.npy` | 693392 | `922a223a224e05eb16742303c8a37f56648f6316acdf0dbf7da2041085ff4821` |
-| `outputs\split_assignment_SEQN.csv` | 191261 | `ca5a8aaf3ac9cdefbe69e9d96530324e2d6821da459c0aabbc43311a370ec90e` |
+| `notebooks/tuning_results_20260831_103201/preprocessed_data.pkl` | 4059933 | `2285a676c8e2ea9c7c7e81b1da1cf5d4256b853250e874ed906fcff57e9f5f41` |
+| `notebooks/tuning_results_20260831_103201/catboost_best_model.pkl` | 62693 | `0250dd73d681fcacbf40ddcb43690251fa99cd8e4e4abb0b22251372c8e42d66` |
+| `notebooks/tuning_results_20260831_103201/catboost_study.pkl` | 60223 | `20f60a0eb44fb2c6db003758a8f11be3974c74680a395c5cf6c1d60a4a9126ad` |
+| `outputs/final_analyses_20260831_103201/locked_threshold_calibration.pkl` | 1215 | `8bdb4e21f7a70a02547bd7f517e6397a5c046b0edcc5d894ac3e4486bbbc5bde` |
+| `outputs/reduced_model_20260831_103201/reduced_model_bundle.pkl` | 59285 | `992866815546bd64969504531fd0bd53b24a138ff2cb8360416ec0e6a27cf690` |
+| `outputs/reduced_model_20260831_103201/shap_values_train_full.npy` | 693392 | `922a223a224e05eb16742303c8a37f56648f6316acdf0dbf7da2041085ff4821` |
+| `outputs/split_assignment_SEQN.csv` | 191261 | `7f76b2425a555cb51754f4f1def5d8aadd0c8a5a9f816dedbba5063450fa9569` |
+| `data/reference/bmiagerev.csv` | 72022 | `fcf2ddd1aa7b902620f6ddd6a10971b533f8f1c1653951d4a8bf18c8945df297` |
 
 ## Figures
 
 | File | Bytes | SHA-256 |
 |---|---:|---|
-| `outputs\figures_R3\efigure_calibration.png` | 133198 | `e5ccf9efa8f0ee886aa88ce701f4dc0894b621191cc66061ab1be101aa0a618d` |
-| `outputs\figures_R3\efigure_decision_curve.png` | 120347 | `f5e70c49e997e97e891f5d43f8361af9291d6381cf8794fb5a1843364ea6ae08` |
-| `outputs\figures_R3\figure_metrics.png` | 71043 | `baa9fba4d91c3259928eb84f09689322fb7e2655dc7ea022043105af8a8f73bd` |
-| `outputs\figures_R3\figure_roc.png` | 137594 | `d090856afe0913f41f5277257c4c15ea5fbfd7d0b43165548a0fd87dfdf47f6b` |
-| `outputs\figures_R3\figure_shap_ranking.png` | 199086 | `8c10a056e8db9caa44f76d699c7f5103386aac1b53c615abff61bc474dab9c03` |
-| `outputs\figures_R3\figure_shap_summary.png` | 456992 | `4b1c80a09b23096e4120c59185d8d0fb4df23395851ad6eab9853ce7cc0c32c0` |
+| `outputs/figures_R3/efigure_calibration.png` | 133198 | `e5ccf9efa8f0ee886aa88ce701f4dc0894b621191cc66061ab1be101aa0a618d` |
+| `outputs/figures_R3/efigure_decision_curve.png` | 120347 | `f5e70c49e997e97e891f5d43f8361af9291d6381cf8794fb5a1843364ea6ae08` |
+| `outputs/figures_R3/figure_metrics.png` | 71043 | `baa9fba4d91c3259928eb84f09689322fb7e2655dc7ea022043105af8a8f73bd` |
+| `outputs/figures_R3/figure_roc.png` | 137594 | `d090856afe0913f41f5277257c4c15ea5fbfd7d0b43165548a0fd87dfdf47f6b` |
+| `outputs/figures_R3/figure_shap_ranking.png` | 199086 | `8c10a056e8db9caa44f76d699c7f5103386aac1b53c615abff61bc474dab9c03` |
+| `outputs/figures_R3/figure_shap_summary.png` | 456992 | `4b1c80a09b23096e4120c59185d8d0fb4df23395851ad6eab9853ce7cc0c32c0` |
 
-## Input data (hashed, not committed)
+## Processed input data (committed 31 Aug)
 
 | File | Bytes | SHA-256 |
 |---|---:|---|
-| `data\processed\01_combined_nhanes.parquet` | 4179785 | `2bcfc9c7a8bcb7fa92c0c69214e10957f71dca64e02cd1d917a15808bf091d3c` |
-| `data\processed\02_recoded.parquet` | 4071526 | `7054a6fb07fd0848912ef849f17f136c1ec390682f7ed586a1c4d022f5e63baa` |
-| `data\processed\02b_harmonized.parquet` | 4121522 | `04b65673360c12a16327c62a2df6d84e87cf0f427c77c293ebcd7f8b3c3b5524` |
-| `data\processed\03_cleaned.parquet` | 538075 | `8a6c17b36c26486323b92270d0d1b1a93dcb8c45f489a49dc561904c29fcd84a` |
+| `data/processed/01_combined_nhanes.parquet` | 4179785 | `2bcfc9c7a8bcb7fa92c0c69214e10957f71dca64e02cd1d917a15808bf091d3c` (working tree, untracked) |
+| `data/processed/02_recoded.parquet` | 4071526 | `7054a6fb07fd0848912ef849f17f136c1ec390682f7ed586a1c4d022f5e63baa` (working tree, untracked) |
+| `data/processed/02b_harmonized.parquet` | 4121522 | `04b65673360c12a16327c62a2df6d84e87cf0f427c77c293ebcd7f8b3c3b5524` |
+| `data/processed/03_cleaned.parquet` | 538075 | `8a6c17b36c26486323b92270d0d1b1a93dcb8c45f489a49dc561904c29fcd84a` |
 
 ## Environment
 
