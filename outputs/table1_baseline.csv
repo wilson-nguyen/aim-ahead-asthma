@@ -3,9 +3,9 @@ Variable,Overall,No Asthma,Asthma,Missing (n)
 "Female, %",49.4%,50.3%,45.5%,0
 "Body Mass Index, kg/m2",20.9 (0.10),20.7 (0.11),22.0 (0.17),48
 BMI-for-age z-score (CDC),0.5 (0.02),0.5 (0.02),0.7 (0.04),48
-BMI-for-age category: Underweight (<5th),3.2%,3.3%,3.0%,48
-BMI-for-age category: Healthy (5th-<85th),62.0%,63.3%,56.1%,48
-BMI-for-age category: Overweight (85th-<95th),15.8%,15.5%,16.8%,48
-BMI-for-age category: Obese (>=95th),19.1%,17.9%,24.1%,48
+BMI-for-age category: Underweight (<5th),3.3%,3.3%,3.0%,48
+BMI-for-age category: Healthy (5th-<85th),62.1%,63.4%,56.5%,48
+BMI-for-age category: Overweight (85th-<95th),15.7%,15.5%,16.4%,48
+BMI-for-age category: Obese (>=95th),19.0%,17.8%,24.1%,48
 FEV1/FVC ratio,0.860 (0.0011),0.866 (0.0011),0.835 (0.0030),1841
 Family income-to-poverty ratio,2.5 (0.07),2.6 (0.07),2.5 (0.10),509

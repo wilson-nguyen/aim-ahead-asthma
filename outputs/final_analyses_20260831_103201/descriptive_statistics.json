@@ -1,0 +1,61 @@
+{
+  "run": "tuning_results_20260831_103201",
+  "generated_by": "generate_descriptives.py",
+  "basis": "descriptive stratification of the locked test predictions (raw scores); no modeling decisions",
+  "age_smd_cases_vs_controls": 0.072,
+  "age_smd_cases_vs_controls_weighted": 0.126,
+  "bmi_z_computable": {
+    "n": 6519,
+    "of": 6567,
+    "pct": 99.3
+  },
+  "weighted_obesity_pct_ge95th_nonmissing_denominator": {
+    "asthma": 24.1,
+    "no_asthma": 17.8
+  },
+  "age_group_test_auc": {
+    "note": "fixed age BANDS (not empirical tertiles); exploratory description of the fixed test predictions; raw-score AUC with stratified-bootstrap CIs",
+    "6-9": {
+      "n": 474,
+      "auc": 0.85,
+      "auc_ci95": [
+        0.796,
+        0.896
+      ]
+    },
+    "10-13": {
+      "n": 451,
+      "auc": 0.73,
+      "auc_ci95": [
+        0.661,
+        0.792
+      ]
+    },
+    "14-17": {
+      "n": 389,
+      "auc": 0.736,
+      "auc_ci95": [
+        0.671,
+        0.794
+      ]
+    }
+  },
+  "spirometry_availability_test_auc": {
+    "note": "usable = measured AND quality grade A/B (2026-08-27 gating); AUC from raw scores, unweighted and survey-weighted (WTMEC2YR); null = subgroup empty or single-class",
+    "both_usable": {
+      "n": 937,
+      "auc_unweighted": 0.776,
+      "auc_weighted": 0.738
+    },
+    "one_usable": {
+      "n": 127,
+      "auc_unweighted": 0.782,
+      "auc_weighted": 0.788
+    },
+    "neither_usable": {
+      "n": 250,
+      "auc_unweighted": 0.793,
+      "auc_weighted": 0.79
+    }
+  }
+}

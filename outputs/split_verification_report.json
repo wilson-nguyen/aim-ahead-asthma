@@ -1,6 +1,6 @@
 {
-  "verified_at": "2026-08-28T11:36:48",
-  "run_dir": "tuning_results_20260828_110326",
+  "verified_at": "2026-08-31T11:09:28",
+  "run_dir": "tuning_results_20260831_103201",
   "random_state": 42,
   "n_analytic": 6567,
   "n_train": 3939,
@@ -129,15 +129,15 @@
     },
     "X_train_feat exact + hash": {
       "pass": true,
-      "detail": "hash=21b301ccc25a8dc9"
+      "detail": "hash=842202d1e00cb9a0"
     },
     "X_val_feat exact + hash": {
       "pass": true,
-      "detail": "hash=7c138f0a0cc58616"
+      "detail": "hash=be236d0ca6ced248"
     },
     "X_test_feat exact + hash": {
       "pass": true,
-      "detail": "hash=3c9ff4b870945b8d"
+      "detail": "hash=b066c046b6271d9d"
     }
   },
   "historical_runs_checked": [
