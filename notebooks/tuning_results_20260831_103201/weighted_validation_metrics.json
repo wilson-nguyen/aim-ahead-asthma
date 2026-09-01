@@ -1,0 +1,56 @@
+{
+  "catboost": {
+    "unweighted": {
+      "auc": 0.8120603818397735,
+      "sensitivity": 0.7520325203252033,
+      "specificity": 0.7172284644194756,
+      "threshold": 0.5,
+      "weighted": false,
+      "n": 1314
+    },
+    "survey_weighted": {
+      "auc": 0.8172161964099254,
+      "sensitivity": 0.7764278892671875,
+      "specificity": 0.6857991736387055,
+      "threshold": 0.5,
+      "weighted": true,
+      "n": 1314
+    }
+  },
+  "mlp": {
+    "unweighted": {
+      "auc": 0.7946849974117719,
+      "sensitivity": 0.7479674796747967,
+      "specificity": 0.6985018726591761,
+      "threshold": 0.5,
+      "weighted": false,
+      "n": 1314
+    },
+    "survey_weighted": {
+      "auc": 0.8014391654706593,
+      "sensitivity": 0.7811375283347478,
+      "specificity": 0.6911189870523874,
+      "threshold": 0.5,
+      "weighted": true,
+      "n": 1314
+    }
+  },
+  "balancedrf": {
+    "unweighted": {
+      "auc": 0.8151795773575714,
+      "sensitivity": 0.7642276422764228,
+      "specificity": 0.7397003745318352,
+      "threshold": 0.5,
+      "weighted": false,
+      "n": 1314
+    },
+    "survey_weighted": {
+      "auc": 0.8174686004181047,
+      "sensitivity": 0.7736221849245418,
+      "specificity": 0.7278001878996144,
+      "threshold": 0.5,
+      "weighted": true,
+      "n": 1314
+    }
+  }
+}

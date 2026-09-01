@@ -2,12 +2,12 @@
 
 An explainable machine-learning analysis identifying the clinical, environmental, and social factors associated with **diagnosed** pediatric asthma in U.S. national survey data (NHANES). First-author research project (Best Poster Award, 2025 AIM-AHEAD Annual Meeting); manuscript under peer review (Ms. 26-02-0197R2, *Annals of Allergy, Asthma & Immunology*).
 
-> **Analysis of record:** run `tuning_results_20260831_103201`. Every number below comes from committed result files in `outputs/`. `outputs/RELEASE_MANIFEST.md` binds those numbers to a git commit and SHA-256 hashes. Results from earlier runs, including the AUC 0.827 figure in the originally submitted manuscript, are **superseded** — see "Revision history" below.
+> **Analysis of record:** run `tuning_results_20260831_103201`. Every number below comes from committed result files (see the manifest), including the model-comparison metrics from the run directory. `outputs/RELEASE_MANIFEST.md` binds those numbers to a git commit and SHA-256 hashes. Results from earlier runs, including the AUC 0.827 figure in the originally submitted manuscript, are **superseded** — see "Revision history" below.
 
 ## Summary
 
 - **Goal:** an interpretable classifier for **cross-sectional classification of self- or proxy-reported, physician-diagnosed asthma at the time of assessment**. This is not incident prediction, not detection of undiagnosed asthma, and not a deployable diagnostic tool.
-- **Data:** NHANES 2007-2008, 2009-2010, 2011-2012; children aged 6-17; **n = 6,567** analytic sample (1,229 with reported asthma; weighted prevalence 18.8%). Outcome: `MCQ010`. Split 60/20/20 stratified (seed 42), verified participant-level identical across every version of this work.
+- **Data:** NHANES 2007-2008, 2009-2010, 2011-2012; children aged 6-17; **n = 6,567** analytic sample (1,229 with reported asthma; weighted prevalence 18.8%). Outcome: `MCQ010`. Split 60/20/20 stratified (seed 42). The current run's assignments are SEQN-anchored in a committed record; historical runs reproduced the same ordered outcome and survey-weight arrays exactly, but those frozen artifacts contain no participant identifiers, so historical identity is established at the level of those arrays.
 - **Model:** CatBoost, tuned with Optuna (100 trials, 5-fold CV), class imbalance handled with categorical-aware SMOTENC + edited nearest neighbors inside folds. CatBoost is retained for continuity with the originally submitted analysis, not reselected on revision performance — the balanced random forest comparator reached validation AUC 0.815 vs CatBoost's 0.812. Model fitting is **unweighted**; survey weights are used for descriptive estimates and reported alongside as weighted evaluation.
 - **Operating point:** isotonic calibration and threshold both selected on the **validation** set (first point reaching sensitivity ≥ 0.80) and frozen before any test-set evaluation.
 - **Reporting:** discrimination (AUC) from **raw model scores**; threshold metrics from calibrated scores; calibration assessed separately.
@@ -23,9 +23,9 @@ The test split is a **historically reused internal holdout** — it also produce
 
 The reduced model — the ten highest-SHAP features plus the two protected spirometry-availability indicators — has the higher AUC in a paired bootstrap (difference 0.023, 95% CI 0.007 to 0.041) and more favorable calibration point estimates (slope 0.87 vs 0.71) while using half as many variables.
 
-**A revision-stage no-resampling sensitivity analysis, declared before the final evaluation batch, had higher AUC than the primary in this internal evaluation** (0.818 vs 0.779; paired difference 0.039 in its favor, 95% CI 0.019 to 0.060; `outputs/final_analyses_*/noresampling_contrast.json`). Alongside: the combined SMOTENC-ENN procedure leaves 1,520 of 3,202 training controls (62% cases after resampling). The contrast removes the combined procedure as a whole, so it does not isolate which component is responsible. The resampling-based primary is retained rather than switched after observing the reused test split. **Neither model meets the originally stated 0.80 sensitivity / 0.70 specificity targets as point estimates on held-out data**; both sensitivity intervals include 0.80. This is reported plainly rather than tuned away.
+**A revision-stage no-resampling sensitivity analysis, declared before the final evaluation batch, had higher AUC than the primary in this internal evaluation** (0.818 vs 0.779; paired difference 0.039 in its favor, 95% CI 0.019 to 0.060; `outputs/final_analyses_*/noresampling_contrast.json`). Alongside: the combined SMOTENC-ENN procedure leaves 1,520 of 3,202 training controls (62% cases after resampling). The contrast removes the combined procedure as a whole, so it does not isolate which component is responsible. The resampling-based primary is retained rather than switched after observing the reused test split. **The primary and reduced models did not meet the combined 0.80 sensitivity / 0.70 specificity targets as point estimates**; their sensitivity intervals include 0.80. The no-resampling variant met the sensitivity target pointwise (0.805) but not the specificity target (0.645); no bootstrap interval was computed for that arm. This is reported plainly rather than tuned away.
 
-CIs are stratified bootstrap, 2,000 resamples, seed 42, conditional on the fitted models and locked thresholds (they do not propagate tuning, selection, or calibration uncertainty); the survey-weighted variants resample participants with their weights and do not model the design's clustering.
+CIs are stratified bootstrap, 2,000 resamples, seed 42, conditional on the fitted models and locked thresholds (they do not propagate tuning, selection, or calibration uncertainty); the survey-weighted variants resample participants with their weights and do not model the design's clustering; and because resampling is outcome-stratified, the PPV/NPV intervals are conditional on the observed test-set case mix and do not reflect prevalence uncertainty.
 
 ## Top 10 predictors (mean |SHAP|, training data only)
 
@@ -63,7 +63,7 @@ calibrators, processed parquets, split record, and historical split arrays.
 ```bash
 python verify_split_reconstruction.py     # 32 checks against the pinned run
 python audit_cleaner_replacements.py      # expect: 0 values replaced
-python -m pytest tests/ -q                # 18 tests
+python -m pytest tests/ -q                # 20 tests
 python redraw_shap_figures.py             # figures from artifacts, plot-only
 ```
 
@@ -123,7 +123,9 @@ The R3 revision followed a full audit of the pipeline against the NHANES codeboo
 ```bash
 python -m venv .venv
 .venv\Scripts\Activate.ps1        # PowerShell; Git Bash: source .venv/Scripts/activate
-pip install -r requirements.txt   # exact pins: requirements-lock.txt
+pip install -r requirements.txt   # exact pins: requirements-lock.txt (Windows freeze;
+                                  # newer library versions load the artifacts but may
+                                  # emit version warnings when unpickling)
 ```
 
 NHANES files are not tracked (`data/` is git-ignored). Download from https://wwwn.cdc.gov/nchs/nhanes/ into `data/raw/`, or run `python download_nhanes.py`.
