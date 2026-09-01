@@ -85,11 +85,14 @@ def main():
                  f"n={len(X)}, {X.shape[1]} columns",
         "total_values_replaced": total,
         "interpretation": (
-            "0 means the model-stage cleaner changes nothing on real data: "
-            "Phase 2 recoding already handled nonresponse codes, and the "
-            "cleaner is a defensive regression guard. Any nonzero count "
-            "must be adjudicated against the NHANES codebook before the "
-            "affected run is treated as final."),
+            "total_values_replaced counts sentinel-to-missing replacements "
+            "only (the binary 1/2 to 1/0 recode is a separate, intended "
+            "transform). 0 means the cleaner performs zero sentinel-to-"
+            "missing replacements on real data: Phase 2 recoding already "
+            "handled nonresponse codes, and the cleaner is a defensive "
+            "regression guard, fail-closed for unlisted variables since "
+            "31 Aug. Any nonzero count must be adjudicated against the "
+            "NHANES codebook before the affected run is treated as final."),
         "variables": variables,
     }
     path = os.path.join(HERE, "outputs", "cleaner_replacement_audit.json")

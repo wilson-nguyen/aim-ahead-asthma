@@ -72,14 +72,20 @@ def main():
     commit = git("rev-parse", "HEAD")
     dirty = git("status", "--porcelain", default="")
     tracked = [
+        "download_nhanes.py",
+        "notebooks/01_load_and_harmonize.ipynb", "notebooks/02_recode.ipynb",
+        "notebooks/harmonize_cycles.py",
         "notebooks/asthma_pipeline.py", "notebooks/pediatric_corrections.py",
         "notebooks/build_table1.py", "notebooks/03_clean_and_filter.ipynb",
         "notebooks/04_model.ipynb", "verify_split_reconstruction.py",
         "run_final_analyses.py", "run_reduced_model_and_figures.py",
         "run_uncertainty.py", "generate_descriptives.py",
         "redraw_shap_figures.py", "patch11_r3_quality_gating.py",
+        "audit_cleaner_replacements.py", "export_historical_split_arrays.py",
+        "build_release_manifest.py",
         "tests/test_cleaner_sentinels.py", "tests/test_quality_gating.py",
         "tests/test_cdc_bmi_age.py",
+        "README.md", "requirements.txt", "requirements-lock.txt",
     ]
     results = [
         f"outputs/final_analyses_{run_id}/final_analyses_results.json",
@@ -100,9 +106,14 @@ def main():
         f"outputs/reduced_model_{run_id}/shap_values_train_full.npy",
         "outputs/split_assignment_SEQN.csv",
         "data/reference/bmiagerev.csv",
+        *sorted(str(Path(p).relative_to(REPO).as_posix()) for p in
+                glob.glob(str(OUT / "historical_split_arrays" / "*.npz"))),
     ]
     figures = sorted(glob.glob(str(OUT / "figures_R3" / "*.png")))
-    data = sorted(glob.glob(str(REPO / "data" / "processed" / "*.parquet")))
+    # committed processed inputs only (01/02-stage intermediates are
+    # regenerable from raw NHANES and deliberately not shipped)
+    data = ["data/processed/02b_harmonized.parquet",
+            "data/processed/03_cleaned.parquet"]
 
     def table(paths, base=REPO):
         """Tracked files: hash of committed bytes at HEAD (portable across

@@ -89,9 +89,41 @@ def test_household_size_topcode_7_survives():
 
 
 def test_small_categorical_rare_7_9_scrubbed():
+    # HUQ010 is EXPLICITLY listed (codebook: 1-5 valid, 7 refused, 9 DK)
     df = _synth()
     _, out = _clean(df)
     assert not out["HUQ010"].isin([7, 9]).any()
+
+
+def test_unlisted_rare_code_fails_closed():
+    """[31 Aug fail-closed] An unlisted variable with a sentinel-looking
+    code at ANY frequency must raise, never silently erase. This is the
+    external reviewer's scenario: a legitimate rare '7' (1%) on an
+    unlisted variable."""
+    rng = np.random.default_rng(2)
+    df = pd.DataFrame({
+        "FAKE_RARE7": rng.choice([1, 2, 3, 4, 5, 6, 7], 300,
+                                 p=[.198, .198, .198, .198, .198, 0, .01]),
+    })
+    df.loc[0, "FAKE_RARE7"] = 7          # guarantee presence
+    try:
+        NHANESCleaner().fit(df)
+    except ValueError as e:
+        assert "FAKE_RARE7" in str(e) and "never scrubbed" in str(e)
+    else:
+        raise AssertionError("unlisted rare sentinel-looking code must raise")
+
+
+def test_unlisted_validation_only_code_survives_transform():
+    """A code appearing only OUTSIDE the fit data must flow through
+    unchanged for unlisted variables (no width-rule map is retained)."""
+    rng = np.random.default_rng(3)
+    train = pd.DataFrame({"FAKE_V": rng.choice([1, 2, 3, 4, 5], 300)})
+    cl = NHANESCleaner().fit(train)
+    val = pd.DataFrame({"FAKE_V": [1.0, 7.0, 9.0, 2.0]})
+    out = cl.transform(val)
+    assert (out["FAKE_V"] == 7.0).sum() == 1 and (out["FAKE_V"] == 9.0).sum() == 1, \
+        "unlisted variables must never be scrubbed at transform time"
 
 
 def test_binary_recode_preserves_missingness():

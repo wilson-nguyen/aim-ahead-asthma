@@ -61,6 +61,7 @@ from imblearn.pipeline import Pipeline as ImbPipeline                # noqa: E40
 from asthma_pipeline import AutoSMOTENCENN, preprocessing_steps      # noqa: E402
 from run_final_analyses import (                                     # noqa: E402
     binary_metrics, fit_calibrator, lock_threshold, calibration_summary,
+    require_verified,
 )
 # [2026-08-27 KM ruling] AUC is reported from RAW model scores; threshold
 # metrics use the calibrated scores; calibration is assessed separately.
@@ -93,6 +94,7 @@ def main():
     ap.add_argument("--smoke", action="store_true")
     args = ap.parse_args()
 
+    require_verified(LOCKED_RUN)
     run_dir = os.path.join(HERE, "notebooks", LOCKED_RUN)
     fin_dir = os.path.join(HERE, "outputs", f"final_analyses_{LOCKED_RUN.split('_', 2)[2]}")
     out_dir = "/tmp/reduced_smoke" if args.smoke else os.path.join(

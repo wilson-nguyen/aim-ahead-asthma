@@ -53,7 +53,24 @@ Pre-specified before the final analysis; full audit trail in the revision folder
 
 **Disclosed limitations:** integer category codes are treated as numeric by the tree models (no declared `cat_features`); the cleaner's type inference and correlation pruning are fitted on the full training set rather than within inner folds; the cohort-level missingness screen precedes the split; the tuning objective maximizes CV sensitivity with a soft specificity penalty and does not itself enforce the 0.80 floor, which is applied at threshold selection; the MLP comparator is unweighted; the parallel Optuna search is preserved as committed study objects rather than being bit-reproducible.
 
-## Pipeline
+## Reproducing the analysis of record (clean clone, no refitting)
+
+Everything needed ships in the repository: the pinned run's fitted pipelines,
+calibrators, processed parquets, split record, and historical split arrays.
+
+```bash
+python verify_split_reconstruction.py     # 32 checks against the pinned run
+python audit_cleaner_replacements.py      # expect: 0 values replaced
+python -m pytest tests/ -q                # 18 tests
+python redraw_shap_figures.py             # figures from artifacts, plot-only
+```
+
+Every script is pinned to `tuning_results_20260831_103201` and every script
+that touches the test split first calls a fail-closed gate requiring the
+committed verification report to cover that exact run, with every check
+passing and the run artifact's hash matching.
+
+## Re-executing from scratch (produces a NEW analysis, not a reproduction)
 
 ```bash
 python download_nhanes.py                                  # 1. fetch raw NHANES
@@ -62,16 +79,21 @@ jupyter execute notebooks/02_recode.ipynb                  # 3. recode
 python notebooks/harmonize_cycles.py                       # 4. -> 02b_harmonized.parquet
 jupyter execute notebooks/03_clean_and_filter.ipynb        # 5. -> 03_cleaned.parquet
 jupyter execute notebooks/04_model.ipynb                   # 6. tuning (hours)
-python verify_split_reconstruction.py                      # 7. gate: 32 checks must pass
-python run_final_analyses.py                               # 8. locked eval + 6 sensitivity arms
-python run_reduced_model_and_figures.py                    # 9. SHAP, reduced model, figures
-python run_uncertainty.py                                  # 10. bootstrap CIs
-python generate_descriptives.py                            # 11. descriptive statistics
-cd notebooks && python build_table1.py && cd ..            # 12. Table 1
-python build_release_manifest.py                           # 13. hash-bound manifest
 ```
 
-Order matters: the verifier gates the test evaluation, and the uncertainty script needs the reduced-model bundle. `notebooks/05_top10_sensitivity.ipynb` is **permanently superseded** by `run_reduced_model_and_figures.py` and is blocked by a guard cell; do not run it. Regression tests: `python -m pytest tests/ -q`.
+Notebook 04's parallel Optuna search is **not bit-reproducible**, so this
+creates a new timestamped `tuning_results_*` directory constituting a new
+analysis. To evaluate it, run `verify_split_reconstruction.py --run <new-id>`
+and then each run script with the pin updated (or `run_final_analyses.py
+--run <new-id>`); the gate will refuse mismatched combinations. The pinned
+IDs in the scripts always name the analysis of record.
+
+A note on "single evaluation pass": several scripts read the test split, but
+exactly one decision-bearing evaluation exists per model (thresholds and
+calibration locked on validation first); all other access is descriptive
+recomputation of fixed predictions. `notebooks/05_top10_sensitivity.ipynb` is
+**permanently superseded** by `run_reduced_model_and_figures.py` and blocked
+by a guard cell; do not run it.
 
 ## Repository structure
 

@@ -216,7 +216,14 @@ def mutual_info_seeded(X, y):
 # ---------------------------------------------------------------------------
 
 # Per-variable sentinel sets verified against NHANES codebooks (DEMO_F,
-# SPX_F, ...). Variables listed here bypass the width rule entirely.
+# SPX_F, HUQ_F, ...). ONLY variables listed here are ever scrubbed.
+# [2026-08-31 fail-closed change] Unlisted categorical variables are NEVER
+# scrubbed; if one shows a sentinel-looking code at fit time, fit() raises
+# so the variable is adjudicated against its codebook. This removes the
+# latent path where a rare legitimate code on an unlisted variable could
+# be silently erased (external review, 31 Aug). On the analysis of record
+# this is a no-op: the committed replacement audit shows zero
+# sentinel-to-missing replacements on the real analytic frame.
 CATEGORICAL_SENTINELS = {
     "DMDEDUC3": {77, 99},   # 0-15 grades (+55/66 special levels) valid
     "INDHHIN2": {77, 99},   # income brackets 1-15 valid
@@ -224,6 +231,7 @@ CATEGORICAL_SENTINELS = {
     "DMDHHSIZ": set(),      # 1-7 valid, 7 = "7 or more"; no refused codes
     "DMDFMSIZ": set(),
     "SPDNACC":  set(),      # 0-9 curve counts; no refused codes
+    "HUQ010":   {7, 9},     # 1-5 valid; 7 refused, 9 don't know
 }
 
 _SENTINEL_PAIRS = [(7, 9), (77, 99), (777, 999), (7777, 9999)]
@@ -234,17 +242,16 @@ class NHANESCleaner(BaseEstimator, TransformerMixin):
     """Codebook-verified NHANES missing-value handling.
 
     Continuous variables: no value replacement (NHANES codes missing as
-    blank). Categorical variables: refused/don't-know codes only, taken
-    from CATEGORICAL_SENTINELS when listed, otherwise from the width rule
-    (the sentinel pair strictly above the training data's maximum
-    non-sentinel code). If an unlisted variable shows a sentinel-looking
-    code at implausibly high frequency (>2%, refused/DK are rare), fit()
-    raises so the variable is adjudicated against its codebook instead of
-    silently mangled. Binary (1/2) variables: 7/9 scrubbed defensively,
-    then recoded to 1/0 with missingness preserved.
+    blank). Categorical variables: refused/don't-know codes are scrubbed
+    ONLY for variables explicitly listed in CATEGORICAL_SENTINELS
+    (codebook-verified). Unlisted variables are NEVER scrubbed; if one
+    shows a sentinel-looking code (the width-rule pair strictly above its
+    maximum non-sentinel code) at fit time, fit() raises so the variable
+    is adjudicated against its codebook instead of silently mangled
+    [fail-closed since 31 Aug 2026; previously a >2% frequency guard].
+    Binary (1/2) variables: 7/9 scrubbed defensively, then recoded to 1/0
+    with missingness preserved.
     """
-
-    AMBIGUITY_FREQ = 0.02
 
     def __init__(self):
         self.continuous_cols_ = None
@@ -285,22 +292,24 @@ class NHANESCleaner(BaseEstimator, TransformerMixin):
             if col in CATEGORICAL_SENTINELS:
                 self.sentinel_map_[col] = set(CATEGORICAL_SENTINELS[col])
                 continue
+            # Unlisted variable: NEVER scrub. Detect sentinel-looking codes
+            # with the width rule and fail closed if any are present, so no
+            # legitimate rare code can be silently erased and no genuine
+            # nonresponse code can silently flow through.
             obs = set(int(v) for v in X_df[col].dropna().unique())
             nonsent_max = max((v for v in obs if v not in _ALL_SENTINEL_CODES),
                               default=0)
             pair = next((set(p) for p in _SENTINEL_PAIRS if p[0] > nonsent_max),
                         set())
-            n = len(X_df[col].dropna())
-            for code in sorted(pair & obs):
-                freq = (X_df[col] == code).sum() / max(n, 1)
-                if freq > self.AMBIGUITY_FREQ:
-                    raise ValueError(
-                        f"NHANESCleaner: '{col}' has sentinel-looking code "
-                        f"{code} at {freq:.1%} frequency - refused/don't-know "
-                        f"codes are rare, so this may be a valid value. Check "
-                        f"the NHANES codebook and add '{col}' to "
-                        f"CATEGORICAL_SENTINELS explicitly.")
-            self.sentinel_map_[col] = pair
+            present = sorted(pair & obs)
+            if present:
+                raise ValueError(
+                    f"NHANESCleaner: '{col}' is not in CATEGORICAL_SENTINELS "
+                    f"but shows sentinel-looking code(s) {present}. Unlisted "
+                    f"variables are never scrubbed. Check the NHANES codebook "
+                    f"and add '{col}' to CATEGORICAL_SENTINELS explicitly "
+                    f"(with the correct code set, possibly empty).")
+            self.sentinel_map_[col] = set()
 
         return self
 

@@ -45,7 +45,7 @@ LOCKED_RUN = PINNED_RUN
 SEED = 42
 
 from sklearn.metrics import roc_auc_score                            # noqa: E402
-from run_final_analyses import binary_metrics                        # noqa: E402
+from run_final_analyses import binary_metrics, require_verified      # noqa: E402
 
 
 def boot_ci(stat_fn, n, n_boot, rng, strata):
@@ -69,6 +69,7 @@ def main():
     args = ap.parse_args()
     n_boot = 200 if args.smoke else args.n_boot
 
+    require_verified(LOCKED_RUN)
     run_dir = os.path.join(HERE, "notebooks", LOCKED_RUN)
     fin_dir = os.path.join(HERE, "outputs", f"final_analyses_{LOCKED_RUN.split('_', 2)[2]}")
     red_dir = os.path.join(HERE, "outputs", f"reduced_model_{LOCKED_RUN.split('_', 2)[2]}")

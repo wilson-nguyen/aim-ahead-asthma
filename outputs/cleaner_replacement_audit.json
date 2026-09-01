@@ -1,8 +1,8 @@
 {
-  "generated": "2026-08-31T11:59:14",
+  "generated": "2026-08-31T14:28:58",
   "frame": "notebook-04 analytic frame (gated, excluded, filtered), n=6567, 75 columns",
   "total_values_replaced": 0,
-  "interpretation": "0 means the model-stage cleaner changes nothing on real data: Phase 2 recoding already handled nonresponse codes, and the cleaner is a defensive regression guard. Any nonzero count must be adjudicated against the NHANES codebook before the affected run is treated as final.",
+  "interpretation": "total_values_replaced counts sentinel-to-missing replacements only (the binary 1/2 to 1/0 recode is a separate, intended transform). 0 means the cleaner performs zero sentinel-to-missing replacements on real data: Phase 2 recoding already handled nonresponse codes, and the cleaner is a defensive regression guard, fail-closed for unlisted variables since 31 Aug. Any nonzero count must be adjudicated against the NHANES codebook before the affected run is treated as final.",
   "variables": {
     "RIAGENDR": {
       "class": "binary",
@@ -19,10 +19,7 @@
     "RIDRETH1": {
       "class": "categorical",
       "sentinel_source": "width rule (2% ambiguity guard)",
-      "sentinel_codes": [
-        7,
-        9
-      ],
+      "sentinel_codes": [],
       "values_replaced": 0
     },
     "DMDCITZN": {
@@ -91,28 +88,19 @@
     "DMDHREDU": {
       "class": "categorical",
       "sentinel_source": "width rule (2% ambiguity guard)",
-      "sentinel_codes": [
-        7,
-        9
-      ],
+      "sentinel_codes": [],
       "values_replaced": 0
     },
     "DMDHRMAR": {
       "class": "categorical",
       "sentinel_source": "width rule (2% ambiguity guard)",
-      "sentinel_codes": [
-        7,
-        9
-      ],
+      "sentinel_codes": [],
       "values_replaced": 0
     },
     "DMDHSEDU": {
       "class": "categorical",
       "sentinel_source": "width rule (2% ambiguity guard)",
-      "sentinel_codes": [
-        7,
-        9
-      ],
+      "sentinel_codes": [],
       "values_replaced": 0
     },
     "FIALANG": {
@@ -270,10 +258,7 @@
     "LBDCOTLC": {
       "class": "categorical",
       "sentinel_source": "width rule (2% ambiguity guard)",
-      "sentinel_codes": [
-        7,
-        9
-      ],
+      "sentinel_codes": [],
       "values_replaced": 0
     },
     "URXNAL": {
@@ -287,82 +272,55 @@
     "FSD032A": {
       "class": "categorical",
       "sentinel_source": "width rule (2% ambiguity guard)",
-      "sentinel_codes": [
-        7,
-        9
-      ],
+      "sentinel_codes": [],
       "values_replaced": 0
     },
     "FSD032B": {
       "class": "categorical",
       "sentinel_source": "width rule (2% ambiguity guard)",
-      "sentinel_codes": [
-        7,
-        9
-      ],
+      "sentinel_codes": [],
       "values_replaced": 0
     },
     "FSD032C": {
       "class": "categorical",
       "sentinel_source": "width rule (2% ambiguity guard)",
-      "sentinel_codes": [
-        7,
-        9
-      ],
+      "sentinel_codes": [],
       "values_replaced": 0
     },
     "FSD032D": {
       "class": "categorical",
       "sentinel_source": "width rule (2% ambiguity guard)",
-      "sentinel_codes": [
-        7,
-        9
-      ],
+      "sentinel_codes": [],
       "values_replaced": 0
     },
     "FSD032E": {
       "class": "categorical",
       "sentinel_source": "width rule (2% ambiguity guard)",
-      "sentinel_codes": [
-        7,
-        9
-      ],
+      "sentinel_codes": [],
       "values_replaced": 0
     },
     "FSD032F": {
       "class": "categorical",
       "sentinel_source": "width rule (2% ambiguity guard)",
-      "sentinel_codes": [
-        7,
-        9
-      ],
+      "sentinel_codes": [],
       "values_replaced": 0
     },
     "FSDHH": {
       "class": "categorical",
       "sentinel_source": "width rule (2% ambiguity guard)",
-      "sentinel_codes": [
-        7,
-        9
-      ],
+      "sentinel_codes": [],
       "values_replaced": 0
     },
     "FSDAD": {
       "class": "categorical",
       "sentinel_source": "width rule (2% ambiguity guard)",
-      "sentinel_codes": [
-        7,
-        9
-      ],
+      "sentinel_codes": [],
       "values_replaced": 0
     },
     "FSDCH": {
       "class": "categorical",
       "sentinel_source": "width rule (2% ambiguity guard)",
-      "sentinel_codes": [
-        7,
-        9
-      ],
+      "sentinel_codes": [],
       "values_replaced": 0
     },
     "FSD151": {
@@ -439,7 +397,7 @@
     },
     "HUQ010": {
       "class": "categorical",
-      "sentinel_source": "width rule (2% ambiguity guard)",
+      "sentinel_source": "explicit codebook entry",
       "sentinel_codes": [
         7,
         9
@@ -449,19 +407,13 @@
     "HUQ020": {
       "class": "categorical",
       "sentinel_source": "width rule (2% ambiguity guard)",
-      "sentinel_codes": [
-        7,
-        9
-      ],
+      "sentinel_codes": [],
       "values_replaced": 0
     },
     "HUQ040": {
       "class": "categorical",
       "sentinel_source": "width rule (2% ambiguity guard)",
-      "sentinel_codes": [
-        7,
-        9
-      ],
+      "sentinel_codes": [],
       "values_replaced": 0
     },
     "PFQ020": {
@@ -507,19 +459,13 @@
     "DMDBORN_US": {
       "class": "categorical",
       "sentinel_source": "width rule (2% ambiguity guard)",
-      "sentinel_codes": [
-        7,
-        9
-      ],
+      "sentinel_codes": [],
       "values_replaced": 0
     },
     "DMDHRBR_US": {
       "class": "categorical",
       "sentinel_source": "width rule (2% ambiguity guard)",
-      "sentinel_codes": [
-        7,
-        9
-      ],
+      "sentinel_codes": [],
       "values_replaced": 0
     },
     "RIDAGEEX_H": {

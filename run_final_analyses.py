@@ -268,6 +268,41 @@ def match_age_sex(Xtr, ytr, seed=RANDOM_STATE):
 
 # ---------------------------------------------------------------------------
 
+def require_verified(run_name, here=HERE):
+    """Fail-closed gate [31 Aug, strengthened same day]: refuse to touch the
+    test set unless the committed split-verification report (a) covers this
+    exact run, (b) has EVERY individual check passing, and (c) records the
+    SHA-256 of the run's preprocessed artifact matching the file on disk,
+    binding report -> artifact -> evaluation. Shared by every script that
+    reads test-set artifacts."""
+    import hashlib as _hl
+
+    rep_path = os.path.join(here, "outputs", "split_verification_report.json")
+    if not os.path.exists(rep_path):
+        sys.exit("GATE: outputs/split_verification_report.json is missing. "
+                 "Run verify_split_reconstruction.py first.")
+    rep = json.load(open(rep_path))
+    if rep.get("run_dir") != run_name:
+        sys.exit(f"GATE: split verification covers '{rep.get('run_dir')}', "
+                 f"not {run_name}. Re-run verify_split_reconstruction.py.")
+    failed = [k for k, v in rep.get("checks", {}).items() if not v.get("pass")]
+    if failed or not str(rep.get("verdict", "")).startswith("ACCEPTED"):
+        sys.exit(f"GATE: verification not fully passed ({len(failed)} failing "
+                 f"check(s): {failed[:3]}...). Do not evaluate.")
+    pkl_path = os.path.join(here, "notebooks", run_name, "preprocessed_data.pkl")
+    want = rep.get("preprocessed_data_sha256")
+    if not want:
+        sys.exit("GATE: report predates artifact binding - re-run "
+                 "verify_split_reconstruction.py to record the artifact hash.")
+    have = _hl.sha256(open(pkl_path, "rb").read()).hexdigest()
+    if have != want:
+        sys.exit("GATE: preprocessed_data.pkl hash does not match the "
+                 "verified artifact - the run directory changed after "
+                 "verification. Re-run verify_split_reconstruction.py.")
+    print(f"gate: split verification ACCEPTED and artifact-bound for {run_name}")
+    return rep
+
+
 def main():
     global LOCKED_RUN
     ap = argparse.ArgumentParser()
@@ -281,21 +316,7 @@ def main():
                       else f"tuning_results_{args.run}")
 
     run_dir = os.path.join(HERE, "notebooks", LOCKED_RUN)
-
-    # [31 Aug] fail-closed gate: split verification must have ACCEPTED this
-    # exact run before any test-set evaluation happens here.
-    rep_path = os.path.join(HERE, "outputs", "split_verification_report.json")
-    if not os.path.exists(rep_path):
-        sys.exit("GATE: outputs/split_verification_report.json is missing. "
-                 "Run verify_split_reconstruction.py first.")
-    rep = json.load(open(rep_path))
-    if (rep.get("run_dir") != LOCKED_RUN
-            or not str(rep.get("verdict", "")).startswith("ACCEPTED")):
-        sys.exit(f"GATE: split verification covers '{rep.get('run_dir')}' "
-                 f"(verdict: {str(rep.get('verdict', ''))[:30]}...). Re-run "
-                 f"verify_split_reconstruction.py against {LOCKED_RUN}; do not "
-                 f"evaluate unless it is ACCEPTED for this run.")
-    print(f"gate: split verification ACCEPTED for {LOCKED_RUN}")
+    require_verified(LOCKED_RUN)
     art = joblib.load(os.path.join(run_dir, "preprocessed_data.pkl"))
     study = joblib.load(os.path.join(run_dir, "catboost_study.pkl"))
     bp = study.best_params.copy()

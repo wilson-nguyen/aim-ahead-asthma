@@ -1,5 +1,5 @@
 {
-  "verified_at": "2026-08-31T11:09:28",
+  "verified_at": "2026-08-31T14:28:56",
   "run_dir": "tuning_results_20260831_103201",
   "random_state": 42,
   "n_analytic": 6567,
@@ -7,7 +7,8 @@
   "n_val": 1314,
   "n_test": 1314,
   "phase3_content_hash": "f40b776942ab350b3cd53c331a6502843a865843169458ee27caaf928d491166",
-  "split_assignment_sha256": "ca5a8aaf3ac9cdefbe69e9d96530324e2d6821da459c0aabbc43311a370ec90e",
+  "split_assignment_sha256_lf": "7f76b2425a555cb51754f4f1def5d8aadd0c8a5a9f816dedbba5063450fa9569",
+  "preprocessed_data_sha256": "2285a676c8e2ea9c7c7e81b1da1cf5d4256b853250e874ed906fcff57e9f5f41",
   "pandas": "2.3.3",
   "numpy": "2.4.4",
   "checks": {
@@ -141,8 +142,8 @@
     }
   },
   "historical_runs_checked": [
-    "tuning_results_20260426_180035",
-    "tuning_results_20260625_165708"
+    "20260426_180035",
+    "20260625_165708"
   ],
   "verdict": "ACCEPTED. Current run: reconstructed feature, outcome, and survey-weight arrays match the preserved arrays exactly (values, ordering, dtypes, missingness, hashes). Frozen historical runs: preserved outcome and survey-weight arrays match the replay exactly, establishing identical participant membership and ordering of all three splits; historical feature matrices were built under superseded feature definitions and are not reproduced. Splits proven pairwise disjoint and complete."
 }

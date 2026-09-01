@@ -170,8 +170,10 @@ def main():
     processed = os.path.join(HERE, "data", "processed")
     nb_dir = os.path.join(HERE, "notebooks")
 
+    # [31 Aug] default pinned to the analysis of record (was: newest local run)
+    PINNED_RUN = "tuning_results_20260831_103201"
     run_dir = (os.path.join(nb_dir, args.run) if args.run
-               else sorted(glob.glob(os.path.join(nb_dir, "tuning_results_*")))[-1])
+               else os.path.join(nb_dir, PINNED_RUN))
     print(f"Verifying against run: {os.path.basename(run_dir)}\n")
 
     # ---- Step 1: Phase-3 replica vs preserved 03_cleaned.parquet ----------
@@ -215,32 +217,31 @@ def main():
     check("SEQN sets pairwise disjoint",
           not (s_tr & s_va) and not (s_tr & s_te) and not (s_va & s_te))
 
-    # ---- Step 2c: HISTORICAL arrays (frozen pre-correction snapshot) ------
+    # ---- Step 2c: HISTORICAL arrays (committed exports) -------------------
     # Item 7 as originally promised: the split behind the SUBMITTED results.
-    print("\nStep 2c — historical split arrays from the frozen snapshot")
-    import __main__ as _m
-    for _name in ("NHANESCleaner", "ClinicalFeatureEngineer", "ProtectedSelectKBest"):
-        if not hasattr(_m, _name):          # shims so old __main__ pickles resolve
-            setattr(_m, _name, type(_name, (), {}))
-    frozen_pkls = sorted(glob.glob(os.path.join(
-        HERE, "..", "aim-ahead-asthma-FROZEN-*", "notebooks",
-        "tuning_results_*", "preprocessed_data.pkl")))
-    if not frozen_pkls:
-        check("historical frozen arrays found", False, "no FROZEN snapshot located")
-    for fp in frozen_pkls:
-        tag = os.path.basename(os.path.dirname(fp)).replace("tuning_results_", "")
-        try:
-            import warnings as _w
-            with _w.catch_warnings():
-                _w.simplefilter("ignore")
-                hist = joblib.load(fp)
-            for part in ("train", "val", "test"):
-                check(f"[historical {tag}] y_{part} exact",
-                      rep[f"y_{part}"].equals(hist[f"y_{part}"]))
-                check(f"[historical {tag}] sw_{part} exact",
-                      rep[f"sw_{part}"].equals(hist[f"sw_{part}"]))
-        except Exception as e:
-            check(f"[historical {tag}] loadable", False, f"{type(e).__name__}: {e}")
+    # [31 Aug] arrays are read from committed outputs/historical_split_arrays/
+    # (see export_historical_split_arrays.py), so this step is clean-clone
+    # reproducible; it no longer depends on the external FROZEN snapshots.
+    print("\nStep 2c — historical split arrays (committed exports)")
+    hist_npzs = sorted(glob.glob(os.path.join(
+        HERE, "outputs", "historical_split_arrays", "*.npz")))
+    if not hist_npzs:
+        check("historical split arrays found", False,
+              "outputs/historical_split_arrays/ is empty - run "
+              "export_historical_split_arrays.py on the machine with the "
+              "frozen snapshots and commit the .npz files")
+    hist_tags = []
+    for fp in hist_npzs:
+        tag = os.path.basename(fp).replace(".npz", "")
+        hist_tags.append(tag)
+        hist = np.load(fp)
+        for part in ("train", "val", "test"):
+            check(f"[historical {tag}] y_{part} exact",
+                  np.array_equal(np.asarray(rep[f"y_{part}"], float),
+                                 hist[f"y_{part}"]))
+            check(f"[historical {tag}] sw_{part} exact",
+                  np.array_equal(np.asarray(rep[f"sw_{part}"], float),
+                                 hist[f"sw_{part}"]))
 
     # ---- Step 3: feature arrays — engineer via the shared module ----------
     print("\nStep 3 — feature-array reconstruction (cleaner → engineer → pruning)")
@@ -302,8 +303,14 @@ def main():
                          float(rep[f"sw_{part}"].loc[pos])))
     rec = pd.DataFrame(rows, columns=["SEQN", "split", "asthma", "WTMEC2YR"]).sort_values("SEQN")
     csv_path = os.path.join(args.out, "split_assignment_SEQN.csv")
-    rec.to_csv(csv_path, index=False)
+    rec.to_csv(csv_path, index=False, lineterminator="\n")
 
+    # [31 Aug] canonical (LF) hash so the value matches the committed git
+    # blob regardless of the local line-ending configuration, plus a hash
+    # of the run's preprocessed artifact so the gate in run_final_analyses
+    # can bind report -> artifact -> evaluation.
+    csv_lf = open(csv_path, "rb").read().replace(b"\r\n", b"\n")
+    pkl_path = os.path.join(run_dir, "preprocessed_data.pkl")
     report = {
         "verified_at": datetime.now().isoformat(timespec="seconds"),
         "run_dir": os.path.basename(run_dir),
@@ -311,10 +318,11 @@ def main():
         "n_analytic": int(rep["n_clean"]),
         "n_train": len(rep["i_train"]), "n_val": len(rep["i_val"]), "n_test": len(rep["i_test"]),
         "phase3_content_hash": h_rep,
-        "split_assignment_sha256": hashlib.sha256(open(csv_path, "rb").read()).hexdigest(),
+        "split_assignment_sha256_lf": hashlib.sha256(csv_lf).hexdigest(),
+        "preprocessed_data_sha256": hashlib.sha256(open(pkl_path, "rb").read()).hexdigest(),
         "pandas": pd.__version__, "numpy": np.__version__,
         "checks": checks,
-        "historical_runs_checked": [os.path.basename(os.path.dirname(p)) for p in frozen_pkls],
+        "historical_runs_checked": hist_tags,
         "verdict": ("ACCEPTED. Current run: reconstructed feature, outcome, and "
                     "survey-weight arrays match the preserved arrays exactly (values, "
                     "ordering, dtypes, missingness, hashes). Frozen historical runs: "

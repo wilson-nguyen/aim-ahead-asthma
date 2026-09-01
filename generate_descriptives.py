@@ -42,6 +42,7 @@ PINNED_RUN = "tuning_results_20260831_103201"
 LOCKED_RUN = PINNED_RUN
 
 from sklearn.metrics import roc_auc_score                            # noqa: E402
+from run_final_analyses import require_verified                      # noqa: E402
 from pediatric_corrections import cdc_bmi_z                          # noqa: E402
 
 
@@ -67,6 +68,7 @@ def smd(x, g, w=None):
 
 
 def main():
+    require_verified(LOCKED_RUN)
     run_dir = os.path.join(HERE, "notebooks", LOCKED_RUN)
     fin_dir = os.path.join(HERE, "outputs",
                            f"final_analyses_{LOCKED_RUN.split('_', 2)[2]}")
