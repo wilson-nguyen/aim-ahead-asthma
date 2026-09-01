@@ -1,8 +1,8 @@
 # Release manifest — analysis of record
 
-- Generated: 2026-08-31T16:28:28
+- Generated: 2026-08-31T16:37:28
 - Pinned run: `tuning_results_20260831_103201`
-- Git commit: `4c152979167b56e4c3bac3edadd68715c37ad752` (branch `master`)
+- Git commit: `d64afc08829740f61db4b441a1979ff0dcd415ad` (branch `master`)
 - Working tree at generation: CLEAN
 - Python 3.12.13 on Windows-11-10.0.26200-SP0
 
@@ -72,11 +72,11 @@ pass' below refers to this run's locked pass, not to the split's history.
 | `audit_cleaner_replacements.py` | 6501 | `c741a3bc273c4314122daf3e432ddee0d4366a9ad926ac25eff2713947d89df3` |
 | `export_historical_split_arrays.py` | 3202 | `a83cd0458c7212a9bb180a67773967df53e9b47809f667849d1d52a5078a27a0` |
 | `compute_noresampling_contrast.py` | 5403 | `02470ba60d4d28df0efab62ace33f2bd333c08601be47ec3379d6862c8cb8097` |
-| `build_release_manifest.py` | 14028 | `30fb8be7a4b1d6a80d2b17c22ef54e2017c44d7361ad65f9ba6385427ccf540a` |
+| `build_release_manifest.py` | 13961 | `ff83f15451158a85583d047e70e9a016ae00a0b7a5c3538d24e26d174887ab29` |
 | `tests/test_cleaner_sentinels.py` | 8162 | `96a6fa1fa425523e994ed330370373bbed2de76f33f5249f4ffe4d6fa4095174` |
 | `tests/test_quality_gating.py` | 5366 | `03ea6644e524d0d4cf8027f2cc5bf8c08f4128c5b5837e35ba202e30705c8b24` |
 | `tests/test_cdc_bmi_age.py` | 3158 | `07afceb31423dc27fa7679dac5107ec4a9786d05cf2d61e0fd71569207211387` |
-| `README.md` | 13237 | `8d49e6b26bd81ca6fd146fe3eadf4e45d6e114c1781bf2d21c2e71768a71302e` |
+| `README.md` | 13399 | `ab99afe61d002e7792d8d6531b646c97f23ba08f2ee7f7d67c1b746198c68e88` |
 | `requirements.txt` | 148 | `6381e344f1addcc74c0d4c15edc3bb0fbb8b54bbdec0e34c342d1825a4d58263` |
 | `requirements-lock.txt` | 2930 | `5f0f4a38ebd99a8bd8a47e972ba928e34d2a5f20da4bc12341084aa5dc8ea46f` |
 
@@ -91,7 +91,6 @@ pass' below refers to this run's locked pass, not to the split's history.
 | `outputs/reduced_model_20260831_103201/shap_ranking.json` | 1559 | `c298b92185478969f46f1ccbd752ff1c35241083bcbfc18be85f929f3467533c` |
 | `outputs/final_analyses_20260831_103201/noresampling_contrast.json` | 657 | `35bf594361c546298a2532f0b3a5466d2d899c25732bc8c08430cf7eee6c029e` |
 | `notebooks/tuning_results_20260831_103201/weighted_validation_metrics.json` | 1313 | `1de17e670d9a668704c5d6dcaac299c1605499dfec6e5c6539b2e68b30d1476f` |
-| `notebooks/tuning_results_20260831_103201/model_comparison.csv` | 350 | `dbbb03cdd8240ad2d70de2c0f949f5ad85c3b0bb999e369537a6caffe7f97165` |
 | `outputs/split_verification_report.json` | 4481 | `5abc5a8bac38b982f1a2624b3873c4c1fd50731985d6b10174a10695b606928a` |
 | `outputs/cleaner_replacement_audit.json` | 11287 | `5de6e7a7aa5b700e695d0f3a3039dcb4ab44992795e2bfb7f8076ad5604de4cc` |
 | `outputs/historical_split_arrays/provenance.json` | 826 | `9947b0d692a675a05479671dc061b78f83bb774cea00cf2fab313860d7d005b0` |
