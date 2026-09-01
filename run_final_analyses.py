@@ -285,21 +285,36 @@ def require_verified(run_name, here=HERE):
     if rep.get("run_dir") != run_name:
         sys.exit(f"GATE: split verification covers '{rep.get('run_dir')}', "
                  f"not {run_name}. Re-run verify_split_reconstruction.py.")
-    failed = [k for k, v in rep.get("checks", {}).items() if not v.get("pass")]
+    # [v3.2] schema depth: an ACCEPTED verdict with a missing or truncated
+    # checks block is refused, and sentinel check keys must be present.
+    checks = rep.get("checks", {})
+    REQUIRED_KEYS = ("content hash", "y_test exact (values+order+index)",
+                     "splits pairwise disjoint", "SEQN sets pairwise disjoint")
+    if len(checks) < 32 or any(k not in checks for k in REQUIRED_KEYS):
+        sys.exit(f"GATE: verification report has {len(checks)} checks and is "
+                 f"missing required entries - not a complete verification. "
+                 f"Re-run verify_split_reconstruction.py --production.")
+    failed = [k for k, v in checks.items() if not v.get("pass")]
     if failed or not str(rep.get("verdict", "")).startswith("ACCEPTED"):
         sys.exit(f"GATE: verification not fully passed ({len(failed)} failing "
                  f"check(s): {failed[:3]}...). Do not evaluate.")
-    pkl_path = os.path.join(here, "notebooks", run_name, "preprocessed_data.pkl")
-    want = rep.get("preprocessed_data_sha256")
-    if not want:
-        sys.exit("GATE: report predates artifact binding - re-run "
-                 "verify_split_reconstruction.py to record the artifact hash.")
-    have = _hl.sha256(open(pkl_path, "rb").read()).hexdigest()
-    if have != want:
-        sys.exit("GATE: preprocessed_data.pkl hash does not match the "
-                 "verified artifact - the run directory changed after "
-                 "verification. Re-run verify_split_reconstruction.py.")
-    print(f"gate: split verification ACCEPTED and artifact-bound for {run_name}")
+    # [v3.2] authenticate every evaluation INPUT the scripts consume from
+    # the run directory (downstream outputs are the manifest's job).
+    for fname, key in (("preprocessed_data.pkl", "preprocessed_data_sha256"),
+                       ("catboost_best_model.pkl", "catboost_best_model_sha256"),
+                       ("catboost_study.pkl", "catboost_study_sha256")):
+        want = rep.get(key)
+        if not want:
+            sys.exit(f"GATE: report predates artifact binding for {fname} - "
+                     f"re-run verify_split_reconstruction.py --production.")
+        p = os.path.join(here, "notebooks", run_name, fname)
+        have = _hl.sha256(open(p, "rb").read()).hexdigest()
+        if have != want:
+            sys.exit(f"GATE: {fname} hash does not match the verified "
+                     f"artifact - the run directory changed after "
+                     f"verification. Re-run verify_split_reconstruction.py.")
+    print(f"gate: split verification ACCEPTED and artifact-bound for {run_name} "
+          f"({len(checks)} checks, 3 input artifacts authenticated)")
     return rep
 
 

@@ -120,7 +120,6 @@ def test_real_data_gating_counts():
     abc = apply_spirometry_quality_gating(an, SENSITIVITY_ALLOWED_GRADES, verbose=False)
     n_both = int((abc["SPXNFEV1"].notna() & abc["SPXNFVC"].notna()).sum())
     assert n_both == 5440 and len(an) - n_both == 1127
-    return False
 
 
 if __name__ == "__main__":

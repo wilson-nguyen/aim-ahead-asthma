@@ -209,7 +209,7 @@ def main():
                  label=f"{label}, AUC {roc_auc_score(yte, prob):.3f}")
     plt.plot([0, 1], [0, 1], ":", color="gray", lw=1)
     plt.xlabel("1 − Specificity"); plt.ylabel("Sensitivity")
-    plt.title("Held-out test set"); plt.legend(loc="lower right"); plt.tight_layout()
+    plt.title("Test set (historically reused internal split)"); plt.legend(loc="lower right"); plt.tight_layout()
     plt.savefig(os.path.join(fig_dir, "figure_roc.png"), dpi=300); plt.close()
 
     # Metrics bars at locked thresholds (test)
@@ -221,7 +221,8 @@ def main():
     plt.bar(x + w / 2, [red_t[m] for m in ms], w, label="Reduced (12)")
     plt.xticks(x, [m.upper() if len(m) == 3 else m.capitalize() for m in ms])
     plt.ylim(0, 1); plt.ylabel("Value")
-    plt.title("Test performance at locked thresholds (sens ≥ 0.80 rule)")
+    plt.title("Test set (historically reused internal split)\n"
+              "performance at validation-locked thresholds")
     plt.legend(); plt.tight_layout()
     plt.savefig(os.path.join(fig_dir, "figure_metrics.png"), dpi=300); plt.close()
 
@@ -260,7 +261,7 @@ def main():
         return np.array(exp), np.array(obs)
 
     plt.figure(figsize=(6, 6))
-    for y_, p_, label in ((yva, prob_va_f, "Validation"), (yte, prob_te_f, "Test")):
+    for y_, p_, label in ((yva, prob_va_f, "Validation"), (yte, prob_te_f, "Test (reused internal split)")):
         e, o = reliability(np.asarray(y_), np.asarray(p_))
         plt.plot(e, o, "o-", label=label)
     plt.plot([0, 1], [0, 1], ":", color="gray")
@@ -284,7 +285,7 @@ def main():
     plt.axhline(0, color="gray", lw=1, label="Screen none")
     plt.ylim(-0.05, max(nb_model) + 0.05)
     plt.xlabel("Threshold probability"); plt.ylabel("Net benefit")
-    plt.title("Decision curve — held-out test set"); plt.legend(); plt.tight_layout()
+    plt.title("Decision curve — test set (historically reused internal split)"); plt.legend(); plt.tight_layout()
     plt.savefig(os.path.join(fig_dir, "efigure_decision_curve.png"), dpi=300); plt.close()
 
     print(f"\nDone. Artifacts: {out_dir}/ | Figures: {fig_dir}/")

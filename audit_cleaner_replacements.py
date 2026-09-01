@@ -56,6 +56,40 @@ def main():
     X = X.drop(columns=[c for c in X.columns if c in excl])
 
     cl = NHANESCleaner().fit(X)
+
+    # ---- [v3.2] additionally audit the PERSISTED cleaner from the run
+    # artifact, not just a freshly fitted one. The persisted object predates
+    # the fail-closed rewrite and retains inferred width-rule maps for
+    # unlisted variables; those maps are inert in the artifacts (the stored
+    # feature frames are already built), and this section proves they would
+    # replace zero values on the frames regardless.
+    import joblib
+    persisted = {"present": False}
+    pkl = os.path.join(HERE, "notebooks", "tuning_results_20260831_103201",
+                       "preprocessed_data.pkl")
+    if os.path.exists(pkl):
+        art = joblib.load(pkl)
+        pcl = art.get("cleaner")
+        if pcl is not None and hasattr(pcl, "sentinel_map_"):
+            n_persist = 0
+            legacy_maps = {}
+            for col, sents in pcl.sentinel_map_.items():
+                if not sents or col not in X.columns:
+                    continue
+                n = int(X[col].isin(list(sents)).sum())
+                n_persist += n
+                if col not in CATEGORICAL_SENTINELS:
+                    legacy_maps[col] = sorted(sents)
+            persisted = {
+                "present": True,
+                "values_the_persisted_maps_would_replace": n_persist,
+                "unlisted_vars_with_legacy_inferred_maps": len(legacy_maps),
+                "note": ("the persisted cleaner predates the 31 Aug "
+                         "fail-closed rewrite; its inferred maps are inert "
+                         "(stored feature frames are final) and would "
+                         "replace the count above if ever re-applied"),
+            }
+
     variables = {}
     total = 0
     for col in X.columns:
@@ -93,6 +127,7 @@ def main():
             "regression guard, fail-closed for unlisted variables since "
             "31 Aug. Any nonzero count must be adjudicated against the "
             "NHANES codebook before the affected run is treated as final."),
+        "persisted_cleaner_in_run_artifact": persisted,
         "variables": variables,
     }
     path = os.path.join(HERE, "outputs", "cleaner_replacement_audit.json")

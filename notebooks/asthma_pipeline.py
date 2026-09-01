@@ -250,7 +250,10 @@ class NHANESCleaner(BaseEstimator, TransformerMixin):
     is adjudicated against its codebook instead of silently mangled
     [fail-closed since 31 Aug 2026; previously a >2% frequency guard].
     Binary (1/2) variables: 7/9 scrubbed defensively, then recoded to 1/0
-    with missingness preserved.
+    with missingness preserved. This scrub is an intended CONTRACT, applied
+    at transform time even to codes absent from the fit data: NHANES 1/2
+    questionnaire items universally use 7/9 as refused/don't-know, so a
+    7/9 appearing only outside the fit split is nonresponse, not signal.
     """
 
     def __init__(self):
@@ -293,15 +296,17 @@ class NHANESCleaner(BaseEstimator, TransformerMixin):
                 self.sentinel_map_[col] = set(CATEGORICAL_SENTINELS[col])
                 continue
             # Unlisted variable: NEVER scrub. Detect sentinel-looking codes
-            # with the width rule and fail closed if any are present, so no
-            # legitimate rare code can be silently erased and no genuine
-            # nonresponse code can silently flow through.
+            # and fail closed if any are present, so no legitimate rare code
+            # can be silently erased and no genuine nonresponse code can
+            # silently flow through. [31 Aug v3.2] the tripwire checks EVERY
+            # sentinel-family code above the variable's maximum non-sentinel
+            # value, not just the nearest pair, so e.g. a stray 777 on a
+            # 1-6-coded variable is also caught.
             obs = set(int(v) for v in X_df[col].dropna().unique())
             nonsent_max = max((v for v in obs if v not in _ALL_SENTINEL_CODES),
                               default=0)
-            pair = next((set(p) for p in _SENTINEL_PAIRS if p[0] > nonsent_max),
-                        set())
-            present = sorted(pair & obs)
+            present = sorted(c for c in _ALL_SENTINEL_CODES
+                             if c > nonsent_max and c in obs)
             if present:
                 raise ValueError(
                     f"NHANESCleaner: '{col}' is not in CATEGORICAL_SENTINELS "

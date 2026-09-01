@@ -1,0 +1,14 @@
+{
+  "exported": "2026-08-31T14:51:19",
+  "note": "y/sw arrays extracted from the frozen pre-correction snapshots. The frozen artifacts do not contain participant identifiers (SEQN), so historical identity is established at the level of these arrays; the current run's split record is SEQN-anchored.",
+  "sources": {
+    "20260426_180035": {
+      "source_pkl": "aim-ahead-asthma-FROZEN-20260811_1657\\notebooks\\tuning_results_20260426_180035\\preprocessed_data.pkl",
+      "source_pkl_sha256": "4319d2ee6aad5af779f0bd69ceaf2442e1f1277aa966a5c2c7f149adca177ce8"
+    },
+    "20260625_165708": {
+      "source_pkl": "aim-ahead-asthma-FROZEN-20260811_1657\\notebooks\\tuning_results_20260625_165708\\preprocessed_data.pkl",
+      "source_pkl_sha256": "d1a9905fce05b62aedbc639f330b6da6df804b73ce2fad00209b9b918509f411"
+    }
+  }
+}

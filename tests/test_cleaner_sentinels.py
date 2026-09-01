@@ -114,6 +114,32 @@ def test_unlisted_rare_code_fails_closed():
         raise AssertionError("unlisted rare sentinel-looking code must raise")
 
 
+def test_unlisted_distant_sentinel_code_also_raises():
+    """[v3.2] the tripwire must catch sentinel-family codes far above the
+    variable's range (e.g. 777 on a 1-6-coded variable), not only the
+    nearest pair."""
+    df = pd.DataFrame({"FAKE_BIG": np.r_[np.tile([1., 2, 3, 4, 5, 6], 49),
+                                         [777.0, 3, 3, 3, 3, 3]]})
+    try:
+        NHANESCleaner().fit(df)
+    except ValueError as e:
+        assert "FAKE_BIG" in str(e) and "777" in str(e)
+    else:
+        raise AssertionError("distant sentinel-looking code must raise")
+
+
+def test_binary_transform_scrub_is_contract():
+    """Binary 1/2 items: 7/9 are scrubbed at transform even when absent
+    from the fit data (intended contract; NHANES 1/2 items universally use
+    7/9 as refused/don't-know)."""
+    train = pd.DataFrame({"FAKE_BIN": [1.0, 2.0] * 150})
+    cl = NHANESCleaner().fit(train)
+    val = pd.DataFrame({"FAKE_BIN": [1.0, 7.0, 9.0, 2.0]})
+    out = cl.transform(val)
+    assert np.isnan(out.loc[1, "FAKE_BIN"]) and np.isnan(out.loc[2, "FAKE_BIN"])
+    assert out.loc[0, "FAKE_BIN"] == 1.0 and out.loc[3, "FAKE_BIN"] == 0.0
+
+
 def test_unlisted_validation_only_code_survives_transform():
     """A code appearing only OUTSIDE the fit data must flow through
     unchanged for unlisted variables (no width-rule map is retained)."""

@@ -42,6 +42,17 @@ def main():
         sys.exit("No frozen snapshots found (../aim-ahead-asthma-FROZEN-*). "
                  "Run this on the machine that has them.")
     os.makedirs(OUT, exist_ok=True)
+    import hashlib
+    import json
+    from datetime import datetime
+    provenance = {"exported": datetime.now().isoformat(timespec="seconds"),
+                  "note": ("y/sw arrays extracted from the frozen "
+                           "pre-correction snapshots. The frozen artifacts "
+                           "do not contain participant identifiers (SEQN), "
+                           "so historical identity is established at the "
+                           "level of these arrays; the current run's split "
+                           "record is SEQN-anchored."),
+                  "sources": {}}
     for fp in pkls:
         run = os.path.basename(os.path.dirname(fp)).replace("tuning_results_", "")
         art = joblib.load(fp)
@@ -51,9 +62,16 @@ def main():
             arrays[f"sw_{part}"] = np.asarray(art[f"sw_{part}"], dtype=float)
         path = os.path.join(OUT, f"{run}.npz")
         np.savez_compressed(path, **arrays)
+        provenance["sources"][run] = {
+            "source_pkl": os.path.relpath(fp, os.path.join(HERE, "..")),
+            "source_pkl_sha256": hashlib.sha256(open(fp, "rb").read()).hexdigest(),
+        }
         print(f"exported {run}: " + ", ".join(
             f"{k}={v.shape[0]}" for k, v in arrays.items() if k.startswith("y_"))
             + f" -> {path}")
+    with open(os.path.join(OUT, "provenance.json"), "w") as f:
+        json.dump(provenance, f, indent=2)
+    print("provenance written:", os.path.join(OUT, "provenance.json"))
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 {
-  "verified_at": "2026-08-31T14:28:56",
+  "verified_at": "2026-08-31T14:51:24",
   "run_dir": "tuning_results_20260831_103201",
   "random_state": 42,
   "n_analytic": 6567,
@@ -9,6 +9,8 @@
   "phase3_content_hash": "f40b776942ab350b3cd53c331a6502843a865843169458ee27caaf928d491166",
   "split_assignment_sha256_lf": "7f76b2425a555cb51754f4f1def5d8aadd0c8a5a9f816dedbba5063450fa9569",
   "preprocessed_data_sha256": "2285a676c8e2ea9c7c7e81b1da1cf5d4256b853250e874ed906fcff57e9f5f41",
+  "catboost_best_model_sha256": "0250dd73d681fcacbf40ddcb43690251fa99cd8e4e4abb0b22251372c8e42d66",
+  "catboost_study_sha256": "20f60a0eb44fb2c6db003758a8f11be3974c74680a395c5cf6c1d60a4a9126ad",
   "pandas": "2.3.3",
   "numpy": "2.4.4",
   "checks": {
@@ -128,22 +130,22 @@
       "pass": true,
       "detail": ""
     },
-    "X_train_feat exact + hash": {
+    "X_train_feat reconstruction (tol 1e-09)": {
       "pass": true,
-      "detail": "hash=842202d1e00cb9a0"
+      "detail": "hash=842202d1e00cb9a0; bitwise_match=True"
     },
-    "X_val_feat exact + hash": {
+    "X_val_feat reconstruction (tol 1e-09)": {
       "pass": true,
-      "detail": "hash=be236d0ca6ced248"
+      "detail": "hash=be236d0ca6ced248; bitwise_match=True"
     },
-    "X_test_feat exact + hash": {
+    "X_test_feat reconstruction (tol 1e-09)": {
       "pass": true,
-      "detail": "hash=b066c046b6271d9d"
+      "detail": "hash=b066c046b6271d9d; bitwise_match=True"
     }
   },
   "historical_runs_checked": [
     "20260426_180035",
     "20260625_165708"
   ],
-  "verdict": "ACCEPTED. Current run: reconstructed feature, outcome, and survey-weight arrays match the preserved arrays exactly (values, ordering, dtypes, missingness, hashes). Frozen historical runs: preserved outcome and survey-weight arrays match the replay exactly, establishing identical participant membership and ordering of all three splits; historical feature matrices were built under superseded feature definitions and are not reproduced. Splits proven pairwise disjoint and complete."
+  "verdict": "ACCEPTED. Current run: reconstructed outcome and survey-weight arrays match the preserved arrays exactly (values, ordering, dtypes, missingness); feature matrices match within the stated numerical tolerance, with bitwise equality recorded per check as platform-specific evidence. Historical runs: the preserved outcome and survey-weight sequences match the replay exactly, in order and value; the frozen artifacts do not include participant identifiers, so historical identity is established at the level of these arrays (the current run's assignments are SEQN-anchored). Splits proven pairwise disjoint and complete."
 }

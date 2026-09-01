@@ -81,8 +81,9 @@ def main():
         "run_final_analyses.py", "run_reduced_model_and_figures.py",
         "run_uncertainty.py", "generate_descriptives.py",
         "redraw_shap_figures.py", "patch11_r3_quality_gating.py",
+        "patch12_nb04_header.py", "patch13_stale_notebook_text.py",
         "audit_cleaner_replacements.py", "export_historical_split_arrays.py",
-        "build_release_manifest.py",
+        "compute_noresampling_contrast.py", "build_release_manifest.py",
         "tests/test_cleaner_sentinels.py", "tests/test_quality_gating.py",
         "tests/test_cdc_bmi_age.py",
         "README.md", "requirements.txt", "requirements-lock.txt",
@@ -93,8 +94,10 @@ def main():
         f"outputs/final_analyses_{run_id}/descriptive_statistics.json",
         f"outputs/reduced_model_{run_id}/reduced_model_results.json",
         f"outputs/reduced_model_{run_id}/shap_ranking.json",
+        f"outputs/final_analyses_{run_id}/noresampling_contrast.json",
         "outputs/split_verification_report.json",
         "outputs/cleaner_replacement_audit.json",
+        "outputs/historical_split_arrays/provenance.json",
         "outputs/table1_baseline.csv", "outputs/table1_baseline.md",
     ]
     artifacts = [

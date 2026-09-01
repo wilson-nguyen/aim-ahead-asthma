@@ -1,0 +1,13 @@
+{
+  "primary_minus_noresampling_auc": {
+    "point": -0.0394,
+    "ci95": [
+      -0.0598,
+      -0.0185
+    ],
+    "n_boot": 2000,
+    "seed": 42,
+    "note": "paired stratified bootstrap of raw test scores; conditional on the fitted models and the historically reused internal split. A negative value favors the no-resampling variant. Reported for disclosure; the pre-declared resampling-based primary is retained rather than switched post hoc."
+  },
+  "refit_verified_against_committed_arm": true
+}

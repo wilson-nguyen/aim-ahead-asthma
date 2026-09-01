@@ -165,6 +165,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--run", default=None, help="tuning_results_* dir name under notebooks/")
     ap.add_argument("--out", default=os.path.join(HERE, "outputs"))
+    ap.add_argument("--production", action="store_true",
+                    help="write the canonical committed report "
+                         "(split_verification_report.json). Without this "
+                         "flag, results go to split_verification_report."
+                         "local.json so a local or cross-platform run can "
+                         "never overwrite the committed record.")
     args = ap.parse_args()
 
     processed = os.path.join(HERE, "data", "processed")
@@ -266,29 +272,39 @@ def main():
           f"{len(pruned)} vs {len(art.get('pruned_features') or [])}")
     check("feature name list matches run",
           Xtr_f.columns.tolist() == art.get("feature_names"))
+    # [v3.2] portable vs platform-sensitive classification: participant-level
+    # and structural agreement must hold everywhere; bitwise equality of
+    # float feature values is platform evidence. A reconstruction whose only
+    # deviation is float noise (identical NaN pattern, max abs diff < 1e-9)
+    # PASSES the portable check, with the bitwise status recorded separately.
+    TOL = 1e-9
     for name, mine, theirs in (("X_train_feat", Xtr_f, art.get("X_train_feat")),
                                ("X_val_feat", Xva_f, art.get("X_val_feat")),
                                ("X_test_feat", Xte_f, art.get("X_test_feat"))):
         mine = mine.reset_index(drop=True)
-        ok = theirs is not None and mine.equals(theirs.reset_index(drop=True))
-        detail = f"hash={frame_hash(mine)[:16]}"
-        if theirs is not None and not ok:
-            # diagnose: bitwise mismatch vs structural mismatch
+        bitwise = theirs is not None and mine.equals(theirs.reset_index(drop=True))
+        ok = bitwise
+        detail = f"hash={frame_hash(mine)[:16]}; bitwise_match={bitwise}"
+        if theirs is not None and not bitwise:
             t = theirs.reset_index(drop=True)
             if list(mine.columns) == list(t.columns) and mine.shape == t.shape:
                 a = mine.to_numpy(dtype=float); b = t.to_numpy(dtype=float)
                 nan_mm = int((np.isnan(a) != np.isnan(b)).sum())
                 both = ~np.isnan(a) & ~np.isnan(b)
                 max_abs = float(np.max(np.abs(a[both] - b[both]))) if both.any() else 0.0
-                detail += (f"; nan_mismatch={nan_mm}, max_abs_diff={max_abs:.3e}. "
-                           "If nan_mismatch=0 and max_abs_diff<1e-12, this is "
-                           "floating-point library noise from running in a different "
-                           "environment than the one that produced the run artifacts — "
-                           "re-run this script in the production environment for the "
-                           "bitwise verdict.")
+                if nan_mm == 0 and max_abs < TOL:
+                    ok = True
+                    detail += (f"; PASS within tolerance (max_abs_diff="
+                               f"{max_abs:.3e} < {TOL:g}, identical NaN "
+                               f"pattern) - cross-platform float noise; "
+                               f"bitwise hashes are platform-specific "
+                               f"evidence from the production environment")
+                else:
+                    detail += (f"; nan_mismatch={nan_mm}, "
+                               f"max_abs_diff={max_abs:.3e} exceeds tolerance")
             else:
                 detail += "; STRUCTURAL mismatch (shape or columns differ)"
-        check(f"{name} exact + hash", ok, detail)
+        check(f"{name} reconstruction (tol {TOL:g})", ok, detail)
 
     # ---- Step 4: write the permanent SEQN -> split record -----------------
     print("\nStep 4 — writing the split-assignment record")
@@ -311,6 +327,11 @@ def main():
     # can bind report -> artifact -> evaluation.
     csv_lf = open(csv_path, "rb").read().replace(b"\r\n", b"\n")
     pkl_path = os.path.join(run_dir, "preprocessed_data.pkl")
+
+    def _sha(p):
+        return (hashlib.sha256(open(p, "rb").read()).hexdigest()
+                if os.path.exists(p) else None)
+
     report = {
         "verified_at": datetime.now().isoformat(timespec="seconds"),
         "run_dir": os.path.basename(run_dir),
@@ -319,23 +340,33 @@ def main():
         "n_train": len(rep["i_train"]), "n_val": len(rep["i_val"]), "n_test": len(rep["i_test"]),
         "phase3_content_hash": h_rep,
         "split_assignment_sha256_lf": hashlib.sha256(csv_lf).hexdigest(),
-        "preprocessed_data_sha256": hashlib.sha256(open(pkl_path, "rb").read()).hexdigest(),
+        "preprocessed_data_sha256": _sha(pkl_path),
+        "catboost_best_model_sha256": _sha(os.path.join(run_dir, "catboost_best_model.pkl")),
+        "catboost_study_sha256": _sha(os.path.join(run_dir, "catboost_study.pkl")),
         "pandas": pd.__version__, "numpy": np.__version__,
         "checks": checks,
         "historical_runs_checked": hist_tags,
-        "verdict": ("ACCEPTED. Current run: reconstructed feature, outcome, and "
-                    "survey-weight arrays match the preserved arrays exactly (values, "
-                    "ordering, dtypes, missingness, hashes). Frozen historical runs: "
-                    "preserved outcome and survey-weight arrays match the replay exactly, "
-                    "establishing identical participant membership and ordering of all "
-                    "three splits; historical feature matrices were built under "
-                    "superseded feature definitions and are not reproduced. Splits "
-                    "proven pairwise disjoint and complete."
+        "verdict": ("ACCEPTED. Current run: reconstructed outcome and survey-weight "
+                    "arrays match the preserved arrays exactly (values, ordering, "
+                    "dtypes, missingness); feature matrices match within the stated "
+                    "numerical tolerance, with bitwise equality recorded per check as "
+                    "platform-specific evidence. Historical runs: the preserved outcome "
+                    "and survey-weight sequences match the replay exactly, in order and "
+                    "value; the frozen artifacts do not include participant "
+                    "identifiers, so historical identity is established at the level "
+                    "of these arrays (the current run's assignments are SEQN-anchored). "
+                    "Splits proven pairwise disjoint and complete."
                     if all_pass else
                     "REJECTED: at least one check failed — do NOT describe the split as "
                     "deterministically reconstructed."),
     }
-    with open(os.path.join(args.out, "split_verification_report.json"), "w") as f:
+    rep_name = ("split_verification_report.json" if args.production
+                else "split_verification_report.local.json")
+    if not args.production:
+        print("\n[local mode] writing to split_verification_report.local.json; "
+              "the committed report is untouched. Use --production on the "
+              "machine of record.")
+    with open(os.path.join(args.out, rep_name), "w") as f:
         json.dump(report, f, indent=2)
 
     print(f"\n{'='*70}\n{report['verdict']}\n"

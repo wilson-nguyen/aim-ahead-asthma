@@ -1,8 +1,14 @@
 {
-  "generated": "2026-08-31T14:28:58",
+  "generated": "2026-08-31T14:51:26",
   "frame": "notebook-04 analytic frame (gated, excluded, filtered), n=6567, 75 columns",
   "total_values_replaced": 0,
   "interpretation": "total_values_replaced counts sentinel-to-missing replacements only (the binary 1/2 to 1/0 recode is a separate, intended transform). 0 means the cleaner performs zero sentinel-to-missing replacements on real data: Phase 2 recoding already handled nonresponse codes, and the cleaner is a defensive regression guard, fail-closed for unlisted variables since 31 Aug. Any nonzero count must be adjudicated against the NHANES codebook before the affected run is treated as final.",
+  "persisted_cleaner_in_run_artifact": {
+    "present": true,
+    "values_the_persisted_maps_would_replace": 0,
+    "unlisted_vars_with_legacy_inferred_maps": 18,
+    "note": "the persisted cleaner predates the 31 Aug fail-closed rewrite; its inferred maps are inert (stored feature frames are final) and would replace the count above if ever re-applied"
+  },
   "variables": {
     "RIAGENDR": {
       "class": "binary",
