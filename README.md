@@ -21,7 +21,9 @@ The test split is a **historically reused internal holdout** — it also produce
 | Primary (22 features) | 0.779 (0.744-0.813) | 0.752 | 0.625 | 0.32 | 0.92 |
 | Reduced (12 features) | 0.802 (0.769-0.834) | 0.793 | 0.672 | 0.36 | 0.93 |
 
-The reduced model — the ten highest-SHAP features plus the two protected spirometry-availability indicators — has the higher AUC in a paired bootstrap (difference 0.023, 95% CI 0.007 to 0.041) and better calibration (slope 0.87 vs 0.71) while using half as many variables. **Neither model meets the originally stated 0.80 sensitivity / 0.70 specificity targets as point estimates on held-out data**; both sensitivity intervals include 0.80. This is reported plainly rather than tuned away.
+The reduced model — the ten highest-SHAP features plus the two protected spirometry-availability indicators — has the higher AUC in a paired bootstrap (difference 0.023, 95% CI 0.007 to 0.041) and more favorable calibration point estimates (slope 0.87 vs 0.71) while using half as many variables.
+
+**A pre-declared no-resampling variant outperforms the primary** (AUC 0.818 vs 0.779; paired difference 0.039 in its favor, 95% CI 0.019 to 0.060; `outputs/final_analyses_*/noresampling_contrast.json`). The mechanism: the ENN cleaning step removes roughly half the training controls (3,202 → 1,520; 62% cases after resampling). The pre-specified resampling-based primary is retained rather than switched after observing the reused test split. **Neither model meets the originally stated 0.80 sensitivity / 0.70 specificity targets as point estimates on held-out data**; both sensitivity intervals include 0.80. This is reported plainly rather than tuned away.
 
 CIs are stratified bootstrap, 2,000 resamples, seed 42, conditional on the fitted models and locked thresholds (they do not propagate tuning, selection, or calibration uncertainty); the survey-weighted variants resample participants with their weights and do not model the design's clustering.
 
@@ -83,9 +85,11 @@ jupyter execute notebooks/04_model.ipynb                   # 6. tuning (hours)
 
 Notebook 04's parallel Optuna search is **not bit-reproducible**, so this
 creates a new timestamped `tuning_results_*` directory constituting a new
-analysis. To evaluate it, run `verify_split_reconstruction.py --run <new-id>`
-and then each run script with the pin updated (or `run_final_analyses.py
---run <new-id>`); the gate will refuse mismatched combinations. The pinned
+analysis. To evaluate it, run `verify_split_reconstruction.py --run <new-id>
+--production` (without `--production`, output goes to a `.local.json` file
+that the gate deliberately ignores) and then each run script with the pin
+updated (or `run_final_analyses.py --run <new-id>`); the gate will refuse
+mismatched combinations. The pinned
 IDs in the scripts always name the analysis of record.
 
 A note on "single evaluation pass": several scripts read the test split, but

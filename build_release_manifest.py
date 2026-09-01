@@ -207,6 +207,15 @@ def main():
         L += ["", f"- Paired A/B minus A/B/C gating difference: {abc['point']} "
                   f"{abc['ci95']} (interval covering zero indicates no detectable "
                   f"dependence on the quality criterion's strictness)"]
+    nrc_path = fin / "noresampling_contrast.json"
+    if nrc_path.exists():
+        nrc = json.load(open(nrc_path))["primary_minus_noresampling_auc"]
+        L += [f"- Paired primary minus no-resampling AUC: {nrc['point']} "
+              f"{nrc['ci95']} — the no-resampling variant outperforms the "
+              f"primary (ENN removes roughly half the training controls; "
+              f"3,202 to 1,520, 62% cases after resampling); the pre-declared "
+              f"resampling-based primary is retained rather than switched "
+              f"post hoc"]
 
     L += ["", "## Analysis code (committed)", "",
           "| File | Bytes | SHA-256 |", "|---|---:|---|", *table(tracked),

@@ -1,9 +1,9 @@
 # Release manifest — analysis of record
 
-- Generated: 2026-08-31T14:51:38
+- Generated: 2026-08-31T15:09:21
 - Pinned run: `tuning_results_20260831_103201`
-- Git commit: `abe9f14757e1641216094e040ae1ad55934853c3` (branch `master`)
-- Working tree at generation: CLEAN
+- Git commit: `c2985c2ac8a5cd0b413ab9719a48f4318bb84c69` (branch `master`)
+- Working tree at generation: MODIFIED (see below)
 - Python 3.12.13 on Windows-11-10.0.26200-SP0
 
 This manifest binds the reported numbers to specific file contents. Hashes
@@ -44,6 +44,7 @@ pass' below refers to this run's locked pass, not to the split's history.
 | `quality_grades_ABC` | 0.767 |
 
 - Paired A/B minus A/B/C gating difference: 0.0117 [-0.0052, 0.0287] (interval covering zero indicates no detectable dependence on the quality criterion's strictness)
+- Paired primary minus no-resampling AUC: -0.0394 [-0.0598, -0.0185] — the no-resampling variant outperforms the primary (ENN removes roughly half the training controls; 3,202 to 1,520, 62% cases after resampling); the pre-declared resampling-based primary is retained rather than switched post hoc
 
 ## Analysis code (committed)
 
@@ -70,11 +71,11 @@ pass' below refers to this run's locked pass, not to the split's history.
 | `audit_cleaner_replacements.py` | 6501 | `c741a3bc273c4314122daf3e432ddee0d4366a9ad926ac25eff2713947d89df3` |
 | `export_historical_split_arrays.py` | 3202 | `a83cd0458c7212a9bb180a67773967df53e9b47809f667849d1d52a5078a27a0` |
 | `compute_noresampling_contrast.py` | 4857 | `9e82191d5e6f00ae775067b57a1803c55a6d4fb0f89154fa0e9afd7d57fff8ff` |
-| `build_release_manifest.py` | 11455 | `1fc8086e0e51bc307db8a34112766e3c617b4a8d73fa7188e8ece23cc393c212` |
+| `build_release_manifest.py` | 12016 | `1fc8086e0e51bc307db8a34112766e3c617b4a8d73fa7188e8ece23cc393c212` |
 | `tests/test_cleaner_sentinels.py` | 8162 | `96a6fa1fa425523e994ed330370373bbed2de76f33f5249f4ffe4d6fa4095174` |
 | `tests/test_quality_gating.py` | 5366 | `03ea6644e524d0d4cf8027f2cc5bf8c08f4128c5b5837e35ba202e30705c8b24` |
 | `tests/test_cdc_bmi_age.py` | 3158 | `07afceb31423dc27fa7679dac5107ec4a9786d05cf2d61e0fd71569207211387` |
-| `README.md` | 11490 | `6c1f358c7589e3149f1ac67a47e734c10f9e506d4adeec56aec2f4b4d5198ff9` |
+| `README.md` | 12070 | `6c1f358c7589e3149f1ac67a47e734c10f9e506d4adeec56aec2f4b4d5198ff9` |
 | `requirements.txt` | 148 | `6381e344f1addcc74c0d4c15edc3bb0fbb8b54bbdec0e34c342d1825a4d58263` |
 | `requirements-lock.txt` | 2930 | `5f0f4a38ebd99a8bd8a47e972ba928e34d2a5f20da4bc12341084aa5dc8ea46f` |
 
@@ -130,6 +131,13 @@ clone reproduces predictions without refitting.
 |---|---:|---|
 | `data/processed/02b_harmonized.parquet` | 4121522 | `04b65673360c12a16327c62a2df6d84e87cf0f427c77c293ebcd7f8b3c3b5524` |
 | `data/processed/03_cleaned.parquet` | 538075 | `8a6c17b36c26486323b92270d0d1b1a93dcb8c45f489a49dc561904c29fcd84a` |
+
+## Uncommitted changes at generation time
+
+```
+M README.md
+ M build_release_manifest.py
+```
 
 ## Environment
 
