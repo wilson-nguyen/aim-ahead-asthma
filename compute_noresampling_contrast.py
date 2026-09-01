@@ -87,7 +87,17 @@ def main():
         diffs.append(roc_auc_score(yte[bi], raw_p[bi])
                      - roc_auc_score(yte[bi], raw_a[bi]))
     lo, hi = np.percentile(diffs, [2.5, 97.5])
+    # [v3.2.1 provenance] persist the exact prediction vectors used for the
+    # contrast, so the paired interval is recomputable without any refit.
+    pred_path = os.path.join(fin_dir, "noresampling_predictions.npz")
+    np.savez_compressed(pred_path, raw_primary=raw_p, raw_noresampling=raw_a,
+                        y_test=yte)
+    import hashlib
+    pred_sha = hashlib.sha256(open(pred_path, "rb").read()).hexdigest()
+
     out = {
+        "prediction_vectors": {"file": os.path.basename(pred_path),
+                               "sha256": pred_sha},
         "primary_minus_noresampling_auc": {
             "point": round(float(roc_auc_score(yte, raw_p)
                                  - roc_auc_score(yte, raw_a)), 4),

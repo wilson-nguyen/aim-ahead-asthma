@@ -1,4 +1,8 @@
 {
+  "prediction_vectors": {
+    "file": "noresampling_predictions.npz",
+    "sha256": "fadd32485a8d53e2b665e137a325f76dcf88b056ed55d5199b155e3bdfb6046d"
+  },
   "primary_minus_noresampling_auc": {
     "point": -0.0394,
     "ci95": [

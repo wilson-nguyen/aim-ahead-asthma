@@ -64,13 +64,39 @@ def committed_sha256(relpath):
         return None
 
 
+def blob_size(relpath):
+    """Byte length of the committed blob at HEAD (matches the hash source),
+    so rows describe one repository state. None if untracked."""
+    try:
+        r = subprocess.run(["git", "cat-file", "-s", f"HEAD:{relpath}"],
+                           cwd=REPO, capture_output=True, text=True, timeout=30)
+        return int(r.stdout.strip()) if r.returncode == 0 else None
+    except Exception:
+        return None
+
+
 def main():
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--allow-dirty", action="store_true",
+                    help="permit generation from a modified tree or with "
+                         "missing files (diagnostic use only; the canonical "
+                         "manifest must be generated fail-closed)")
+    args = ap.parse_args()
+
     run_id = "20260831_103201"  # [31 Aug] pinned to the analysis of record
     fin = OUT / f"final_analyses_{run_id}"
     red = OUT / f"reduced_model_{run_id}"
 
     commit = git("rev-parse", "HEAD")
     dirty = git("status", "--porcelain", default="")
+    # [v3.3] fail-closed: a canonical manifest must describe exactly one
+    # repository state. Refuse a modified tree unless explicitly overridden.
+    if dirty and not args.allow_dirty:
+        sys.exit("ABORT: working tree is modified - commit first, then "
+                 "generate the manifest (or use --allow-dirty for a "
+                 "diagnostic run):\n" + dirty)
+    missing_files = []
     tracked = [
         "download_nhanes.py",
         "notebooks/01_load_and_harmonize.ipynb", "notebooks/02_recode.ipynb",
@@ -108,6 +134,7 @@ def main():
         f"outputs/reduced_model_{run_id}/reduced_model_bundle.pkl",
         f"outputs/reduced_model_{run_id}/shap_values_train_full.npy",
         "outputs/split_assignment_SEQN.csv",
+        f"outputs/final_analyses_{run_id}/noresampling_predictions.npz",
         "data/reference/bmiagerev.csv",
         *sorted(str(Path(p).relative_to(REPO).as_posix()) for p in
                 glob.glob(str(OUT / "historical_split_arrays" / "*.npz"))),
@@ -130,13 +157,16 @@ def main():
                      else Path(rel).as_posix())
             if not p.exists():
                 rows.append(f"| `{shown}` | — | (absent) |")
+                missing_files.append(shown)
                 continue
             h = committed_sha256(shown)
             if h is None:
                 rows.append(f"| `{shown}` | {p.stat().st_size} | "
                             f"`{sha256(p)}` (working tree, untracked) |")
+                missing_files.append(shown + " (untracked)")
             else:
-                rows.append(f"| `{shown}` | {p.stat().st_size} | `{h}` |")
+                bs = blob_size(shown)
+                rows.append(f"| `{shown}` | {bs if bs is not None else p.stat().st_size} | `{h}` |")
         return rows
 
     # headline numbers, read from the artifacts
@@ -211,11 +241,13 @@ def main():
     if nrc_path.exists():
         nrc = json.load(open(nrc_path))["primary_minus_noresampling_auc"]
         L += [f"- Paired primary minus no-resampling AUC: {nrc['point']} "
-              f"{nrc['ci95']} — the no-resampling variant outperforms the "
-              f"primary (ENN removes roughly half the training controls; "
-              f"3,202 to 1,520, 62% cases after resampling); the pre-declared "
+              f"{nrc['ci95']} — the no-resampling variant had the higher AUC "
+              f"in this internal evaluation. The combined SMOTENC-ENN "
+              f"procedure leaves 1,520 of 3,202 training controls (62% cases "
+              f"after resampling); the contrast removes the combined "
+              f"procedure as a whole and does not isolate a component. The "
               f"resampling-based primary is retained rather than switched "
-              f"post hoc"]
+              f"post hoc."]
 
     L += ["", "## Analysis code (committed)", "",
           "| File | Bytes | SHA-256 |", "|---|---:|---|", *table(tracked),
@@ -241,6 +273,10 @@ def main():
     except Exception as e:
         pkgs = f"(pip freeze failed: {e})"
     L += ["", "## Environment", "", "```", pkgs, "```", ""]
+
+    if missing_files and not args.allow_dirty:
+        sys.exit("ABORT: expected files missing or untracked (canonical "
+                 "manifest must be complete):\n  " + "\n  ".join(missing_files))
 
     path = OUT / "RELEASE_MANIFEST.md"
     path.write_text("\n".join(L), encoding="utf-8")
