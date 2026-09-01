@@ -1,8 +1,8 @@
 # Release manifest — analysis of record
 
-- Generated: 2026-08-31T14:29:11
+- Generated: 2026-08-31T14:51:38
 - Pinned run: `tuning_results_20260831_103201`
-- Git commit: `cc7e80937e8b5971bc05d9d9a78f2e50f9238710` (branch `master`)
+- Git commit: `abe9f14757e1641216094e040ae1ad55934853c3` (branch `master`)
 - Working tree at generation: CLEAN
 - Python 3.12.13 on Windows-11-10.0.26200-SP0
 
@@ -53,25 +53,28 @@ pass' below refers to this run's locked pass, not to the split's history.
 | `notebooks/01_load_and_harmonize.ipynb` | 9943 | `e0170701e2a6d4161e37a206a339ae724925850fdbae5778272b3dcb95e0aa05` |
 | `notebooks/02_recode.ipynb` | 85037 | `b95f10b0f95a436fec565813b65a8a7fa3aa6f10138a8db682f7462d2b4d6663` |
 | `notebooks/harmonize_cycles.py` | 4738 | `e3d8a41ab838fb503053bc1215a7aabaf2aab71981c438a7acce2e7e812b461d` |
-| `notebooks/asthma_pipeline.py` | 24882 | `bc47ecaf46b6dd5da1d31bdf0011b6128a0b381c27d5ec948bf8df6c20b9553d` |
+| `notebooks/asthma_pipeline.py` | 25332 | `d64a70bf7ac583c53bbc18e17089c2cce43d2aabf19a17da7ccea3e324015054` |
 | `notebooks/pediatric_corrections.py` | 6328 | `e473434463d47073c95b0e40484ef860d4d882a4a88d252f8ab09a008d703520` |
 | `notebooks/build_table1.py` | 9113 | `03cf7ee05b9e8a1a3b1a6296ad26dac419318e1f657d146d6a9898569cc0e3b3` |
 | `notebooks/03_clean_and_filter.ipynb` | 11389 | `ba9690be760cb1d4676b9a8c27bec5c81517552d17573545c4c167303bc5d360` |
-| `notebooks/04_model.ipynb` | 126420 | `922debe734fab8dd0b3cf65c353ea7fb8154a2df57668a986aaa6845113010f2` |
-| `verify_split_reconstruction.py` | 16992 | `8478486fbba297b4ffbba55d91bcaba23ec41541df9564bfd1986d45245eff90` |
-| `run_final_analyses.py` | 26005 | `ce5d52b56a8c29042ab31b9c743fa6a3b3eed63ddf95c1bc73eead54f045dc9d` |
-| `run_reduced_model_and_figures.py` | 14589 | `bca7d156a315d3534e6b0388e59e8f16a24e9201dd3629355e94f245bf9403e0` |
+| `notebooks/04_model.ipynb` | 125896 | `e1912d7a96e51d3cada3c77ea5be6325b61926da1b066806810050eefef30442` |
+| `verify_split_reconstruction.py` | 18721 | `83242ec330a8ca26225fdae1f39ab8af349c4b34ebd420ae610547fb3f55a281` |
+| `run_final_analyses.py` | 27046 | `139c8bfbfd5caa3c2b08c3598b9cb64185e63f42dca85c65bbeef3224b2eabf6` |
+| `run_reduced_model_and_figures.py` | 14718 | `b876988870d5c259b614749a5e80a78dc573fbfa2bd5db650613ff44e89ba47f` |
 | `run_uncertainty.py` | 6845 | `8ba845336a4a11447472af5f5587e7ea73bf205ffbed4766039ae56922fbce79` |
 | `generate_descriptives.py` | 6950 | `fd812fe9b32e842cb0e43e2779ed4c38f1715aa95fb8171842886d657dbbc1df` |
 | `redraw_shap_figures.py` | 7784 | `f3a530f60bd940276b3fbfece1586b5e06a39c011e6f8bf3cf94c99957ccb340` |
 | `patch11_r3_quality_gating.py` | 5371 | `bd8be8eab51816e75c992aa019e3c2e9d72e68b569dec80b5331b5127b695060` |
-| `audit_cleaner_replacements.py` | 4789 | `0933866222f9f42e7a4dbb6fefe793ae702948fd4226de55824a20f57d69c7de` |
-| `export_historical_split_arrays.py` | 2211 | `13e55d9b4da93dc6c78662b2929bee470b69d529cab5f1edb3a37f3684fd3c12` |
-| `build_release_manifest.py` | 11221 | `5f2fa99fbd667ca019b5003f727536c0ba0d386aa3a16b02c9204db13f771f16` |
-| `tests/test_cleaner_sentinels.py` | 7023 | `90833ed6b0c3fdaf6dfd17e81685fe8c67c1481528f86907edf503bda7c9ad9a` |
-| `tests/test_quality_gating.py` | 5383 | `a6d640586dae01a1eee03fdcf7491d5417e2f5bee4663f4fc2cf97e0eea35a8b` |
+| `patch12_nb04_header.py` | 2192 | `b7dc6d73f9f460aeb1149c4e4c8d6a2127fc68ebc6dedf062d7e63cc4b4e6aaa` |
+| `patch13_stale_notebook_text.py` | 3831 | `10e594a1f87d1b109861c6491306c863e55a3853eb5c299333955092e0a8cdcf` |
+| `audit_cleaner_replacements.py` | 6501 | `c741a3bc273c4314122daf3e432ddee0d4366a9ad926ac25eff2713947d89df3` |
+| `export_historical_split_arrays.py` | 3202 | `a83cd0458c7212a9bb180a67773967df53e9b47809f667849d1d52a5078a27a0` |
+| `compute_noresampling_contrast.py` | 4857 | `9e82191d5e6f00ae775067b57a1803c55a6d4fb0f89154fa0e9afd7d57fff8ff` |
+| `build_release_manifest.py` | 11455 | `1fc8086e0e51bc307db8a34112766e3c617b4a8d73fa7188e8ece23cc393c212` |
+| `tests/test_cleaner_sentinels.py` | 8162 | `96a6fa1fa425523e994ed330370373bbed2de76f33f5249f4ffe4d6fa4095174` |
+| `tests/test_quality_gating.py` | 5366 | `03ea6644e524d0d4cf8027f2cc5bf8c08f4128c5b5837e35ba202e30705c8b24` |
 | `tests/test_cdc_bmi_age.py` | 3158 | `07afceb31423dc27fa7679dac5107ec4a9786d05cf2d61e0fd71569207211387` |
-| `README.md` | 11312 | `72bb28e9c3b448eff8d73f0ebad78d56957bbc17abfe4630c061283c752e106e` |
+| `README.md` | 11490 | `6c1f358c7589e3149f1ac67a47e734c10f9e506d4adeec56aec2f4b4d5198ff9` |
 | `requirements.txt` | 148 | `6381e344f1addcc74c0d4c15edc3bb0fbb8b54bbdec0e34c342d1825a4d58263` |
 | `requirements-lock.txt` | 2930 | `5f0f4a38ebd99a8bd8a47e972ba928e34d2a5f20da4bc12341084aa5dc8ea46f` |
 
@@ -84,8 +87,10 @@ pass' below refers to this run's locked pass, not to the split's history.
 | `outputs/final_analyses_20260831_103201/descriptive_statistics.json` | 1584 | `f54fb12902ff3820f0f4197b42b4ea05f05eb542d325c1f6b6530dffc97c3e88` |
 | `outputs/reduced_model_20260831_103201/reduced_model_results.json` | 2131 | `cb987df88c0fbbb94ffee0043b05eaa963f415fcc19a1dddf1f6ec7c5cde0103` |
 | `outputs/reduced_model_20260831_103201/shap_ranking.json` | 1663 | `c298b92185478969f46f1ccbd752ff1c35241083bcbfc18be85f929f3467533c` |
-| `outputs/split_verification_report.json` | 4197 | `77c8f17714a58544a0ae319793a752b81289d8c4c146335af8b433c325b5e044` |
-| `outputs/cleaner_replacement_audit.json` | 11402 | `8d7b7034806f837b94eccf990212bda837c4cf855e9c40f7950a3ec44c31ad17` |
+| `outputs/final_analyses_20260831_103201/noresampling_contrast.json` | 513 | `91bdb7a0296a133b49a1998308b54f60259b0d32773640f60a392626bd9d15e6` |
+| `outputs/split_verification_report.json` | 4631 | `5abc5a8bac38b982f1a2624b3873c4c1fd50731985d6b10174a10695b606928a` |
+| `outputs/cleaner_replacement_audit.json` | 11768 | `5de6e7a7aa5b700e695d0f3a3039dcb4ab44992795e2bfb7f8076ad5604de4cc` |
+| `outputs/historical_split_arrays/provenance.json` | 839 | `9947b0d692a675a05479671dc061b78f83bb774cea00cf2fab313860d7d005b0` |
 | `outputs/table1_baseline.csv` | 646 | `c7beef0b3f6ad2676e154eeeac071e2da67190611b4be1570828aefcdb59a40a` |
 | `outputs/table1_baseline.md` | 1844 | `09462b16d70b1afa3f7fbd5f31e18ce55a85aea0c33000056f21accc04eb110d` |
 
