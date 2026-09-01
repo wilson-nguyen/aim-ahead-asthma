@@ -1,10 +1,10 @@
 # Release manifest — analysis of record
 
-- Generated: 2026-08-31T15:09:21
+- Generated: 2026-08-31T16:08:27
 - Pinned run: `tuning_results_20260831_103201`
-- Git commit: `c2985c2ac8a5cd0b413ab9719a48f4318bb84c69` (branch `master`)
+- Git commit: `3be76736f3717a0cb16a9a4df5b7a59410e2da69` (branch `master`)
 - Working tree at generation: MODIFIED (see below)
-- Python 3.12.13 on Windows-11-10.0.26200-SP0
+- Python 3.10.12 on Linux-6.8.0-136-generic-x86_64-with-glibc2.35
 
 This manifest binds the reported numbers to specific file contents. Hashes
 for tracked files are computed from the committed bytes at the named commit,
@@ -44,7 +44,7 @@ pass' below refers to this run's locked pass, not to the split's history.
 | `quality_grades_ABC` | 0.767 |
 
 - Paired A/B minus A/B/C gating difference: 0.0117 [-0.0052, 0.0287] (interval covering zero indicates no detectable dependence on the quality criterion's strictness)
-- Paired primary minus no-resampling AUC: -0.0394 [-0.0598, -0.0185] — the no-resampling variant outperforms the primary (ENN removes roughly half the training controls; 3,202 to 1,520, 62% cases after resampling); the pre-declared resampling-based primary is retained rather than switched post hoc
+- Paired primary minus no-resampling AUC: -0.0394 [-0.0598, -0.0185] — the no-resampling variant had the higher AUC in this internal evaluation. The combined SMOTENC-ENN procedure leaves 1,520 of 3,202 training controls (62% cases after resampling); the contrast removes the combined procedure as a whole and does not isolate a component. The resampling-based primary is retained rather than switched post hoc.
 
 ## Analysis code (committed)
 
@@ -57,8 +57,8 @@ pass' below refers to this run's locked pass, not to the split's history.
 | `notebooks/asthma_pipeline.py` | 25332 | `d64a70bf7ac583c53bbc18e17089c2cce43d2aabf19a17da7ccea3e324015054` |
 | `notebooks/pediatric_corrections.py` | 6328 | `e473434463d47073c95b0e40484ef860d4d882a4a88d252f8ab09a008d703520` |
 | `notebooks/build_table1.py` | 9113 | `03cf7ee05b9e8a1a3b1a6296ad26dac419318e1f657d146d6a9898569cc0e3b3` |
-| `notebooks/03_clean_and_filter.ipynb` | 11389 | `ba9690be760cb1d4676b9a8c27bec5c81517552d17573545c4c167303bc5d360` |
-| `notebooks/04_model.ipynb` | 125896 | `e1912d7a96e51d3cada3c77ea5be6325b61926da1b066806810050eefef30442` |
+| `notebooks/03_clean_and_filter.ipynb` | 11118 | `ba9690be760cb1d4676b9a8c27bec5c81517552d17573545c4c167303bc5d360` |
+| `notebooks/04_model.ipynb` | 123490 | `e1912d7a96e51d3cada3c77ea5be6325b61926da1b066806810050eefef30442` |
 | `verify_split_reconstruction.py` | 18721 | `83242ec330a8ca26225fdae1f39ab8af349c4b34ebd420ae610547fb3f55a281` |
 | `run_final_analyses.py` | 27046 | `139c8bfbfd5caa3c2b08c3598b9cb64185e63f42dca85c65bbeef3224b2eabf6` |
 | `run_reduced_model_and_figures.py` | 14718 | `b876988870d5c259b614749a5e80a78dc573fbfa2bd5db650613ff44e89ba47f` |
@@ -71,11 +71,11 @@ pass' below refers to this run's locked pass, not to the split's history.
 | `audit_cleaner_replacements.py` | 6501 | `c741a3bc273c4314122daf3e432ddee0d4366a9ad926ac25eff2713947d89df3` |
 | `export_historical_split_arrays.py` | 3202 | `a83cd0458c7212a9bb180a67773967df53e9b47809f667849d1d52a5078a27a0` |
 | `compute_noresampling_contrast.py` | 4857 | `9e82191d5e6f00ae775067b57a1803c55a6d4fb0f89154fa0e9afd7d57fff8ff` |
-| `build_release_manifest.py` | 12016 | `1fc8086e0e51bc307db8a34112766e3c617b4a8d73fa7188e8ece23cc393c212` |
+| `build_release_manifest.py` | 12016 | `4af28ad815accc433918f2f2f92e906000e42394c477c027fed3001f1a152a20` |
 | `tests/test_cleaner_sentinels.py` | 8162 | `96a6fa1fa425523e994ed330370373bbed2de76f33f5249f4ffe4d6fa4095174` |
 | `tests/test_quality_gating.py` | 5366 | `03ea6644e524d0d4cf8027f2cc5bf8c08f4128c5b5837e35ba202e30705c8b24` |
 | `tests/test_cdc_bmi_age.py` | 3158 | `07afceb31423dc27fa7679dac5107ec4a9786d05cf2d61e0fd71569207211387` |
-| `README.md` | 12070 | `6c1f358c7589e3149f1ac67a47e734c10f9e506d4adeec56aec2f4b4d5198ff9` |
+| `README.md` | 12070 | `f88d1c3764b14f45f07133ac36f2a182dd80c7bed174f668c3ef8077ef8b7610` |
 | `requirements.txt` | 148 | `6381e344f1addcc74c0d4c15edc3bb0fbb8b54bbdec0e34c342d1825a4d58263` |
 | `requirements-lock.txt` | 2930 | `5f0f4a38ebd99a8bd8a47e972ba928e34d2a5f20da4bc12341084aa5dc8ea46f` |
 
@@ -83,17 +83,17 @@ pass' below refers to this run's locked pass, not to the split's history.
 
 | File | Bytes | SHA-256 |
 |---|---:|---|
-| `outputs/final_analyses_20260831_103201/final_analyses_results.json` | 16540 | `d590dc5bcdfd344ed988c22a5a6e1cf65c12c9eba2cde32a3dd3233569ab931b` |
-| `outputs/final_analyses_20260831_103201/uncertainty_bootstrap.json` | 2496 | `6cd7d34159db468c5e731afeff2a24bf47f488d57760f17fa652e0d170b8ce45` |
-| `outputs/final_analyses_20260831_103201/descriptive_statistics.json` | 1584 | `f54fb12902ff3820f0f4197b42b4ea05f05eb542d325c1f6b6530dffc97c3e88` |
-| `outputs/reduced_model_20260831_103201/reduced_model_results.json` | 2131 | `cb987df88c0fbbb94ffee0043b05eaa963f415fcc19a1dddf1f6ec7c5cde0103` |
-| `outputs/reduced_model_20260831_103201/shap_ranking.json` | 1663 | `c298b92185478969f46f1ccbd752ff1c35241083bcbfc18be85f929f3467533c` |
-| `outputs/final_analyses_20260831_103201/noresampling_contrast.json` | 513 | `91bdb7a0296a133b49a1998308b54f60259b0d32773640f60a392626bd9d15e6` |
-| `outputs/split_verification_report.json` | 4631 | `5abc5a8bac38b982f1a2624b3873c4c1fd50731985d6b10174a10695b606928a` |
-| `outputs/cleaner_replacement_audit.json` | 11768 | `5de6e7a7aa5b700e695d0f3a3039dcb4ab44992795e2bfb7f8076ad5604de4cc` |
-| `outputs/historical_split_arrays/provenance.json` | 839 | `9947b0d692a675a05479671dc061b78f83bb774cea00cf2fab313860d7d005b0` |
-| `outputs/table1_baseline.csv` | 646 | `c7beef0b3f6ad2676e154eeeac071e2da67190611b4be1570828aefcdb59a40a` |
-| `outputs/table1_baseline.md` | 1844 | `09462b16d70b1afa3f7fbd5f31e18ce55a85aea0c33000056f21accc04eb110d` |
+| `outputs/final_analyses_20260831_103201/final_analyses_results.json` | 15908 | `d590dc5bcdfd344ed988c22a5a6e1cf65c12c9eba2cde32a3dd3233569ab931b` |
+| `outputs/final_analyses_20260831_103201/uncertainty_bootstrap.json` | 2364 | `6cd7d34159db468c5e731afeff2a24bf47f488d57760f17fa652e0d170b8ce45` |
+| `outputs/final_analyses_20260831_103201/descriptive_statistics.json` | 1524 | `f54fb12902ff3820f0f4197b42b4ea05f05eb542d325c1f6b6530dffc97c3e88` |
+| `outputs/reduced_model_20260831_103201/reduced_model_results.json` | 2039 | `cb987df88c0fbbb94ffee0043b05eaa963f415fcc19a1dddf1f6ec7c5cde0103` |
+| `outputs/reduced_model_20260831_103201/shap_ranking.json` | 1559 | `c298b92185478969f46f1ccbd752ff1c35241083bcbfc18be85f929f3467533c` |
+| `outputs/final_analyses_20260831_103201/noresampling_contrast.json` | 501 | `91bdb7a0296a133b49a1998308b54f60259b0d32773640f60a392626bd9d15e6` |
+| `outputs/split_verification_report.json` | 4481 | `5abc5a8bac38b982f1a2624b3873c4c1fd50731985d6b10174a10695b606928a` |
+| `outputs/cleaner_replacement_audit.json` | 11287 | `5de6e7a7aa5b700e695d0f3a3039dcb4ab44992795e2bfb7f8076ad5604de4cc` |
+| `outputs/historical_split_arrays/provenance.json` | 826 | `9947b0d692a675a05479671dc061b78f83bb774cea00cf2fab313860d7d005b0` |
+| `outputs/table1_baseline.csv` | 635 | `c7beef0b3f6ad2676e154eeeac071e2da67190611b4be1570828aefcdb59a40a` |
+| `outputs/table1_baseline.md` | 1828 | `09462b16d70b1afa3f7fbd5f31e18ce55a85aea0c33000056f21accc04eb110d` |
 
 ## Model artifacts and reference data (committed 31 Aug)
 
@@ -110,7 +110,8 @@ clone reproduces predictions without refitting.
 | `outputs/reduced_model_20260831_103201/reduced_model_bundle.pkl` | 59285 | `992866815546bd64969504531fd0bd53b24a138ff2cb8360416ec0e6a27cf690` |
 | `outputs/reduced_model_20260831_103201/shap_values_train_full.npy` | 693392 | `922a223a224e05eb16742303c8a37f56648f6316acdf0dbf7da2041085ff4821` |
 | `outputs/split_assignment_SEQN.csv` | 184693 | `7f76b2425a555cb51754f4f1def5d8aadd0c8a5a9f816dedbba5063450fa9569` |
-| `data/reference/bmiagerev.csv` | 72022 | `fcf2ddd1aa7b902620f6ddd6a10971b533f8f1c1653951d4a8bf18c8945df297` |
+| `outputs/final_analyses_20260831_103201/noresampling_predictions.npz` | 20871 | `e379778e1c3ae8e58502e7a1943d2710370841babfaf36ceab8f9518d8a9eab1` (working tree, untracked) |
+| `data/reference/bmiagerev.csv` | 71582 | `fcf2ddd1aa7b902620f6ddd6a10971b533f8f1c1653951d4a8bf18c8945df297` |
 | `outputs/historical_split_arrays/20260426_180035.npz` | 44852 | `6eee95bcd7bc065ca2adb8a91945879d30e079f3db9c547c03bf92717573248f` |
 | `outputs/historical_split_arrays/20260625_165708.npz` | 44852 | `6eee95bcd7bc065ca2adb8a91945879d30e079f3db9c547c03bf92717573248f` |
 
@@ -137,171 +138,211 @@ clone reproduces predictions without refitting.
 ```
 M README.md
  M build_release_manifest.py
+ M compute_noresampling_contrast.py
+ M data/reference/bmiagerev.csv
+ M notebooks/03_clean_and_filter.ipynb
+ M notebooks/04_model.ipynb
+ M notebooks/05_top10_sensitivity.ipynb
+ M outputs/RELEASE_MANIFEST.md
+ M outputs/cleaner_replacement_audit.json
+ M outputs/final_analyses_20260824_140539/final_analyses_results.json
+ M outputs/final_analyses_20260824_140539/uncertainty_bootstrap.json
+ M outputs/final_analyses_20260826_124650/final_analyses_results.json
+ M outputs/final_analyses_20260826_124650/uncertainty_bootstrap.json
+ M outputs/final_analyses_20260828_110326/descriptive_statistics.json
+ M outputs/final_analyses_20260828_110326/final_analyses_results.json
+ M outputs/final_analyses_20260828_110326/uncertainty_bootstrap.json
+ M outputs/final_analyses_20260831_103201/descriptive_statistics.json
+ M outputs/final_analyses_20260831_103201/final_analyses_results.json
+ M outputs/final_analyses_20260831_103201/noresampling_contrast.json
+ M outputs/final_analyses_20260831_103201/uncertainty_bootstrap.json
+ M outputs/historical_split_arrays/provenance.json
+ M outputs/reduced_model_20260824_140539/reduced_model_results.json
+ M outputs/reduced_model_20260824_140539/shap_ranking.json
+ M outputs/reduced_model_20260826_124650/reduced_model_results.json
+ M outputs/reduced_model_20260826_124650/shap_ranking.json
+ M outputs/reduced_model_20260828_110326/reduced_model_results.json
+ M outputs/reduced_model_20260828_110326/shap_ranking.json
+ M outputs/reduced_model_20260831_103201/reduced_model_results.json
+ M outputs/reduced_model_20260831_103201/shap_ranking.json
+ M outputs/split_verification_report.json
+ M outputs/table1_baseline.csv
+ M outputs/table1_baseline.md
 ```
 
 ## Environment
 
 ```
-alembic==1.18.4
-annotated-doc==0.0.4
-annotated-types==0.7.0
-anthropic==0.109.2
-anyio==4.13.0
-argon2-cffi==25.1.0
-argon2-cffi-bindings==25.1.0
-arrow==1.4.0
-asttokens==3.0.1
-async-lru==2.3.0
-attrs==26.1.0
-babel==2.18.0
-beautifulsoup4==4.14.3
-bleach==6.3.0
+alembic==1.18.5
+argcomplete==1.8.1
+attrs==21.2.0
+Automat==20.2.0
+Babel==2.8.0
+bcrypt==3.2.0
+beautifulsoup4==4.15.0
+blinker==1.4
+camelot-py==2.0.0
 catboost==1.2.10
-certifi==2026.4.22
-cffi==2.0.0
-charset-normalizer==3.4.7
-click==8.4.1
+certifi==2026.7.22
+cffi==2.1.1
+chardet==4.0.0
+charset-normalizer==3.5.0
+click==8.4.2
 cloudpickle==3.1.2
-colorama==0.4.6
-colorlog==6.10.1
-comm==0.2.3
-contourpy==1.3.3
+colorama==0.4.4
+coloredlogs==15.0.1
+colorlog==6.11.0
+command-not-found==0.3
+constantly==15.1.0
+contourpy==1.3.2
+cryptography==50.0.0
 cycler==0.12.1
-debugpy==1.8.20
-decorator==5.2.1
+dbus-python==1.2.18
 defusedxml==0.7.1
 distro==1.9.0
-docstring_parser==0.18.0
+distro-info==1.1+ubuntu0.2
 et_xmlfile==2.0.0
-executing==2.2.1
-fastjsonschema==2.21.2
-filelock==3.29.4
-fonttools==4.62.1
-fqdn==1.5.1
-fsspec==2026.4.0
+fastjsonschema==2.22.2
+flatbuffers==25.12.19
+fonttools==4.63.0
+formulaic==1.2.2
+freetype-py==2.3.0
 graphviz==0.21
-greenlet==3.4.0
-h11==0.16.0
-hf-xet==1.5.1
-httpcore==1.0.9
-httpx==0.28.1
-huggingface_hub==1.19.0
-idna==3.13
-imbalanced-learn==0.14.1
-iniconfig==2.3.0
-ipykernel==7.2.0
-ipython==9.13.0
-ipython_pygments_lexers==1.1.1
-ipywidgets==8.1.8
-isoduration==20.11.0
-jedi==0.19.2
-Jinja2==3.1.6
-jiter==0.15.0
+greenlet==3.5.3
+httplib2==0.20.2
+humanfriendly==10.0
+hyperlink==21.0.0
+idna==3.18
+ImageIO==2.37.4
+imageio-ffmpeg==0.6.0
+imbalanced-learn==0.14.2
+img2pdf==0.6.3
+importlib-metadata==4.6.4
+incremental==21.3.0
+interface_meta==2.0.1
+jeepney==0.7.1
+Jinja2==3.0.3
 joblib==1.5.3
-json5==0.14.0
-jsonpointer==3.1.1
-jsonschema==4.26.0
-jsonschema-specifications==2025.9.1
-jupyter==1.1.1
-jupyter-console==6.6.3
-jupyter-events==0.12.1
-jupyter-lsp==2.3.1
-jupyter_client==8.8.0
+jsonpatch==1.32
+jsonpointer==2.0
+jsonschema==3.2.0
 jupyter_core==5.9.1
-jupyter_server==2.17.0
-jupyter_server_terminals==0.5.4
-jupyterlab==4.5.6
-jupyterlab_pygments==0.3.0
-jupyterlab_server==2.28.0
-jupyterlab_widgets==3.0.16
+keyring==23.5.0
 kiwisolver==1.5.0
-lark==1.3.1
-lightgbm==4.6.0
-llvmlite==0.47.0
-Mako==1.3.11
+launchpadlib==1.10.16
+lazr.restfulclient==0.14.4
+lazr.uri==1.0.6
+livereload==2.6.3
+llvmlite==0.48.0
+lxml==6.1.1
+magika==0.6.3
+Mako==1.3.12
+Markdown==3.10.3
 markdown-it-py==4.2.0
-MarkupSafe==3.0.3
+markdownify==1.2.3
+markitdown==0.1.7
+marko==2.2.4
+MarkupSafe==2.0.1
 matplotlib==3.10.9
-matplotlib-inline==0.2.1
 mdurl==0.1.2
-mistune==3.2.0
-narwhals==2.20.0
-nbclient==0.10.4
-nbconvert==7.17.1
-nbformat==5.10.4
-nest-asyncio==1.6.0
-notebook==7.5.5
-notebook_shim==0.2.4
-numba==0.65.1
-numpy==2.4.4
+mistune==3.3.4
+mkdocs==1.1.2
+more-itertools==8.10.0
+mpmath==1.3.0
+mypy_extensions==1.1.0
+narwhals==2.22.1
+nbformat==5.11.1
+netifaces==0.11.0
+numba==0.66.0
+numpy==2.2.6
+oauthlib==3.2.0
+odfpy==1.4.1
+onnxruntime==1.23.2
+opencv-python==5.0.0.93
+opencv-python-headless==5.0.0.93
 openpyxl==3.1.5
-optuna==4.8.0
-packaging==26.2
+optuna==4.9.0
+packaging==26.3
 pandas==2.3.3
-pandocfilters==1.5.1
-parso==0.8.6
 patsy==1.0.2
-pillow==12.2.0
-platformdirs==4.9.6
-plotly==6.7.0
-pluggy==1.6.0
-prometheus_client==0.25.0
-prompt_toolkit==3.0.52
+pdf2image==1.17.0
+pdfkit==1.0.0
+pdfminer.six==20260107
+pdfplumber==0.11.10
+pikepdf==10.11.0
+pillow==12.3.0
+pipx==1.0.0
+platformdirs==4.11.3
+playa-pdf==1.1.0
+plotly==6.8.0
+polars==1.44.1
+polars-runtime-32==1.44.1
+protobuf==7.35.1
 psutil==7.2.2
-pure_eval==0.2.3
 pyarrow==24.0.0
+pyasn1==0.4.8
+pyasn1-modules==0.2.1
+pycairo==1.29.1
 pycparser==3.0
-pydantic==2.13.4
-pydantic_core==2.46.4
-Pygments==2.20.0
+Pygments==2.11.2
+PyGObject==3.42.1
+PyHamcrest==2.0.2
+pyinotify==0.9.6
+PyJWT==2.3.0
+pymdown-extensions==11.0.1
+pyoo==1.4
+pyOpenSSL==21.0.0
 pyparsing==3.3.2
-pyreadstat==1.3.4
-pytest==9.1.1
+pypdf==6.15.0
+pypdfium2==5.12.1
+pyrsistent==0.18.1
+pyserial==3.5
+pytesseract==0.3.13
+python-apt==2.4.0+ubuntu4.1
 python-dateutil==2.9.0.post0
+python-docx==1.2.0
 python-dotenv==1.2.2
-python-json-logger==4.1.0
-pytz==2026.1.post1
-pywinpty==3.0.3
+python-pptx==1.0.2
+pytz==2026.3.post1
 PyYAML==6.0.3
-pyzmq==27.1.0
-referencing==0.37.0
-requests==2.33.1
-rfc3339-validator==0.1.4
-rfc3986-validator==0.1.1
-rfc3987-syntax==1.1.0
-rich==15.0.0
-rpds-py==0.30.0
-scikit-learn==1.8.0
-scipy==1.17.1
+reportlab==5.0.0
+requests==2.34.2
+rlPyCairo==0.4.0
+samplics==0.6.0
+scikit-learn==1.7.2
+scipy==1.15.3
 seaborn==0.13.2
-Send2Trash==2.1.0
-setuptools==82.0.1
-shap==0.51.0
-shellingham==1.5.4
+SecretStorage==3.3.1
+service-identity==18.1.0
+shap==0.49.1
 six==1.17.0
-sklearn-compat==0.1.5
+sklearn-compat==0.1.6
 slicer==0.0.8
-sniffio==1.3.1
-soupsieve==2.8.3
-SQLAlchemy==2.0.49
-stack-data==0.6.3
-statsmodels==0.14.6
-terminado==0.18.1
+soupsieve==2.9.2
+SQLAlchemy==2.0.51
+ssh-import-id==5.11
+statsmodels==0.15.0
+sympy==1.14.0
+tabula-py==2.10.0
+tabulate==0.10.0
 threadpoolctl==3.6.0
-tinycss2==1.4.0
-tornado==6.5.5
-tqdm==4.67.3
-traitlets==5.14.3
-typer==0.25.1
-typing-inspection==0.4.2
-typing_extensions==4.15.0
-tzdata==2026.2
-uri-template==1.3.0
-urllib3==2.6.3
-wcwidth==0.6.0
-webcolors==25.10.0
-webencodings==0.5.1
-websocket-client==1.9.0
-widgetsnbextension==4.0.15
-xgboost==3.2.0
+tomli==2.4.1
+tornado==6.1
+tqdm==4.69.0
+traitlets==5.16.1
+Twisted==22.1.0
+typing_extensions==4.16.0
+tzdata==2026.3
+ufw==0.36.1
+unattended-upgrades==0.1
+unoserver==3.7
+urllib3==2.7.0
+userpath==1.8.0
+wadllib==1.3.6
+Wand==0.7.2
+wrapt==2.3.0
+xlrd==2.0.2
+xlsxwriter==3.2.9
+zipp==1.0.0
+zope.interface==5.4.0
 ```
