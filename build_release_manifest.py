@@ -122,7 +122,6 @@ def main():
         f"outputs/reduced_model_{run_id}/shap_ranking.json",
         f"outputs/final_analyses_{run_id}/noresampling_contrast.json",
         f"notebooks/tuning_results_{run_id}/weighted_validation_metrics.json",
-        f"notebooks/tuning_results_{run_id}/model_comparison.csv",
         "outputs/split_verification_report.json",
         "outputs/cleaner_replacement_audit.json",
         "outputs/historical_split_arrays/provenance.json",

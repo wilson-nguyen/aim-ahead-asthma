@@ -1,4 +1,0 @@
-Model,Sensitivity_CV,Specificity_CV,AUC_CV,Configuration,Status
-CatBoost,0.67852546423975,0.7002013455538222,0.7583921043290298,f_classif + smotenc_enn,Success
-MLP,0.6841489786453014,0.692695007800312,0.7629428468403214,mutual_info + cost_5x,Success
-BalancedRF,0.6795265130654866,0.6964464703588142,0.7539051701227937,f_classif + smotenc_enn,Success

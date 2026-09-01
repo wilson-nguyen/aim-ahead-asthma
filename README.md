@@ -53,7 +53,7 @@ Pre-specified before the final analysis; full audit trail in the revision folder
 - **BMI:** the CDC 2000 LMS BMI-for-age z-score is the sole BMI-derived predictor, computed with half a month added to completed-month age per CDC program documentation; raw body weight remains a separately eligible anthropometric variable (ranked 13th by SHAP) and is covered by the age-dependence sensitivity analysis.
 - **Retained deliberately:** health insurance coverage and family interview language, as the social and structural factors this study is about.
 
-**Disclosed limitations:** integer category codes are treated as numeric by the tree models (no declared `cat_features`); the cleaner's type inference and correlation pruning are fitted on the full training set rather than within inner folds; the cohort-level missingness screen precedes the split; the tuning objective maximizes CV sensitivity with a soft specificity penalty and does not itself enforce the 0.80 floor, which is applied at threshold selection; the MLP comparator is unweighted; the parallel Optuna search is preserved as committed study objects rather than being bit-reproducible.
+**Disclosed limitations:** integer category codes are treated as numeric by the tree models (no declared `cat_features`); the cleaner's type inference and correlation pruning are fitted on the full training set rather than within inner folds; the cohort-level missingness screen precedes the split; the tuning objective maximizes CV sensitivity with a soft specificity penalty and does not itself enforce the 0.80 floor, which is applied at threshold selection; the MLP comparator is unweighted; the parallel Optuna search is not bit-reproducible and is preserved as a committed study object for the primary model only (comparator studies remain local artifacts; their cited validation metrics are committed in `weighted_validation_metrics.json`).
 
 ## Reproducing the analysis of record (clean clone, no refitting)
 
@@ -123,7 +123,7 @@ The R3 revision followed a full audit of the pipeline against the NHANES codeboo
 ```bash
 python -m venv .venv
 .venv\Scripts\Activate.ps1        # PowerShell; Git Bash: source .venv/Scripts/activate
-pip install -r requirements.txt   # exact pins: requirements-lock.txt (Windows freeze;
+pip install -r requirements.txt   # Python 3.12; exact pins: requirements-lock.txt (Windows freeze;
                                   # newer library versions load the artifacts but may
                                   # emit version warnings when unpickling)
 ```
