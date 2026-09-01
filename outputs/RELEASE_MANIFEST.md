@@ -1,8 +1,8 @@
 # Release manifest — analysis of record
 
-- Generated: 2026-08-31T11:59:22
+- Generated: 2026-08-31T14:29:11
 - Pinned run: `tuning_results_20260831_103201`
-- Git commit: `47ea4f520d2c1e7a131f617af3631cac105a3c02` (branch `master`)
+- Git commit: `cc7e80937e8b5971bc05d9d9a78f2e50f9238710` (branch `master`)
 - Working tree at generation: CLEAN
 - Python 3.12.13 on Windows-11-10.0.26200-SP0
 
@@ -49,21 +49,31 @@ pass' below refers to this run's locked pass, not to the split's history.
 
 | File | Bytes | SHA-256 |
 |---|---:|---|
-| `notebooks/asthma_pipeline.py` | 24135 | `3a9d12922ee805904526e80f8b69c198d50bdab9420826143369aeff109464a6` |
+| `download_nhanes.py` | 2171 | `7332a218210013ca52ad54498e90af76acd3999aa4ddcd2efa756e1766ac8e87` |
+| `notebooks/01_load_and_harmonize.ipynb` | 9943 | `e0170701e2a6d4161e37a206a339ae724925850fdbae5778272b3dcb95e0aa05` |
+| `notebooks/02_recode.ipynb` | 85037 | `b95f10b0f95a436fec565813b65a8a7fa3aa6f10138a8db682f7462d2b4d6663` |
+| `notebooks/harmonize_cycles.py` | 4738 | `e3d8a41ab838fb503053bc1215a7aabaf2aab71981c438a7acce2e7e812b461d` |
+| `notebooks/asthma_pipeline.py` | 24882 | `bc47ecaf46b6dd5da1d31bdf0011b6128a0b381c27d5ec948bf8df6c20b9553d` |
 | `notebooks/pediatric_corrections.py` | 6328 | `e473434463d47073c95b0e40484ef860d4d882a4a88d252f8ab09a008d703520` |
 | `notebooks/build_table1.py` | 9113 | `03cf7ee05b9e8a1a3b1a6296ad26dac419318e1f657d146d6a9898569cc0e3b3` |
 | `notebooks/03_clean_and_filter.ipynb` | 11389 | `ba9690be760cb1d4676b9a8c27bec5c81517552d17573545c4c167303bc5d360` |
-| `notebooks/04_model.ipynb` | 127469 | `9f767e6c42f65a4fed4a20159f135792471b8e98a4de821dfb3cac01ff7daea6` |
-| `verify_split_reconstruction.py` | 16496 | `947253cdd935b1b2fbc51360e75c2cb601aa9d97229a2c33c2bd8b36216ccf97` |
-| `run_final_analyses.py` | 24925 | `b53ec7b27f173a806e493092f915b014887838dd91e5aa7868d3a37cee72395a` |
-| `run_reduced_model_and_figures.py` | 14534 | `0acbf6140f27f0e5d474486705ed52914dea19f604f89473726a05b54e7c99ee` |
-| `run_uncertainty.py` | 6812 | `4ad2c9351ec4a2836a6736278208eeac341b951e6a2455e2ce2cd8eb6c4b4c7f` |
-| `generate_descriptives.py` | 6835 | `0ad5f5d75cc4fbd2f9fcadbda05eab3ecfe2e33d1b305a00f1e0fca06869eeb9` |
-| `redraw_shap_figures.py` | 2735 | `8a89bfa4a1c1ce5bde6447aa74689530e800c6043c327ff98a5e5c3201376783` |
+| `notebooks/04_model.ipynb` | 126420 | `922debe734fab8dd0b3cf65c353ea7fb8154a2df57668a986aaa6845113010f2` |
+| `verify_split_reconstruction.py` | 16992 | `8478486fbba297b4ffbba55d91bcaba23ec41541df9564bfd1986d45245eff90` |
+| `run_final_analyses.py` | 26005 | `ce5d52b56a8c29042ab31b9c743fa6a3b3eed63ddf95c1bc73eead54f045dc9d` |
+| `run_reduced_model_and_figures.py` | 14589 | `bca7d156a315d3534e6b0388e59e8f16a24e9201dd3629355e94f245bf9403e0` |
+| `run_uncertainty.py` | 6845 | `8ba845336a4a11447472af5f5587e7ea73bf205ffbed4766039ae56922fbce79` |
+| `generate_descriptives.py` | 6950 | `fd812fe9b32e842cb0e43e2779ed4c38f1715aa95fb8171842886d657dbbc1df` |
+| `redraw_shap_figures.py` | 7784 | `f3a530f60bd940276b3fbfece1586b5e06a39c011e6f8bf3cf94c99957ccb340` |
 | `patch11_r3_quality_gating.py` | 5371 | `bd8be8eab51816e75c992aa019e3c2e9d72e68b569dec80b5331b5127b695060` |
-| `tests/test_cleaner_sentinels.py` | 5587 | `ab0dfd819395f6a71cf5f6e8cd327dff535b6bdd406e295acb62852de65e14fc` |
+| `audit_cleaner_replacements.py` | 4789 | `0933866222f9f42e7a4dbb6fefe793ae702948fd4226de55824a20f57d69c7de` |
+| `export_historical_split_arrays.py` | 2211 | `13e55d9b4da93dc6c78662b2929bee470b69d529cab5f1edb3a37f3684fd3c12` |
+| `build_release_manifest.py` | 11221 | `5f2fa99fbd667ca019b5003f727536c0ba0d386aa3a16b02c9204db13f771f16` |
+| `tests/test_cleaner_sentinels.py` | 7023 | `90833ed6b0c3fdaf6dfd17e81685fe8c67c1481528f86907edf503bda7c9ad9a` |
 | `tests/test_quality_gating.py` | 5383 | `a6d640586dae01a1eee03fdcf7491d5417e2f5bee4663f4fc2cf97e0eea35a8b` |
 | `tests/test_cdc_bmi_age.py` | 3158 | `07afceb31423dc27fa7679dac5107ec4a9786d05cf2d61e0fd71569207211387` |
+| `README.md` | 11312 | `72bb28e9c3b448eff8d73f0ebad78d56957bbc17abfe4630c061283c752e106e` |
+| `requirements.txt` | 148 | `6381e344f1addcc74c0d4c15edc3bb0fbb8b54bbdec0e34c342d1825a4d58263` |
+| `requirements-lock.txt` | 2930 | `5f0f4a38ebd99a8bd8a47e972ba928e34d2a5f20da4bc12341084aa5dc8ea46f` |
 
 ## Result files (committed)
 
@@ -74,8 +84,8 @@ pass' below refers to this run's locked pass, not to the split's history.
 | `outputs/final_analyses_20260831_103201/descriptive_statistics.json` | 1584 | `f54fb12902ff3820f0f4197b42b4ea05f05eb542d325c1f6b6530dffc97c3e88` |
 | `outputs/reduced_model_20260831_103201/reduced_model_results.json` | 2131 | `cb987df88c0fbbb94ffee0043b05eaa963f415fcc19a1dddf1f6ec7c5cde0103` |
 | `outputs/reduced_model_20260831_103201/shap_ranking.json` | 1663 | `c298b92185478969f46f1ccbd752ff1c35241083bcbfc18be85f929f3467533c` |
-| `outputs/split_verification_report.json` | 4125 | `154ce6422e4334d097a204e32e928f560fbd987b4c099056a86b6b0eee6ebb22` |
-| `outputs/cleaner_replacement_audit.json` | 11767 | `fe57b39435be4a84d1b9fd494e20365a29ce90db81cc11737df239da94ec7e56` |
+| `outputs/split_verification_report.json` | 4197 | `77c8f17714a58544a0ae319793a752b81289d8c4c146335af8b433c325b5e044` |
+| `outputs/cleaner_replacement_audit.json` | 11402 | `8d7b7034806f837b94eccf990212bda837c4cf855e9c40f7950a3ec44c31ad17` |
 | `outputs/table1_baseline.csv` | 646 | `c7beef0b3f6ad2676e154eeeac071e2da67190611b4be1570828aefcdb59a40a` |
 | `outputs/table1_baseline.md` | 1844 | `09462b16d70b1afa3f7fbd5f31e18ce55a85aea0c33000056f21accc04eb110d` |
 
@@ -93,26 +103,26 @@ clone reproduces predictions without refitting.
 | `outputs/final_analyses_20260831_103201/locked_threshold_calibration.pkl` | 1215 | `8bdb4e21f7a70a02547bd7f517e6397a5c046b0edcc5d894ac3e4486bbbc5bde` |
 | `outputs/reduced_model_20260831_103201/reduced_model_bundle.pkl` | 59285 | `992866815546bd64969504531fd0bd53b24a138ff2cb8360416ec0e6a27cf690` |
 | `outputs/reduced_model_20260831_103201/shap_values_train_full.npy` | 693392 | `922a223a224e05eb16742303c8a37f56648f6316acdf0dbf7da2041085ff4821` |
-| `outputs/split_assignment_SEQN.csv` | 191261 | `7f76b2425a555cb51754f4f1def5d8aadd0c8a5a9f816dedbba5063450fa9569` |
+| `outputs/split_assignment_SEQN.csv` | 184693 | `7f76b2425a555cb51754f4f1def5d8aadd0c8a5a9f816dedbba5063450fa9569` |
 | `data/reference/bmiagerev.csv` | 72022 | `fcf2ddd1aa7b902620f6ddd6a10971b533f8f1c1653951d4a8bf18c8945df297` |
+| `outputs/historical_split_arrays/20260426_180035.npz` | 44852 | `6eee95bcd7bc065ca2adb8a91945879d30e079f3db9c547c03bf92717573248f` |
+| `outputs/historical_split_arrays/20260625_165708.npz` | 44852 | `6eee95bcd7bc065ca2adb8a91945879d30e079f3db9c547c03bf92717573248f` |
 
 ## Figures
 
 | File | Bytes | SHA-256 |
 |---|---:|---|
-| `outputs/figures_R3/efigure_calibration.png` | 133198 | `e5ccf9efa8f0ee886aa88ce701f4dc0894b621191cc66061ab1be101aa0a618d` |
-| `outputs/figures_R3/efigure_decision_curve.png` | 120347 | `f5e70c49e997e97e891f5d43f8361af9291d6381cf8794fb5a1843364ea6ae08` |
-| `outputs/figures_R3/figure_metrics.png` | 71043 | `baa9fba4d91c3259928eb84f09689322fb7e2655dc7ea022043105af8a8f73bd` |
-| `outputs/figures_R3/figure_roc.png` | 137594 | `d090856afe0913f41f5277257c4c15ea5fbfd7d0b43165548a0fd87dfdf47f6b` |
+| `outputs/figures_R3/efigure_calibration.png` | 139823 | `8c1ceb1dc9c4294b833b81ec19a6def5abcb99fd3426aa21f73b557a32469c07` |
+| `outputs/figures_R3/efigure_decision_curve.png` | 126533 | `98b67f1787ed9ad873c3cef046dfc488a8d889e9aff2df3cdc79572109d1ac13` |
+| `outputs/figures_R3/figure_metrics.png` | 81084 | `0a9760e9433c54a471dd24a299df5466b99df7b47174b87769f72083d9c11986` |
+| `outputs/figures_R3/figure_roc.png` | 145753 | `0ef4379efd0aa35160b2038bfbaaec0b17482bbb198b867a62a71e49b19624a9` |
 | `outputs/figures_R3/figure_shap_ranking.png` | 199086 | `8c10a056e8db9caa44f76d699c7f5103386aac1b53c615abff61bc474dab9c03` |
-| `outputs/figures_R3/figure_shap_summary.png` | 456992 | `4b1c80a09b23096e4120c59185d8d0fb4df23395851ad6eab9853ce7cc0c32c0` |
+| `outputs/figures_R3/figure_shap_summary.png` | 455150 | `56f38a92cf9e1f6ddbdd0e1de8d716ca53ffeecb4dfeaa30ca42317f9003b744` |
 
 ## Processed input data (committed 31 Aug)
 
 | File | Bytes | SHA-256 |
 |---|---:|---|
-| `data/processed/01_combined_nhanes.parquet` | 4179785 | `2bcfc9c7a8bcb7fa92c0c69214e10957f71dca64e02cd1d917a15808bf091d3c` (working tree, untracked) |
-| `data/processed/02_recoded.parquet` | 4071526 | `7054a6fb07fd0848912ef849f17f136c1ec390682f7ed586a1c4d022f5e63baa` (working tree, untracked) |
 | `data/processed/02b_harmonized.parquet` | 4121522 | `04b65673360c12a16327c62a2df6d84e87cf0f427c77c293ebcd7f8b3c3b5524` |
 | `data/processed/03_cleaned.parquet` | 538075 | `8a6c17b36c26486323b92270d0d1b1a93dcb8c45f489a49dc561904c29fcd84a` |
 
@@ -165,6 +175,7 @@ httpx==0.28.1
 huggingface_hub==1.19.0
 idna==3.13
 imbalanced-learn==0.14.1
+iniconfig==2.3.0
 ipykernel==7.2.0
 ipython==9.13.0
 ipython_pygments_lexers==1.1.1
@@ -220,6 +231,7 @@ patsy==1.0.2
 pillow==12.2.0
 platformdirs==4.9.6
 plotly==6.7.0
+pluggy==1.6.0
 prometheus_client==0.25.0
 prompt_toolkit==3.0.52
 psutil==7.2.2
@@ -231,6 +243,7 @@ pydantic_core==2.46.4
 Pygments==2.20.0
 pyparsing==3.3.2
 pyreadstat==1.3.4
+pytest==9.1.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.2
 python-json-logger==4.1.0
