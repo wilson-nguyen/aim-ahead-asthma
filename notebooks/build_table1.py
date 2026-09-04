@@ -144,22 +144,77 @@ def add_cat(label, col, level):
     for name, sub in [("Overall", np.ones(len(an), bool)),
                       ("No Asthma", an.asthma.values == 0),
                       ("Asthma", an.asthma.values == 1)]:
-        r[name] = f"{wpct(mask, w, denom=sub & known):.1f}%"
+        r[name] = f"{int((mask & sub & known).sum()):,} ({wpct(mask, w, denom=sub & known):.1f}%)"
     rows.append(r)
 
+def wquantile(x, wt, q):
+    """Weighted quantile (no SE); missing excluded."""
+    x = np.asarray(x, float)
+    wt = np.asarray(wt, float)
+    m = np.isfinite(x) & np.isfinite(wt)
+    if not m.any():
+        return np.nan
+    order = np.argsort(x[m])
+    xs, ws = x[m][order], wt[m][order]
+    cw = np.cumsum(ws) / ws.sum()
+    return float(xs[np.searchsorted(cw, q)])
+
+def add_median(label, col, dp=1):
+    """Weighted median [weighted IQR] for skewed continuous variables; no SE."""
+    x = an[col].to_numpy(float)
+    r = {"Variable": label, "Missing (n)": int(an[col].isna().sum())}
+    for name, sub in [("Overall", np.ones(len(an), bool)),
+                      ("No Asthma", an.asthma.values == 0),
+                      ("Asthma", an.asthma.values == 1)]:
+        r[name] = (f"{wquantile(x[sub], w[sub], 0.5):.{dp}f} "
+                   f"[{wquantile(x[sub], w[sub], 0.25):.{dp}f}, "
+                   f"{wquantile(x[sub], w[sub], 0.75):.{dp}f}]")
+    rows.append(r)
+
+def add_yes(label, col, yes=1):
+    """Weighted % with `col` == yes among nonmissing (NHANES 1 = yes, 2 = no;
+    refused/don't-know codes are already missing after the fail-closed cleaner)."""
+    mask = (an[col] == yes).to_numpy()
+    known = an[col].notna().to_numpy()
+    r = {"Variable": label, "Missing (n)": int(an[col].isna().sum())}
+    for name, sub in [("Overall", np.ones(len(an), bool)),
+                      ("No Asthma", an.asthma.values == 0),
+                      ("Asthma", an.asthma.values == 1)]:
+        r[name] = f"{int((mask & sub & known).sum()):,} ({wpct(mask, w, denom=sub & known):.1f}%)"
+    rows.append(r)
+
+def add_levels(label, col, levels):
+    """One row per coded level of a categorical variable (weighted % among
+    nonmissing); `levels` maps NHANES code -> display label."""
+    known = an[col].notna().to_numpy()
+    for code, lab in levels.items():
+        mask = (an[col] == code).to_numpy()
+        r = {"Variable": f"{label}: {lab}", "Missing (n)": int(an[col].isna().sum())}
+        for name, sub in [("Overall", np.ones(len(an), bool)),
+                          ("No Asthma", an.asthma.values == 0),
+                          ("Asthma", an.asthma.values == 1)]:
+            r[name] = f"{int((mask & sub & known).sum()):,} ({wpct(mask, w, denom=sub & known):.1f}%)"
+        rows.append(r)
+
+# [2026-09-04] Row set expanded to every characteristic reported in the
+# manuscript's Table 1, so the table in the paper is generated here rather
+# than inherited from the pre-correction pipeline (whose missing counts were
+# produced by the retracted blanket sentinel recoding). Design-based p-values
+# are intentionally not produced.
 add_cont("Age, years", "RIDAGEYR")
-_fem = (an.RIAGENDR == 2).values
-rows.append({"Variable": "Female, %", "Missing (n)": 0,
-             "Overall": f"{wpct(_fem, w):.1f}%",
-             "No Asthma": f"{wpct(_fem, w, denom=an.asthma.values == 0):.1f}%",
-             "Asthma": f"{wpct(_fem, w, denom=an.asthma.values == 1):.1f}%"})
+_male = (an.RIAGENDR == 1).values
+rows.append({"Variable": "Male, n (%)", "Missing (n)": 0,
+             "Overall": f"{int(_male.sum()):,} ({wpct(_male, w):.1f}%)",
+             "No Asthma": f"{int((_male & (an.asthma.values == 0)).sum()):,} ({wpct(_male, w, denom=an.asthma.values == 0):.1f}%)",
+             "Asthma": f"{int((_male & (an.asthma.values == 1)).sum()):,} ({wpct(_male, w, denom=an.asthma.values == 1):.1f}%)"})
+add_levels("Race/Hispanic origin", "RIDRETH1",
+           {1: "Mexican American", 2: "Other Hispanic", 3: "Non-Hispanic White",
+            4: "Non-Hispanic Black", 5: "Other race including multiracial"})
 add_cont("Body Mass Index, kg/m2", "BMXBMI")
 add_cont("BMI-for-age z-score (CDC)", "bmi_z_cdc")
 for lev in ["Underweight (<5th)", "Healthy (5th-<85th)",
             "Overweight (85th-<95th)", "Obese (>=95th)"]:
     add_cat("BMI-for-age category", "bmi_cat", lev)
-for col, lab in [("FEV1/FVC ratio", None)]:
-    pass
 if {"SPXNFEV1", "SPXNFVC"} <= set(an.columns):
     m = an.SPXNFEV1.notna() & an.SPXNFVC.notna() & (an.SPXNFVC > 0)
     an["fev1_fvc"] = np.nan
@@ -167,6 +222,17 @@ if {"SPXNFEV1", "SPXNFVC"} <= set(an.columns):
     add_cont("FEV1/FVC ratio", "fev1_fvc", dp=3)
 if "INDFMPIR" in an.columns:
     add_cont("Family income-to-poverty ratio", "INDFMPIR")
+add_median("Serum cotinine, ng/mL (median [IQR])", "LBXCOT", dp=2)
+add_yes("Health insurance coverage, n (%)", "HIQ011")
+add_levels("Household food security", "FSDHH",
+           {1: "Full", 2: "Marginal", 3: "Low", 4: "Very low"})
+add_levels("General health condition", "HUQ010",
+           {1: "Excellent", 2: "Very good", 3: "Good", 4: "Fair", 5: "Poor"})
+add_yes("Smoker inside the home, n (%)", "SMD410")
+add_yes("Close relative with asthma, n (%)", "MCQ300B")
+add_yes("Wheezing or whistling in chest, past 12 months, n (%)", "RDQ070")
+add_yes("Dry cough at night, past 12 months, n (%)", "RDQ140")
+add_yes("Hay fever, past 12 months, n (%)", "AGQ030")
 
 t1 = pd.DataFrame(rows)[["Variable", "Overall", "No Asthma", "Asthma", "Missing (n)"]]
 
@@ -174,7 +240,10 @@ hdr = (f"Table 1. Baseline characteristics of the analytic cohort "
        f"(N = {n_analytic:,}), survey-weighted.\n"
        f"Weighted estimates use WTMEC2YR. Continuous variables: weighted mean "
        f"(Taylor-linearized SE using SDMVSTRA/SDMVPSU; single-PSU strata centered "
-       f"at the overall mean). Categorical: weighted %.\n"
+       f"at the overall mean). Skewed continuous variables: weighted median "
+       f"[weighted interquartile range], no SE. Categorical: unweighted n (weighted %) "
+       f"among nonmissing responses. Missing (n) is the unweighted count of missing "
+       f"values in the analytic cohort. No design-based p-values are produced.\n"
        f"Sample flow: {n_eligible:,} eligible; {n_eligible - n_analytic:,} excluded "
        f"for nonpositive examination weight; {n_analytic:,} analytic.\n"
        f"Unweighted counts: no asthma {int((an.asthma == 0).sum()):,}, "

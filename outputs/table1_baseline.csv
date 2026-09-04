@@ -1,11 +1,32 @@
 Variable,Overall,No Asthma,Asthma,Missing (n)
 "Age, years",11.6 (0.06),11.5 (0.06),12.0 (0.14),0
-"Female, %",49.4%,50.3%,45.5%,0
+"Male, n (%)","3,366 (50.6%)","2,665 (49.7%)",701 (54.5%),0
+Race/Hispanic origin: Mexican American,"1,591 (14.1%)","1,386 (15.0%)",205 (10.1%),0
+Race/Hispanic origin: Other Hispanic,784 (6.8%),624 (6.7%),160 (7.3%),0
+Race/Hispanic origin: Non-Hispanic White,"1,882 (57.0%)","1,536 (57.2%)",346 (56.3%),0
+Race/Hispanic origin: Non-Hispanic Black,"1,665 (14.4%)","1,274 (13.5%)",391 (18.4%),0
+Race/Hispanic origin: Other race including multiracial,645 (7.7%),518 (7.6%),127 (8.0%),0
 "Body Mass Index, kg/m2",20.9 (0.10),20.7 (0.11),22.0 (0.17),48
 BMI-for-age z-score (CDC),0.5 (0.02),0.5 (0.02),0.7 (0.04),48
-BMI-for-age category: Underweight (<5th),3.3%,3.3%,3.0%,48
-BMI-for-age category: Healthy (5th-<85th),62.1%,63.4%,56.5%,48
-BMI-for-age category: Overweight (85th-<95th),15.7%,15.5%,16.4%,48
-BMI-for-age category: Obese (>=95th),19.0%,17.8%,24.1%,48
+BMI-for-age category: Underweight (<5th),196 (3.3%),167 (3.3%),29 (3.0%),48
+BMI-for-age category: Healthy (5th-<85th),"3,909 (62.1%)","3,256 (63.4%)",653 (56.5%),48
+BMI-for-age category: Overweight (85th-<95th),"1,053 (15.7%)",849 (15.5%),204 (16.4%),48
+BMI-for-age category: Obese (>=95th),"1,361 (19.0%)","1,030 (17.8%)",331 (24.1%),48
 FEV1/FVC ratio,0.860 (0.0011),0.866 (0.0011),0.835 (0.0030),1841
 Family income-to-poverty ratio,2.5 (0.07),2.6 (0.07),2.5 (0.10),509
+"Serum cotinine, ng/mL (median [IQR])","0.04 [0.01, 0.24]","0.03 [0.01, 0.20]","0.05 [0.01, 0.52]",1093
+"Health insurance coverage, n (%)","5,799 (90.5%)","4,661 (89.7%)","1,138 (93.6%)",19
+Household food security: Full,"3,834 (69.1%)","3,139 (70.0%)",695 (65.4%),36
+Household food security: Marginal,942 (10.8%),767 (10.6%),175 (11.3%),36
+Household food security: Low,"1,177 (13.3%)",948 (12.7%),229 (15.8%),36
+Household food security: Very low,578 (6.8%),451 (6.7%),127 (7.5%),36
+General health condition: Excellent,"2,566 (43.6%)","2,288 (47.3%)",278 (27.7%),1
+General health condition: Very good,"1,806 (28.9%)","1,441 (28.3%)",365 (31.2%),1
+General health condition: Good,"1,768 (22.6%)","1,345 (20.5%)",423 (31.4%),1
+General health condition: Fair,394 (4.6%),247 (3.6%),147 (8.7%),1
+General health condition: Poor,32 (0.4%),17 (0.3%),15 (0.9%),1
+"Smoker inside the home, n (%)",942 (14.1%),728 (13.4%),214 (17.3%),30
+"Close relative with asthma, n (%)","2,000 (30.9%)","1,300 (24.6%)",700 (58.0%),108
+"Wheezing or whistling in chest, past 12 months, n (%)",743 (11.5%),212 (4.4%),531 (42.1%),2
+"Dry cough at night, past 12 months, n (%)",256 (3.6%),132 (2.4%),124 (9.0%),0
+"Hay fever, past 12 months, n (%)",729 (13.5%),493 (10.9%),236 (24.6%),14
