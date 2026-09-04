@@ -1,8 +1,8 @@
 # Release manifest — analysis of record
 
-- Generated: 2026-08-31T16:37:28
+- Generated: 2026-09-04T10:57:00
 - Pinned run: `tuning_results_20260831_103201`
-- Git commit: `d64afc08829740f61db4b441a1979ff0dcd415ad` (branch `master`)
+- Git commit: `433da1408d756f974f35e884c252e9bb5940cf13` (branch `master`)
 - Working tree at generation: CLEAN
 - Python 3.12.13 on Windows-11-10.0.26200-SP0
 
@@ -57,7 +57,7 @@ pass' below refers to this run's locked pass, not to the split's history.
 | `notebooks/harmonize_cycles.py` | 4738 | `e3d8a41ab838fb503053bc1215a7aabaf2aab71981c438a7acce2e7e812b461d` |
 | `notebooks/asthma_pipeline.py` | 25332 | `d64a70bf7ac583c53bbc18e17089c2cce43d2aabf19a17da7ccea3e324015054` |
 | `notebooks/pediatric_corrections.py` | 6328 | `e473434463d47073c95b0e40484ef860d4d882a4a88d252f8ab09a008d703520` |
-| `notebooks/build_table1.py` | 9113 | `03cf7ee05b9e8a1a3b1a6296ad26dac419318e1f657d146d6a9898569cc0e3b3` |
+| `notebooks/build_table1.py` | 13018 | `64bb2ffa58e1a62d639258c821c3f06de32102384a6b6de7c46d40176ae760d5` |
 | `notebooks/03_clean_and_filter.ipynb` | 11118 | `ba9690be760cb1d4676b9a8c27bec5c81517552d17573545c4c167303bc5d360` |
 | `notebooks/04_model.ipynb` | 123490 | `e1912d7a96e51d3cada3c77ea5be6325b61926da1b066806810050eefef30442` |
 | `verify_split_reconstruction.py` | 18721 | `83242ec330a8ca26225fdae1f39ab8af349c4b34ebd420ae610547fb3f55a281` |
@@ -94,8 +94,8 @@ pass' below refers to this run's locked pass, not to the split's history.
 | `outputs/split_verification_report.json` | 4481 | `5abc5a8bac38b982f1a2624b3873c4c1fd50731985d6b10174a10695b606928a` |
 | `outputs/cleaner_replacement_audit.json` | 11287 | `5de6e7a7aa5b700e695d0f3a3039dcb4ab44992795e2bfb7f8076ad5604de4cc` |
 | `outputs/historical_split_arrays/provenance.json` | 826 | `9947b0d692a675a05479671dc061b78f83bb774cea00cf2fab313860d7d005b0` |
-| `outputs/table1_baseline.csv` | 635 | `c7beef0b3f6ad2676e154eeeac071e2da67190611b4be1570828aefcdb59a40a` |
-| `outputs/table1_baseline.md` | 1828 | `09462b16d70b1afa3f7fbd5f31e18ce55a85aea0c33000056f21accc04eb110d` |
+| `outputs/table1_baseline.csv` | 2428 | `b3bb963dbcc9cf23d78a0cddd917ddd4821816d215a50cfe469cb8df40692282` |
+| `outputs/table1_baseline.md` | 5080 | `33ac3ea358a620878dbd6b536bbe3963a9b0bb3b4efb52b360f505d59270c2ce` |
 
 ## Model artifacts and reference data (committed 31 Aug)
 
