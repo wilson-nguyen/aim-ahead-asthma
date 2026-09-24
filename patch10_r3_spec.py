@@ -302,7 +302,7 @@ L[262:270] = [
     "# Remove leaky/restricted columns + [R3] primary-model exclusions",
     "# (ENQ020, SPDBRONC: NHANES routing/eligibility; HUQ050: diagnostic-",
     "# opportunity proxy — returns only in the declared sensitivity analysis).",
-    "# PFQ020 retained per Khamron 2026-08-14 (Yaseen: no response; logged).",
+    "# PFQ020 retained by author decision (2026-08-14).",
     "cols_to_drop = [c for c in X_clean.columns",
     "                if c in LEAKY_PROXIES + AGE_RESTRICTED_VARS + IDENTIFIERS",
     "                + PRIMARY_MODEL_EXCLUSIONS]",

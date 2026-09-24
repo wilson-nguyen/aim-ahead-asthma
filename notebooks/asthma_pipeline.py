@@ -9,8 +9,7 @@ Decisions implemented here, agreed with K. Micheals 2026-08-14:
   - Primary-model exclusions: prior-diagnosis/treatment proxies,
     healthcare-utilization proxies (HUQ050), NHANES routing/eligibility
     variables (ENQ020, SPDBRONC).
-  - PFQ020 RETAINED in the primary model (Khamron's position; Yaseen has
-    not weighed in - recorded in the exclusion log).
+  - PFQ020 RETAINED in the primary model (author decision, 2026-08-14).
   - CDC BMI-for-age z-score is the sole continuous BMI predictor.
     Raw BMXBMI, bmi_log, and weight-status categories leave the predictor
     set (categories remain descriptive, in Table 1 via build_table1.py).

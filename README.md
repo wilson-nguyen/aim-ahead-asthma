@@ -1,6 +1,6 @@
 # Explainable Machine Learning for Pediatric Asthma (NHANES)
 
-An explainable machine-learning analysis identifying the clinical, environmental, and social factors associated with **diagnosed** pediatric asthma in U.S. national survey data (NHANES). First-author research project (Best Poster Award, 2025 AIM-AHEAD Annual Meeting); manuscript under peer review (Ms. 26-02-0197R2, *Annals of Allergy, Asthma & Immunology*).
+An explainable machine-learning analysis identifying the clinical, environmental, and social factors associated with **diagnosed** pediatric asthma in U.S. national survey data (NHANES). First-author research project (Best Poster Award, 2025 AIM-AHEAD Annual Meeting); accepted for publication in *Annals of Allergy, Asthma & Immunology* (Ms. 26-02-0197R3, in press).
 
 > **Analysis of record:** run `tuning_results_20260831_103201`. Every number below comes from committed result files (see the manifest), including the model-comparison metrics from the run directory. `outputs/RELEASE_MANIFEST.md` binds those numbers to a git commit and SHA-256 hashes. Results from earlier runs, including the AUC 0.827 figure in the originally submitted manuscript, are **superseded** — see "Revision history" below.
 
@@ -9,7 +9,7 @@ An explainable machine-learning analysis identifying the clinical, environmental
 - **Goal:** an interpretable classifier for **cross-sectional classification of self- or proxy-reported, physician-diagnosed asthma at the time of assessment**. This is not incident prediction, not detection of undiagnosed asthma, and not a deployable diagnostic tool.
 - **Data:** NHANES 2007-2008, 2009-2010, 2011-2012; children aged 6-17; **n = 6,567** analytic sample (1,229 with reported asthma; weighted prevalence 18.8%). Outcome: `MCQ010`. Split 60/20/20 stratified (seed 42). The current run's assignments are SEQN-anchored in a committed record; historical runs reproduced the same ordered outcome and survey-weight arrays exactly, but those frozen artifacts contain no participant identifiers, so historical identity is established at the level of those arrays.
 - **Model:** CatBoost, tuned with Optuna (100 trials, 5-fold CV), class imbalance handled with categorical-aware SMOTENC + edited nearest neighbors inside folds. CatBoost is retained for continuity with the originally submitted analysis, not reselected on revision performance — the balanced random forest comparator reached validation AUC 0.815 vs CatBoost's 0.812. Model fitting is **unweighted**; survey weights are used for descriptive estimates and reported alongside as weighted evaluation.
-- **Operating point:** isotonic calibration and threshold both selected on the **validation** set (first point reaching sensitivity ≥ 0.80) and frozen before any test-set evaluation.
+- **Operating point:** isotonic calibration and threshold both selected on the **validation** set (first point reaching sensitivity ≥ 0.80) and locked before the test split was scored in this run (the split itself is a historically reused internal holdout; see below).
 - **Reporting:** discrimination (AUC) from **raw model scores**; threshold metrics from calibrated scores; calibration assessed separately.
 
 ### Test-set results (n = 1,314)
@@ -44,7 +44,7 @@ CIs are stratified bootstrap, 2,000 resamples, seed 42, conditional on the fitte
 
 ## Specification decisions
 
-Pre-specified before the final analysis; full audit trail in the revision folder's exclusion log.
+Pre-specified before the final analysis; the full decision log is kept by the authors and is available on request.
 
 - **Excluded from every model:** prior-diagnosis and treatment proxies; NHANES protocol/routing variables; age-restricted questionnaire items; identifiers and design variables.
 - **Excluded from the primary model** (returned only in a declared exploratory arm): healthcare-utilization and usual-source-of-care variables that index the *opportunity* to be diagnosed.
@@ -136,4 +136,4 @@ Python · pandas · NumPy · scikit-learn · CatBoost · SHAP · imbalanced-lear
 
 ## Citation
 
-Nguyen, W., Micheals, K., & Alwesabi, Y. "Explainable Machine Learning to Identify Clinical, Environmental, and Social Factors Associated with Diagnosed Pediatric Asthma (NHANES 2007-2012)." (Under review, 2026.)
+Nguyen, W., Micheals, K., & Alwesabi, Y. "Explainable Machine Learning to Identify Clinical, Environmental, and Social Factors Associated with Diagnosed Pediatric Asthma." *Annals of Allergy, Asthma & Immunology* (accepted September 2026; in press). Analysis of record: tag `v3.4-R3-final`.
