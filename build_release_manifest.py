@@ -1,7 +1,7 @@
 """
 build_release_manifest.py — bind the analysis of record to verifiable hashes.
 
-Distinct from freeze_and_manifest.py, which snapshotted the PRE-correction
+Distinct from archive/freeze_and_manifest.py, which snapshotted the PRE-correction
 state in August. This one documents the FINAL R3 analysis so a reader with a
 clean clone can confirm they are looking at the same thing we reported:
 
@@ -106,8 +106,9 @@ def main():
         "notebooks/04_model.ipynb", "verify_split_reconstruction.py",
         "run_final_analyses.py", "run_reduced_model_and_figures.py",
         "run_uncertainty.py", "generate_descriptives.py",
-        "redraw_shap_figures.py", "patch11_r3_quality_gating.py",
-        "patch12_nb04_header.py", "patch13_stale_notebook_text.py",
+        "redraw_shap_figures.py", "archive/notebook_patches/patch11_r3_quality_gating.py",
+        "archive/notebook_patches/patch12_nb04_header.py",
+        "archive/notebook_patches/patch13_stale_notebook_text.py",
         "audit_cleaner_replacements.py", "export_historical_split_arrays.py",
         "compute_noresampling_contrast.py", "build_release_manifest.py",
         "tests/test_cleaner_sentinels.py", "tests/test_quality_gating.py",
