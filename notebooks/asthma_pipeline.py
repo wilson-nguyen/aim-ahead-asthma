@@ -1,9 +1,11 @@
 """
 Shared pipeline components for the R3 revision (single source of truth).
 
-Both 04_model.ipynb and (after the production run) 05_top10_sensitivity.ipynb
-import from this module, so the cleaner / feature engineer / exclusion lists
-can no longer drift between notebooks.
+04_model.ipynb and the analysis, verification and test scripts all import
+from this module, so the cleaner / feature engineer / exclusion lists cannot
+drift between them. (The original reduced-model notebook,
+05_top10_sensitivity.ipynb, is now in archive/notebooks/; it was replaced
+by run_reduced_model_and_figures.py.)
 
 Decisions implemented here, agreed with K. Micheals 2026-08-14:
   - Primary-model exclusions: prior-diagnosis/treatment proxies,

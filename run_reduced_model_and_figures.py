@@ -1,16 +1,19 @@
 """
-run_reduced_model_and_figures.py — R3 successor to notebook 05.
+run_reduced_model_and_figures.py — R3 successor to notebook 05
+(05_top10_sensitivity.ipynb, now in archive/notebooks/).
 
-From the locked primary (tuning_results_20260824_140539 + the locked
-threshold/calibration from run_final_analyses.py):
+From the locked primary (the pinned run, tuning_results_20260831_103201,
+plus the locked threshold/calibration from run_final_analyses.py):
 
   1. SHAP values on the TRAINING data via CatBoost's native TreeSHAP,
      computed on the primary pipeline's selected 22 features.
   2. Top-10 feature ranking by mean |SHAP| (training data only — no
      validation or test involvement in the ranking).
-  3. Reduced model: same preprocessing + SMOTENC + tuned hyperparameters,
-     restricted to the top-10 features; calibrated and thresholded on
-     validation by the locked rule (sens >= 0.80), then ONE test pass.
+  3. Reduced model: same preprocessing + SMOTENC-ENN resampling + tuned
+     hyperparameters, restricted to the top-10 features plus the two
+     protected spirometry-availability indicators (12 features); calibrated
+     and thresholded on validation by the locked rule (sens >= 0.80), then
+     ONE test pass.
      Feature names are saved with the model (fixes the nameless
      model_b_top10 problem).
   4. Figures for the revised manuscript, written to outputs/figures_R3/:
@@ -45,9 +48,8 @@ import matplotlib.pyplot as plt
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "notebooks"))
 
-# [2026-08-26] auto-detect the newest tuning run (the corrective run,
-# once notebook 04 has been re-executed); falls back to the prior lock.
-# [2026-08-31] pinned to the analysis of record
+# Pinned to the analysis of record (2026-08-31). Earlier versions of this
+# script auto-detected the newest tuning run.
 PINNED_RUN = "tuning_results_20260831_103201"
 LOCKED_RUN = PINNED_RUN
 RANDOM_STATE = 42

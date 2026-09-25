@@ -17,12 +17,15 @@ deterministically reconstructed.
 Run from the repo root:
     python verify_split_reconstruction.py
 Options:
-    --run tuning_results_20260824_084903   (default: newest in notebooks/)
-    --out outputs                          (where to write the record)
+    --run tuning_results_<id>   (default: the pinned analysis of record,
+                                 tuning_results_20260831_103201)
+    --out outputs               (where to write the record)
+    --production                (write the committed report; see below)
 
 Writes:
     <out>/split_assignment_SEQN.csv
-    <out>/split_verification_report.json
+    <out>/split_verification_report.local.json
+        (split_verification_report.json with --production)
 """
 import argparse
 import glob

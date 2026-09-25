@@ -3,8 +3,8 @@ run_final_analyses.py — post-sign-off package for the locked R3 specification.
 
 Locked spec: SMOTENC-ENN primary (KM sign-off 24 Aug 2026), amended by the
 27 Aug 2026 KM rulings (spirometry quality gating A/B, URDNALLC excluded,
-raw-score AUC reporting); runs against the newest tuning_results_* produced
-by the re-executed notebook 04.
+raw-score AUC reporting). Runs against the pinned analysis of record,
+tuning_results_20260831_103201 (override with --run).
 
 What this does, in order:
   1. THRESHOLD + CALIBRATION LOCK (validation only)

@@ -6,10 +6,11 @@ modeling or threshold decisions: predictions are regenerated deterministically
 from the locked pipelines, calibrators, and thresholds, then resampled.
 
   - Stratified bootstrap (default 2000 resamples, seed 42) of the TEST set
-    for: primary (22 features), reduced (top-10 + 2 indicators), and the
-    no-resampling sensitivity model is NOT refit here — only artifacts that
-    were saved are used (primary + reduced). CIs for the sensitivity arms can
-    be added the same way if their pipelines are persisted.
+    for the primary model (22 features) and the reduced model (top-10 + 2
+    indicators), from their saved artifacts; nothing is refit. The
+    sensitivity-analysis arms get no intervals here; the paired AUC
+    contrast with the no-resampling arm is computed separately by
+    compute_noresampling_contrast.py.
   - Metrics: AUC, sensitivity, specificity, PPV, NPV at the locked thresholds,
     unweighted and survey-weighted (weights resampled with the rows).
     [2026-08-27 KM ruling] AUC is computed from RAW model scores
@@ -37,9 +38,8 @@ warnings.filterwarnings("ignore")
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "notebooks"))
 
-# [2026-08-26] auto-detect the newest tuning run (the corrective run,
-# once notebook 04 has been re-executed); falls back to the prior lock.
-# [2026-08-31] pinned to the analysis of record
+# Pinned to the analysis of record (2026-08-31). Earlier versions of this
+# script auto-detected the newest tuning run.
 PINNED_RUN = "tuning_results_20260831_103201"
 LOCKED_RUN = PINNED_RUN
 SEED = 42
