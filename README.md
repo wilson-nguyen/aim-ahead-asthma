@@ -54,7 +54,7 @@ These steps use the fitted models and results saved in the repository and do not
 
 ## Citation
 
-Nguyen W, Micheals K, Alwesabi Y. Explainable Machine Learning to Identify Clinical, Environmental, and Social Factors Associated with Diagnosed Pediatric Asthma. *Annals of Allergy, Asthma & Immunology*. In press, 2026.
+Micheals K, Nguyen W, Alwesabi Y. Explainable Machine Learning to Identify Clinical, Environmental, and Social Factors Associated with Diagnosed Pediatric Asthma. *Annals of Allergy, Asthma & Immunology*. In press, 2026.
 
 ## License
 
