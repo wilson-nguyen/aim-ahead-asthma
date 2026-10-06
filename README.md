@@ -1,6 +1,6 @@
 # Explainable machine learning for pediatric asthma (NHANES 2007-2012)
 
-Code and results for the paper "Explainable Machine Learning to Identify Clinical, Environmental, and Social Factors Associated with Diagnosed Pediatric Asthma," accepted for publication in *Annals of Allergy, Asthma & Immunology* (in press).
+Code and results for the paper "Explainable Machine Learning to Identify Clinical, Environmental, and Social Factors Associated with Diagnosed Pediatric Asthma," published online in *Annals of Allergy, Asthma & Immunology* in October 2026 ([doi:10.1016/j.anai.2026.09.748](https://doi.org/10.1016/j.anai.2026.09.748)).
 
 ## The study
 
@@ -54,7 +54,9 @@ These steps use the fitted models and results saved in the repository and do not
 
 ## Citation
 
-Micheals K, Nguyen W, Alwesabi Y. Explainable Machine Learning to Identify Clinical, Environmental, and Social Factors Associated with Diagnosed Pediatric Asthma. *Annals of Allergy, Asthma & Immunology*. In press, 2026.
+Micheals K, Nguyen W, Alwesabi Y. Explainable Machine Learning to Identify Clinical, Environmental, and Social Factors Associated with Diagnosed Pediatric Asthma. *Annals of Allergy, Asthma & Immunology*. Published online October 4, 2026. [doi:10.1016/j.anai.2026.09.748](https://doi.org/10.1016/j.anai.2026.09.748)
+
+Khamron Micheals and Wilson Nguyen contributed equally.
 
 ## License
 
