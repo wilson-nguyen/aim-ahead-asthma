@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the paper below."
+title: "Explainable machine learning for pediatric asthma (NHANES 2007-2012)"
+type: software
+authors:
+  - family-names: Nguyen
+    given-names: Wilson
+repository-code: "https://github.com/wilson-nguyen/aim-ahead-asthma"
+license: MIT
+version: v3.4-R3-final
+preferred-citation:
+  type: article
+  title: "Explainable Machine Learning to Identify Clinical, Environmental, and Social Factors Associated with Diagnosed Pediatric Asthma"
+  authors:
+    - family-names: Micheals
+      given-names: Khamron
+    - family-names: Nguyen
+      given-names: Wilson
+    - family-names: Alwesabi
+      given-names: Yaseen
+  journal: "Annals of Allergy, Asthma & Immunology"
+  year: 2026
+  month: 10
+  doi: 10.1016/j.anai.2026.09.748
+  status: advance-online
